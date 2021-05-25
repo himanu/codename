@@ -1,6 +1,7 @@
-<svg width="100%" height="100%" viewBox="0 0 900 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="100%" height="100%" viewBox="0 0 100% 100%" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <rect width="100%" height="100%" rx="20" fill="#3F1575"></rect>
-<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="100vw" height="100vh">
+<rect width="100%" height="100%" rx="20" fill="#3F1575"></rect>
+<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
 <rect width="100%" height="100%" rx="20" fill="#3F1575"></rect>
 </mask>
 <g mask="url(#mask0)">

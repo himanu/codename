@@ -198,7 +198,7 @@
     }
     .gameHeading{
         position : absolute;
-        top : 10%;
+        top : 5%;
     }
     .container{
         display: flex;
