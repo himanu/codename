@@ -1,5 +1,32 @@
 <script>
+import { dbGameSession } from "./database";
 
+
+    var time;
+    dbGameSession.on('value',(snap)=>{
+        if(!snap.exists)
+            return;
+        time = snap.val().time;
+    })
+
+    var interval = setInterval(updateTime,1000);
+	function updateTime(){
+		time = time - 1;
+        if(time>=0)
+        {
+            dbGameSession.update({
+                time 
+            })
+        }
+        
+		if(time === 0)
+		{
+            clearInterval(interval);
+            dbGameSession.update({
+                page : "Game Screen"
+            })
+        }	
+	}
 </script>
 <main>
     <div class = "gameHeading">
@@ -179,7 +206,7 @@
             VS
         </div>
         <div class = "text">
-            Game will start in 08 seconds...
+            Game will start in {time} seconds...
         </div>
     </div>
 </main>
