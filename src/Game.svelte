@@ -17,10 +17,21 @@
     let clueSenderTeam;
     let redTeam = [],blueTeam = [];
     let tableBorderColor = "#4C1A96";
-    let correctWordSelected,opponentWordSelected,greyWordSelected,blackWordSelected;
     let is_This_User_Turn;
     let selectedWordsList = [];
     let redScore = 8, blueScore = 8;
+    let lastWordSelected;
+    let selectedInfoType = 0;
+    let tableBorderMap = {
+        1 : "#3FAB8B",
+        2 : "#9C9C9C",
+        3 : "#9C9C9C",
+        4 : "#3FAB8B",
+        5 : "yellow",
+        6 : "#3FAB8B",
+        7 : "#3B3B3B",
+        8 : "#3FAB8B"
+    }
 
     //user Profile picture
     let userProfilePicture = getParams("userProfilePicture");
@@ -82,12 +93,10 @@
         if(selectedWordsList)
         {
             let wordSelected;
-            console.log(selectedWordsList);
             let cnt1 = 0;
             let cnt2 = 0;
             for(const id in selectedWordsList) {
-                wordSelected = selectedWordsList[id];  
-                console.log(wordSelected);
+                wordSelected = selectedWordsList[id];
                 if(wordSelected.color === "Red") {
                     cnt1++;
                 }
@@ -99,45 +108,59 @@
             blueScore = 8 - cnt2;
         }
     }
-    $: {
+    $:{
         if(selectedWordsList) {
-            wordSelected = selectedWordsList[selectedWordsList.length - 1];
-
-            if(wordSelected.color === wordSelected.selectorTeam) {
-                correctWordSelected = true;
-                setTimeout(()=>{
-                    correctWordSelected = false;
-                },3000);
-            }
-            else if(wordSelected.color === "Grey") {
-                greyWordSelected = true;
-                setTimeout(()=>{
-                    greyWordSelected = false;
-                },3000);
-                changeTurn();
-            }
-            else if(wordSelected.color === "Black") {
-                blackWordSelected = true;
-                setTimeout(()=>{
-                    blackWordSelected = false;
-                },3000);
-            }
-            else {
-                opponentWordSelected = true;
-                setTimeout(()=>{
-                    opponentWordSelected = false;
-                },3000);
-                changeTurn();
-            }
+            lastWordSelected = selectedWordsList[selectedWordsList.length - 1];
         }
-        
     }
     $: {
-        if(blackWordSelected === true) {
+        if(tableBorderColor) {
+            clearTimeout(tableBorderColorTimeout);
+            tableBorderColorTimeout = setTimeout(()=>{
+                selectedInfoType = 0;
+            },3000);
+        }
+    }
+
+    $: {
+        if(lastWordSelected.color === lastWordSelected.selectorTeam && team === turn){
+            tableBorderColor = "#3FAB8B";
+            selectedInfoType = 1;
+        }
+        else if(lastWordSelected.color === lastWordSelected.selectorTeam && team !== turn){
+            tableBorderColor = "#9C9C9C";
+            selectedInfoType = 2;
+        }
+        else if(lastWordSelected.color === "Grey" && team !== turn){
+            tableBorderColor = "#9C9C9C";
+            selectedInfoType = 3;
+        }
+        else if(lastWordSelected.color === "Grey" && team === turn){
+            tableBorderColor = "#3FAB8B";
+            selectedInfoType = 4;
+        }
+        else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team === turn){
+            tableBorderColor = "yellow";
+            selectedInfoType = 5;
+        }
+        else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team !== turn){
+            tableBorderColor = "#3FAB8B";
+            selectedInfoType = 6;
+        }
+        else if(lastWordSelected.color === "Black" && team === turn){
+            tableBorderColor = "#3B3B3B";
+            selectedInfoType = 7;
             resultDeclared = true;
             looser = turn;
         }
+        else if(lastWordSelected.color === "Black" && team !== turn){
+            tableBorderColor = "#3FAB8B";
+            selectedInfoType = 8;
+            resultDeclared = true;
+            winner = turn;
+        }
     }
+    
     $: {
         if(looser === "Red") {
             winner = "Blue";
@@ -158,24 +181,6 @@
             looser = "Red";
         }
     }
-    $: {
-        if( correctWordSelected === true && team === turn)
-        {
-            tableBorderColor = "#3FAB8B";
-        }    
-        else if( opponentWordSelected === true && team != turn){
-            tableBorderColor = "#E1BC36";
-        }
-        else if( greyWordSelected === true && team != turn){
-            tableBorderColor = "#9C9C9C";
-        }
-        else if( blackWordSelected === true && team === turn){
-            tableBorderColor = "#3B3B3B";
-        }
-        else{
-            tableBorderColor = "#4C1A96";
-        }
-    } 
 
     $: {
         if(clue && turn === team && !isSpymaster) {
@@ -217,6 +222,12 @@
         dbGameSession.update({
             selectedWordsList
         })
+        if(word.color === "Grey"){
+            changeTurn();
+        }
+        else if(word.color !== team && word.color !== "Black") {
+            changeTurn();
+        }
     }
     //to send clues to the other player
     function giveClue(event){
@@ -234,9 +245,6 @@
     }
 
     function changeTurn() {
-        correctWordSelected = false;
-        opponentWordSelected = false;
-        blackWordSelected = false;
         if(turn === "Red")
         {
             dbGameSession.update({
@@ -547,10 +555,17 @@
             </div>
         </div>
     </div>
-    <span class="{(correctWordSelected === true && team === turn)?"correctWord-show" : "correctWord-hide"}">Hurrah!!! Correct word Selected</span>
-    <span class="{(greyWordSelected === true && team != turn)?"greyWord-show" : "greyWord-hide"}">Uff!!! Grey word Selected</span>
-    <span class="{(opponentWordSelected === true && team != turn)?"anotherWord-show" : "anotherWord-hide"}">Uff!!! Opponent word Selected</span>
-    <span class="{(blackWordSelected === true && team === turn)?"blackWord-show" : "blackWord-hide"}">Uff!!! Black word Selected</span>
+    <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Correct word Selected</span>
+    <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Opponent selected correct word</span>
+
+    <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Uff!!! Grey word Selected</span>
+    <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Opponent selected grey word </span>
+
+    <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Uff!!! Opponent word Selected</span>
+    <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Opponent selected your word </span>
+
+    <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Uff!!! Black word Selected</span>
+    <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Opponent selected black word</span>
 </main>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap');
@@ -831,10 +846,10 @@
         font-weight : 700;
         font-size : 14px;
     }
-    .correctWord-hide,.anotherWord-hide,.greyWord-hide,.blackWord-hide{
+    .Word-hide{
         display: none;
     }
-    .correctWord-show,.anotherWord-show,.greyWord-show,.blackWord-show{
+    .Word-show{
         display : inline;
         position: absolute;
         top : 18%;
@@ -844,17 +859,5 @@
         font-size : 14px;
         color : #fff;
         border-radius : 10px;
-    }
-    .correctWord-show{
-        background-color: #3AC180;
-    }
-    .anotherWord-show{
-        background-color:#E1BC36;
-    }
-    .greyWord-show{
-        background-color : #9C9C9C
-    }
-    .blackWord-show{
-        background-color: #3B3B3B;
     }
 </style>
