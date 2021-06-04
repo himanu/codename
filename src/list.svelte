@@ -9,24 +9,11 @@
         </pre>
         <div class = "user-list">
             <div class = "users">
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
-                <div class = "user"> <div class = "name">Himanshu</div> <div class="joinedUser"></div> </div>
+                <div class = "name">Himanshu</div>  
+                <div class = "name">Himanshu</div> 
+                <div class = "name">Himanshu</div> 
+                <div class = "name">Himanshu</div> 
+                <div class = "name">Himanshu</div>
             </div>
         </div>
         <button class = "startBtn">

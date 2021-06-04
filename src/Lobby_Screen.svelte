@@ -1,7 +1,6 @@
 <script>
-    import { onMount } from "svelte";
     import { dbUser, dbUsers, dbGameSession } from "./database";
-    import { getParams } from "./utils";
+    import { getParams, wordList, shuffleArray, create_NewArray_Of_List  } from "./utils";
 
     var redTeam = [];
     var blueTeam = [];
@@ -9,8 +8,16 @@
     var userName = getParams('userName');
     var disableRedSpymasterBtn = false,disableBlueSpymasterBtn = false;
     var disableStartGameBtn = true;
-    var displayAlertDiv = "block";
+    let hideAlertBlock = false;
 
+    var shuffled_WordList = shuffleArray(wordList).slice(0,25);
+    shuffled_WordList = create_NewArray_Of_List(shuffled_WordList);
+    shuffled_WordList = shuffleArray(shuffled_WordList);
+    for(let i = 0; i<shuffled_WordList.length ; i++)
+    {
+        shuffled_WordList[i]["id"] = i;
+    }
+    
     dbUsers.on('value',(snap)=>{
         const users = snap.val();
         
@@ -20,7 +27,6 @@
         redTeam = [];
         blueTeam = [];
         disableStartGameBtn = true;
-        displayAlertDiv = "block";
         var redTeam_has_Spymaster = false;
         var blueTeam_has_Spymaster = false;
 
@@ -59,7 +65,7 @@
         if(blueTeam.length > 1 && redTeam.length > 1 && redTeam_has_Spymaster && blueTeam_has_Spymaster)
         {
             disableStartGameBtn = false;
-            displayAlertDiv = "none";
+            hideAlertBlock = true;
         }
     })
 
@@ -93,17 +99,20 @@
     
     function handle_Start_Game_Btn(){
         dbGameSession.update({
-            page : "Lobby"
+            page : "Lobby",
+            time : 5,
+            shuffled_WordList,
+            turn : "Red"
         })
     }
 
     function processName(name){
-        name = name.split(' ')[0];
-        if(name.length > 10)
+        let fname = name.split(" ")[0];
+        if(fname.length > 10)
         {
-            name = name.slice(0,8) + "...";
+            fname = fname.slice(0,8) + "...";
         }
-        return name;
+        return fname;
     }
 </script>
 <main>
@@ -316,7 +325,7 @@
                 </div>
                 <div class = "btn">
                     <button class = "player" on:click = {handle_Red_Player_Btn}>Be Player</button>
-                    <button class = "spymaster" id = "redSpymasterBtn" on:click = {handle_Red_Spymaster_Btn} disabled = {disableRedSpymasterBtn}>Be Spymaster</button>
+                    <button class = "spymaster" on:click = {handle_Red_Spymaster_Btn} disabled = {disableRedSpymasterBtn}>Be Spymaster</button>
                 </div>
             </div>
         </div>
@@ -329,8 +338,8 @@
 				</svg>	
 			</div>
 		</button>
-        <div style = "display : {displayAlertDiv}" class = "alertDiv">
-            Need at least 2 Player and 1 Spymaster in each team!!!
+        <div class = "alertDiv" class:hide_alertDiv = {hideAlertBlock === true}>
+            Need at least 2 Player and 1 Spymaster in each team to start the Game !!!
         </div>
     </div>
 </main>
@@ -540,6 +549,9 @@
         color : white; 
         font-style: italic; 
         padding : 8px;
+    }
+    .hide_alertDiv{
+        display : none;
     }
     
 </style>

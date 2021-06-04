@@ -1,12 +1,40 @@
 <script>
-import { dbGameSession } from "./database";
-
-
-    var time;
+    import { dbGameSession,dbUser,dbUsers ,dbTime} from "./database";
+    let time;
+    let user;
+    let redTeam = [];
+    let blueTeam = [];
+    
+    dbUser.on('value',(snap)=>{
+        if(!snap.exists)
+        return;
+        user = snap.val();
+    })
+    dbUsers.on('value',(snap)=>{
+        if(!snap.exists){
+            return ;
+        }
+        let users = snap.val();
+        for(const id in users)
+        {
+            let currentUser = users[id];
+            if(currentUser.team === "Red")
+            {
+                redTeam.push(user);
+            }
+            else if(currentUser.team === "Blue")
+                blueTeam.push(user);
+        }
+    })
     dbGameSession.on('value',(snap)=>{
         if(!snap.exists)
             return;
-        time = snap.val().time;
+    })
+    dbTime.on('value',(snap)=>{
+        if(!snap.exists){
+            return ;
+        }
+        time = snap.val();
     })
 
     var interval = setInterval(updateTime,1000);
@@ -187,17 +215,17 @@ import { dbGameSession } from "./database";
             <div class = "blue">
                 <div class = "blueH">Blue Team</div>
                 <div class = "players">
-                    <div class = "smiley"></div>
-                    <img src = './images/player1.svg' alt = "player1" class = "player1">
-                    <img src = './images/player2.svg' alt = "player2" class = "player2">
+                    {#each blueTeam as user}
+                        <img class = "player" src = '{user.profilePicture? user.profilePicture : './images/smiley.svg'}' alt = 'player profilePicture'>
+                    {/each}
                 </div>
             </div>
             <div class = "red">
                 <div class = "redH">Red Team</div>
                 <div class = "players">
-                    <div class = "smiley"></div>
-                    <img src = './images/player1.svg' alt = "player1" class = "player1">
-                    <img src = './images/player2.svg' alt = "player2" class = "player2">
+                    {#each redTeam as user}
+                        <img class = "player" src = '{user.profilePicture? user.profilePicture : './images/smiley.svg'}' alt = 'player profilePicture'>
+                    {/each}
                 </div>
             </div>
         </div>
@@ -292,20 +320,15 @@ import { dbGameSession } from "./database";
         justify-content: space-evenly;
         align-items: center;
     }
-    .smiley{
-        width : 56.5px;
-        height : 56.5px;
-        border-radius : 50%;
-        background-color: #766392;
+    .player{
         box-shadow: 0px 11.3008px 14.126px rgba(0, 0, 0, 0.15);
-    }
-    .player1, .player2{
-        box-shadow: 0px 11.3008px 14.126px rgba(0, 0, 0, 0.15);
+        width : 35px;
+        height : 35px;
         border-radius : 50%;
     }
     .vs{
         position : absolute;
-        bottom : 42%;
+        bottom : 50%;
         display : flex;
         align-items: center;
         justify-content: center;

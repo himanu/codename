@@ -2,8 +2,6 @@ import firebase from "firebase/app";
 import "firebase/database";
 import { getGameSessionId, getParams } from "./utils";
 
-var page = "Loading";
-var blueSpyMaster,redSpyMaster;
 const firebaseConfig = {
     apiKey: "AIzaSyAkHeZ4jd3yxaEV7oP23CV3MXTdohs6btY",
     authDomain: "da-cn-dev.firebaseapp.com",
@@ -20,6 +18,12 @@ export const dbRoot = firebase.database().ref('codename');
 export const dbGameSession = dbRoot.child(getGameSessionId());
 export const dbUsers = dbGameSession.child('users');
 export const dbUser = dbUsers.child(getParams('userId'));
+export const dbWordList = dbGameSession.child('shuffled_WordList');
+export const dbSelectedWordsList = dbGameSession.child('selectedWordsList');
+export const dbTurn = dbGameSession.child('turn');
+export const dbClue = dbGameSession.child('clue');
+export const dbTime = dbGameSession.child('time');
+
 export const team = getParams('team');
 
 dbUser.update({
@@ -30,8 +34,5 @@ dbUser.update({
     onlineTime: firebase.database.ServerValue.TIMESTAMP
 });
 
-dbGameSession.update({
-    time : 20
-})
 
 
