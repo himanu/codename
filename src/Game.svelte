@@ -70,7 +70,7 @@
         }
         wordList = snap.val();
     })
-    
+
     dbSelectedWordsList.on('value',(snap)=>{
         if(!snap.exists){
             return;
@@ -127,6 +127,39 @@
                 changeTurn();
             }
         }
+    }
+    $: {
+        if(selectedWordsList) {
+            wordSelected = selectedWordsList[selectedWordsList.length - 1];
+
+            if(wordSelected.color === wordSelected.selectorTeam) {
+                correctWordSelected = true;
+                setTimeout(()=>{
+                    correctWordSelected = false;
+                },3000);
+            }
+            else if(wordSelected.color === "Grey") {
+                greyWordSelected = true;
+                setTimeout(()=>{
+                    greyWordSelected = false;
+                },3000);
+                changeTurn();
+            }
+            else if(wordSelected.color === "Black") {
+                blackWordSelected = true;
+                setTimeout(()=>{
+                    blackWordSelected = false;
+                },3000);
+            }
+            else {
+                opponentWordSelected = true;
+                setTimeout(()=>{
+                    opponentWordSelected = false;
+                },3000);
+                changeTurn();
+            }
+        }
+        
     }
     $: {
         if(blackWordSelected === true) {
@@ -230,6 +263,9 @@
     }
 
     function changeTurn() {
+        correctWordSelected = false;
+        opponentWordSelected = false;
+        blackWordSelected = false;
         if(turn === "Red")
         {
             dbGameSession.update({
