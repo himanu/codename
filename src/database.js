@@ -20,6 +20,11 @@ export const dbUsers = dbGameSession.child('users');
 export const dbUser = dbUsers.child(getParams('userId'));
 export const dbWordList = dbGameSession.child('shuffled_WordList');
 export const dbSelectedWordsList = dbGameSession.child('selectedWordsList');
+// New Data Added
+export const dbLastWordSelected = dbGameSession.child('lastWordSelected');
+export const dbRedScore = dbGameSession.child('redScore');
+export const dbBlueScore = dbGameSession.child('blueScore');
+//
 export const dbTurn = dbGameSession.child('turn');
 export const dbClue = dbGameSession.child('clue');
 export const dbTime = dbGameSession.child('time');

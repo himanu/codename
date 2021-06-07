@@ -1,6 +1,8 @@
 <script>
+import { null_to_empty } from "svelte/internal";
+
     import Cross from "./Cross.svelte";
-    import { dbGameSession, dbUser, dbUsers, dbWordList,dbTurn,dbClue,dbSelectedWordsList} from "./database";
+    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbSelectedWordsList, dbLastWordSelected, dbRedScore, dbBlueScore} from "./database";
     import Tick from "./Tick.svelte";
     import { getParams } from './utils';
 
@@ -16,18 +18,21 @@
     let clueWord,clueWord_Count;
     let clueSenderTeam;
     let redTeam = [],blueTeam = [];
-    let tableBorderColor = "#4C1A96";
     let is_This_User_Turn;
     let selectedWordsList = [];
     let redScore = 8, blueScore = 8;
     let lastWordSelected;
     let selectedInfoType = 0;
+    let selectedInfoTypeTimeout;
+    let showSelectedInfo = false;
+    let tableBorderColor;
     let tableBorderMap = {
+        0 : "#4C1A96",
         1 : "#3FAB8B",
-        2 : "#9C9C9C",
+        2 : "#E1BC36",
         3 : "#9C9C9C",
         4 : "#3FAB8B",
-        5 : "yellow",
+        5 : "#E1BC36",
         6 : "#3FAB8B",
         7 : "#3B3B3B",
         8 : "#3FAB8B"
@@ -82,6 +87,26 @@
         wordList = snap.val();
     })
 
+    // dbRedScore.on('value',(snap)=>{
+    //     if(!snap.exists) {
+    //         return;
+    //     }
+    //     redScore = snap.val();
+    // })
+
+    // dbBlueScore.on('value',(snap)=>{
+    //     if(!snap.exists) {
+    //         return;
+    //     }
+    //     blueScore = snap.val();
+    // })
+    // dbLastWordSelected.on('value',(snap)=>{
+    //     if(!snap.exists) {
+    //         return;
+    //     }
+    //     lastWordSelected = snap.val();
+    // })
+    //
     dbSelectedWordsList.on('value',(snap)=>{
         if(!snap.exists){
             return;
@@ -114,53 +139,51 @@
         }
     }
     $: {
-        if(tableBorderColor) {
-            clearTimeout(tableBorderColorTimeout);
-            tableBorderColorTimeout = setTimeout(()=>{
-                selectedInfoType = 0;
-            },3000);
+        if(lastWordSelected) {
+            showSelectedInfo = true;
+            updateSelectionInfoType();
         }
     }
-
     $: {
-        if(lastWordSelected.color === lastWordSelected.selectorTeam && team === turn){
-            tableBorderColor = "#3FAB8B";
-            selectedInfoType = 1;
-        }
-        else if(lastWordSelected.color === lastWordSelected.selectorTeam && team !== turn){
-            tableBorderColor = "#9C9C9C";
-            selectedInfoType = 2;
-        }
-        else if(lastWordSelected.color === "Grey" && team !== turn){
-            tableBorderColor = "#9C9C9C";
-            selectedInfoType = 3;
-        }
-        else if(lastWordSelected.color === "Grey" && team === turn){
-            tableBorderColor = "#3FAB8B";
-            selectedInfoType = 4;
-        }
-        else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team === turn){
-            tableBorderColor = "yellow";
-            selectedInfoType = 5;
-        }
-        else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team !== turn){
-            tableBorderColor = "#3FAB8B";
-            selectedInfoType = 6;
-        }
-        else if(lastWordSelected.color === "Black" && team === turn){
-            tableBorderColor = "#3B3B3B";
-            selectedInfoType = 7;
-            resultDeclared = true;
-            looser = turn;
-        }
-        else if(lastWordSelected.color === "Black" && team !== turn){
-            tableBorderColor = "#3FAB8B";
-            selectedInfoType = 8;
-            resultDeclared = true;
-            winner = turn;
+
+        if(lastWordSelected) {
+            if(lastWordSelected.color === lastWordSelected.selectorTeam && team === lastWordSelected.color){
+                selectedInfoType = 1;
+            }
+            else if(lastWordSelected.color === lastWordSelected.selectorTeam && team !== lastWordSelected.color){
+                selectedInfoType = 2;
+            }
+            else if(lastWordSelected.color === "Grey" && team !== turn){
+                selectedInfoType = 3;
+            }
+            else if(lastWordSelected.color === "Grey" && team === turn){
+                selectedInfoType = 4;
+            }
+            else if(lastWordSelected.color === "Black" && team === turn){
+                selectedInfoType = 7;
+                resultDeclared = true;
+                looser = team;
+            }
+            else if(lastWordSelected.color === "Black" && team !== turn){
+                selectedInfoType = 8;
+                resultDeclared = true;
+                winner = team;
+            }
+            else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team !== turn){
+                selectedInfoType = 5;
+            }
+            else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team === turn){
+                selectedInfoType = 6;
+            }
         }
     }
-    
+    function updateSelectionInfoType() {
+        clearTimeout(selectedInfoTypeTimeout);
+
+        selectedInfoTypeTimeout = setTimeout(()=>{
+                showSelectedInfo = false;
+        },3000);
+    }
     $: {
         if(looser === "Red") {
             winner = "Blue";
@@ -183,7 +206,7 @@
     }
 
     $: {
-        if(clue && turn === team && !isSpymaster) {
+        if(clue && clue.clueSenderTeam === team && turn === team && !isSpymaster) {
             is_This_User_Turn = true;
         }
         else {
@@ -200,8 +223,15 @@
         else if(team === "Red") {
             profile_picture_border_color = "#E44C4F";
         }
-    } 
-            
+    }
+    $: {
+        if(showSelectedInfo) {
+            tableBorderColor = tableBorderMap[selectedInfoType];
+        }
+        else {
+            tableBorderColor = tableBorderMap[0];
+        }
+    }
     function checkWord(word) {
         if(!is_This_User_Turn)
         return ;
@@ -223,6 +253,7 @@
             selectedWordsList
         })
         if(word.color === "Grey"){
+            console.log("Hey turn should be changed");
             changeTurn();
         }
         else if(word.color !== team && word.color !== "Black") {
@@ -245,16 +276,19 @@
     }
 
     function changeTurn() {
+
         if(turn === "Red")
         {
             dbGameSession.update({
-                turn : "Blue"
+                turn : "Blue",
+                clue : null
             })
         }
         else if(turn === "Blue")
         {
             dbGameSession.update({
-                turn : "Red"
+                turn : "Red",
+                clue : null
             })
         }
     }
@@ -460,7 +494,7 @@
         </div>
     </div>
     <div class = "table">
-        <div class="word-matrix" style = "border :6px solid {tableBorderColor};">
+        <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
             {#each wordList as word}
                 {#if isSpymaster || word.selectedBy}
                     {#if word.color === "Grey"}
@@ -555,17 +589,19 @@
             </div>
         </div>
     </div>
-    <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Correct word Selected</span>
-    <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Opponent selected correct word</span>
+    {#if showSelectedInfo}
+        <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Correct word Selected</span>
+        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Opponent selected correct word</span>
 
-    <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Uff!!! Grey word Selected</span>
-    <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Opponent selected grey word </span>
+        <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Grey word Selected</span>
+        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Opponent selected grey word </span>
 
-    <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Uff!!! Opponent word Selected</span>
-    <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Opponent selected your word </span>
+        <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Opponent word Selected</span>
+        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Opponent selected your word </span>
 
-    <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Uff!!! Black word Selected</span>
-    <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : ;">Hurrah!!! Opponent selected black word</span>
+        <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Black word Selected</span>
+        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Opponent selected black word</span>
+    {/if}
 </main>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap');
