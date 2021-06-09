@@ -88,26 +88,6 @@
         wordList = snap.val();
     })
 
-    // dbRedScore.on('value',(snap)=>{
-    //     if(!snap.exists) {
-    //         return;
-    //     }
-    //     redScore = snap.val();
-    // })
-
-    // dbBlueScore.on('value',(snap)=>{
-    //     if(!snap.exists) {
-    //         return;
-    //     }
-    //     blueScore = snap.val();
-    // })
-    // dbLastWordSelected.on('value',(snap)=>{
-    //     if(!snap.exists) {
-    //         return;
-    //     }
-    //     lastWordSelected = snap.val();
-    // })
-    //
     dbSelectedWordsList.on('value',(snap)=>{
         if(!snap.exists){
             return;
@@ -189,7 +169,7 @@
 
         selectedInfoTypeTimeout = setTimeout(()=>{
                 showSelectedInfo = false;
-        },100000);
+        },3000);
     }
     $: {
         if(looser === "Red") {
