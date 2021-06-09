@@ -18,8 +18,9 @@ export const dbRoot = firebase.database().ref('codename');
 export const dbGameSession = dbRoot.child(getGameSessionId());
 export const dbUsers = dbGameSession.child('users');
 export const dbUser = dbUsers.child(getParams('userId'));
-export const dbWordList = dbGameSession.child('shuffled_WordList');
+export const dbWordList = dbGameSession.child('shuffledWordList');
 export const dbSelectedWordsList = dbGameSession.child('selectedWordsList');
+export const dbPage = dbGameSession.child('page');
 // New Data Added
 export const dbLastWordSelected = dbGameSession.child('lastWordSelected');
 export const dbRedScore = dbGameSession.child('redScore');
