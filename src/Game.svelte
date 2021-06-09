@@ -150,13 +150,7 @@
         if(lastWordSelected) {
             if(lastWordSelected.color === lastWordSelected.selectorTeam && team === lastWordSelected.color){
                 selectedInfoType = 1;
-                if(user.id === userId) {
-                    postWordClickMsg = "";
-                }
-                else {
-                    let selector = lastWordSelected.selectorName;
-                    postWordClickMsg = "Hurrah! " + {selector} + "(Your Teammate) select correct word";
-                }
+                postWordClickMsg = "";
             }
             else if(lastWordSelected.color === lastWordSelected.selectorTeam && team !== lastWordSelected.color){
                 selectedInfoType = 2;
@@ -164,17 +158,11 @@
             }
             else if(lastWordSelected.color === "Grey" && team !== turn){
                 selectedInfoType = 3;
-                let selector = lastWordSelected.selectorName;
-                if(user.id === userId) {
-                    postWordClickMsg = "Uff! You select grey word by mistake and your team chance is passed";
-                }
-                else {
-                    postWordClickMsg = "Uff! " + selector + "(Your Teammate) select grey word by mistake and your team chance is passed";
-                }
+                postWordClickMsg = "Uff! Grey word selected by mistake and your team chance is passed";
             }
             else if(lastWordSelected.color === "Grey" && team === turn){
                 selectedInfoType = 4;
-                postWordClickMsg = "Hurrah! Your opponent team select grey word by mistake and now it's your team turn";
+                postWordClickMsg = "Hurrah! Your opponent team choose grey word by mistake and now it's your team turn";
             }
             else if(lastWordSelected.color === "Black" && team === turn){
                 selectedInfoType = 7;
@@ -188,17 +176,11 @@
             }
             else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team !== turn){
                 selectedInfoType = 5;
-                let selector = lastWordSelected.selectorName;
-                if(user.id === userId) {
-                    postWordClickMsg = "Uff! You choose opponent's word by mistake, they get a free word and your chance is passed.";
-                }
-                else {
-                    postWordClickMsg = "Uff! " + {selector} + "(Your Teammate) choose opponent's word by mistake, they get a free word and your chance is passed."
-                }
+                postWordClickMsg = "Uff! Opponent's word is selected by mistake, they get a free word and your team chance is passed.";
             }
             else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team === turn){
                 selectedInfoType = 6;
-                postWordClickMsg = "Hurrah! Your opponet choose your's team word by mistake, your team get a free word and now it's your team turn."
+                postWordClickMsg = "Hurrah! Your opponent choose your's team word by mistake, your team get a free word and now it's your team turn."
             }
         }
     }
@@ -304,6 +286,7 @@
     }
     //to send clues to the other player
     function giveClue(event){
+        showSelectedInfo = 0;
         event.preventDefault();
         dbGameSession.update({
             clue : {
