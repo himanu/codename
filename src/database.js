@@ -15,13 +15,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 export const dbRoot = firebase.database().ref('codename');
+export const dbCodenameWords = firebase.database().ref('codenameWords');
+export const dbDeepUndercover = dbCodenameWords.child('deepUndercover');
+export const dbDefault = dbCodenameWords.child('default');
+export const dbDuet = dbCodenameWords.child('duet');
 export const dbGameSession = dbRoot.child(getGameSessionId());
 export const dbUsers = dbGameSession.child('users');
 export const dbUser = dbUsers.child(getParams('userId'));
 export const dbWordList = dbGameSession.child('shuffledWordList');
 export const dbSelectedWordsList = dbGameSession.child('selectedWordsList');
 export const dbPage = dbGameSession.child('page');
-// New Data Added
 export const dbLastWordSelected = dbGameSession.child('lastWordSelected');
 export const dbRedScore = dbGameSession.child('redScore');
 export const dbBlueScore = dbGameSession.child('blueScore');
@@ -30,14 +33,27 @@ export const dbTurn = dbGameSession.child('turn');
 export const dbClue = dbGameSession.child('clue');
 export const dbTime = dbGameSession.child('time');
 
-export const team = getParams('team');
+
+var connectedRef = firebase.database().ref('.info/connected');
+connectedRef.on('value', (snap) => {
+    if (snap.val() === true) {
+
+		dbUser.update({
+            online : true
+        });
+
+        dbUser.onDisconnect().update({
+            online : firebase.database.ServerValue.TIMESTAMP
+        });
+    }
+});
 
 dbUser.update({
     id: getParams('userId'),
     userName: getParams('userName'),
     profilePicture: getParams('userProfilePicture'),
-    isOnline: true,
-    onlineTime: firebase.database.ServerValue.TIMESTAMP
+    isOnline : true
+
 });
 
 

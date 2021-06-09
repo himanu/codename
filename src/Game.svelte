@@ -1,7 +1,8 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
-    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbSelectedWordsList, dbPage} from "./database";
+    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbSelectedWordsList, dbPage,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
+    import LoadingSvg from "./LoadingSvg.svelte";
     import Tick from "./Tick.svelte";
     import { getParams } from './utils';
 
@@ -43,6 +44,7 @@
     let userProfilePicture = getParams("userProfilePicture");
     let userName = getParams("userName");
     let userId = getParams("userId");
+    let users;
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
     dbUser.on('value',(snap)=>{
@@ -53,17 +55,11 @@
 
     //To fill redTeam and blueTeam
     dbUsers.on('value',(snap)=>{
-        let users = snap.val();
-        for(const id in users)
-        {
-            const user = users[id];
-            if(user.team === "Red")
-            {
-                redTeam.push(user);
-            }
-            else if(user.team === "Blue")
-                blueTeam.push(user);
+        if(!snap.exists) {
+            return;
         }
+
+        users = snap.val();
     })
 
     
@@ -88,37 +84,28 @@
         wordList = snap.val();
     })
 
-    dbSelectedWordsList.on('value',(snap)=>{
-        if(!snap.exists){
+    //new code added
+    dbBlueScore.on('value',(snap)=>{
+        if(!snap.exists) {
+            return; 
+        }
+        blueScore = snap.val();
+    })
+    dbRedScore.on('value',(snap)=>{
+        if(!snap.exists) {
             return;
         }
-        selectedWordsList = snap.val();
+        redScore = snap.val();
     })
 
-    $:{
-        if(selectedWordsList)
-        {
-            let wordSelected;
-            let cnt1 = 0;
-            let cnt2 = 0;
-            for(const id in selectedWordsList) {
-                wordSelected = selectedWordsList[id];
-                if(wordSelected.color === "Red") {
-                    cnt1++;
-                }
-                else if(wordSelected.color === "Blue") {
-                    cnt2++;
-                }
-            }
-            redScore = 9 - cnt1;
-            blueScore = 8 - cnt2;
+    dbLastWordSelected.on('value',(snap)=>{
+        if(!snap.exists) {
+            return;
         }
-    }
-    $:{
-        if(selectedWordsList) {
-            lastWordSelected = selectedWordsList[selectedWordsList.length - 1];
-        }
-    }
+        lastWordSelected = snap.val();
+    })
+
+
     $: {
         if(lastWordSelected) {
             showSelectedInfo = true;
@@ -162,6 +149,9 @@
                 selectedInfoType = 6;
                 postWordClickMsg = "Hurrah! Your opponent choose your's team word by mistake, your team get a free word and now it's your team turn."
             }
+        }
+        else {
+            selectedInfoType = 0;
         }
     }
     function updateSelectionInfoType() {
@@ -230,13 +220,48 @@
             tableBorderColor = tableBorderMap[0];
         }
     }
-    $: {
-        if(showSelectedInfo) {
-            if(selectedInfoType === 1) {
 
+    $ : {
+        if(users) {
+            redTeam = [];
+            blueTeam = [];
+            for(const id in users)
+            {
+                let currUser = users[id];
+                if(currUser.team === "Red") {
+                    redTeam.push(currUser);
+                }
+                else if(currUser.team === "Blue"){
+                    blueTeam.push(currUser);
+                }
             }
         }
     }
+
+    function keepUpdatingUsersOnlineStatus() {
+        setInterval(updateUsersOnlineStatus, 1000);
+    }
+
+    function updateUsersOnlineStatus() {
+
+        for(const id in users) {
+            let thisUser = users[id];
+            console.log(thisUser);
+            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 15000) ) {
+                console.log("is online");
+                dbUsers.child(thisUser.id).update({
+                    isOnline : true
+                })
+            }
+            else {
+                console.log("is offline");
+                dbUsers.child(thisUser.id).update({
+                    isOnline : false
+                })
+            }
+        }
+    }
+
     function checkWord(word) {
         if(!is_This_User_Turn)
         return ;
@@ -250,18 +275,36 @@
         word["selectorName"] = userName;
         word["selectorTeam"] = team;
 
-        if(!selectedWordsList)
-        selectedWordsList = [];
+        if(word.color === "Red") {
+            dbGameSession.update({
+                lastWordSelected : word,
+                redScore : redScore - 1
+            }) 
 
-        selectedWordsList.push(word);
-        dbGameSession.update({
-            selectedWordsList
-        })
-        if(word.color === "Grey"){
+            if(team !== "Red") {
+                changeTurn();
+            }
+        }
+        else if(word.color === "Blue") {
+            dbGameSession.update({
+                lastWordSelected : word,
+                blueScore : blueScore - 1
+            })
+
+            if(team != "Blue") {
+                changeTurn();
+            }
+        }
+        else if(word.color === "Grey") {
+            dbGameSession.update({
+                lastWordSelected : word
+            })
             changeTurn();
         }
-        else if(word.color !== team && word.color !== "Black") {
-            changeTurn();
+        else if(word.color === "Black") {
+            dbGameSession.update({
+                lastWordSelected : word
+            })
         }
     }
     //to send clues to the other player
@@ -275,7 +318,8 @@
                 senderName : userName,
                 senderId : userId,
                 clueSenderTeam : turn
-            }
+            },
+            lastWordSelected : null
         })
     }
 
@@ -296,22 +340,31 @@
             })
         }
     }
-
-    function processName(name){
+    function processName(user){
+        let name = user.userName;
         let fname = name.split(" ")[0];
         if(fname.length > 10)
         {
-            fname = fname.slice(0,7) + "...";
+            fname = fname.slice(0,8) + "...";
+        }
+        if(user.spymaster) {
+            fname = fname + " (Spymaster)";
+        }
+        else if(user.id === userId) {
+            fname = fname + " (You)";
         }
         return fname;
     }
     function handleRestartBtn() {
         dbGameSession.update({
             page : "Lobby Screen",
-            selectedWordsList : null,
+            lastWordSelected : null,
             clue : null
         })
     }
+
+    keepUpdatingUsersOnlineStatus();
+
 </script>
 <main>
     {#if resultDeclared}
@@ -434,17 +487,21 @@
         <div class = "blue_heading">
             Blue Team
         </div>
-        <div class = "blueUserBox">
-            <div class = "blueUsers">
+        <div class = "userContainer">
+            <div class = "users">
                 {#each blueTeam as user}
-                    <div class = "blueUser">
-                        <img class = "blueUser_profilePicture" src = {user.profilePicture} alt = "profilePicture">
-                        {#if user.spymaster}
-                            <div class = "blueUser_name"> { processName(user.userName) }(Spymaster) </div>
-                        {:else}
-                            <div class = "blueUser_name"> { processName(user.userName) }{user.id === userId?"(You)":''} </div>
-                        {/if}
-
+                    <div class="user">
+                        <div class="userDetails">
+                            <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                            <div class="userName"> { processName(user) }</div>
+                        </div>
+                        <div class="onlineStatus">
+                            {#if user.isOnline}
+                                <Tick/>
+                            {:else}
+                                <LoadingSvg/>
+                            {/if}
+                        </div>
                     </div>
                 {/each}
             </div>
@@ -454,16 +511,21 @@
         <div class = "red_heading">
             Red Team
         </div>
-        <div class = "redUserBox">
-            <div class = "redUsers">
+        <div class = "userContainer">
+            <div class = "users">
                 {#each redTeam as user}
-                    <div class="redUser">
-                        <img class = "redUser_profilePicture" src = {user.profilePicture} alt = "profilePicture">
-                        {#if user.spymaster}
-                            <div class="redUser_name"> {processName(user.userName)}(Spymaster)</div>
-                        {:else}
-                            <div class="redUser_name"> {processName(user.userName)}{user.id === userId?"(You)":''}</div>
-                        {/if}
+                    <div class="user">
+                        <div class="userDetails">
+                            <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                            <div class="userName"> { processName(user) }</div>
+                        </div>
+                        <div class="onlineStatus">
+                            {#if user.isOnline}
+                                <Tick/>
+                            {:else}
+                                <LoadingSvg/>
+                            {/if}
+                        </div>
                     </div>
                 {/each}
             </div>
@@ -775,29 +837,33 @@
         padding : 10px;
         font-size : 18px;
     }
-    .redUserBox,.blueUserBox{
+    .userContainer{
         background-color : #fff;
         height : 150px;
         border-radius : 10px;
         padding : 10px;
     }
-    .redUsers, .blueUsers{
+    .users{
         height : 100%;
         width : 100%;
         overflow-y : scroll;
     }
-    .redUser,.blueUser{
+
+    .userDetails {
+        display : flex;
+    }
+    .user{
         padding : 10px;
         display : flex;
         align-items : center;
-        justify-content : flex-start;
+        justify-content : space-between;
     }
-    .blueUser_profilePicture,.redUser_profilePicture{
+    .userProfilePicture{
         width : 20px;
         height : 20px;
         border-radius : 50%;
     }
-    .blueUser_name,.redUser_name{
+    .userName{
         padding-left : 10px;
         font-family : 'Manrope', sans-serif;
         font-weight : 700;

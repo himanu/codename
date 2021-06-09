@@ -1,11 +1,13 @@
 <script>
+    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet} from "./database";
+    import Tick from "./Tick.svelte";
+    import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
-    import { dbUser, dbUsers, dbGameSession } from "./database";
-    import { getParams, wordList, shuffleArray, create_NewArray_Of_List  } from "./utils";
+    import { getParams, shuffleArray, create_NewArray_Of_List } from "./utils";
 
     let redTeam = [];
     let blueTeam = [];
-    let id = getParams('userId');
+    let userId;
     let disableRedSpymasterBtn = false;
     let disableBlueSpymasterBtn = false;
     let disableStartGameBtn = true;
@@ -19,6 +21,32 @@
     let bluePlayerButtonText;
     let redPlayerButtonText;
     let currUser;
+    let themeValue;
+    let wordList;
+    let deepUndercoverTheme;
+    let defaultTheme;
+    let duetTheme;
+
+    dbDeepUndercover.on('value',(snap)=>{
+        if(!snap.exists) {
+            return;
+        }
+        deepUndercoverTheme = snap.val();
+    })
+
+    dbDefault.on('value',(snap)=>{
+        if(!snap.exists) {
+            return;
+        }
+        defaultTheme = snap.val();
+    })
+
+    dbDuet.on('value',(snap)=>{
+        if(!snap.exists) {
+            return;
+        }
+        duetTheme = snap.val();
+    })
     
     dbUsers.on('value',(snap)=>{
         if(!snap.exists) {
@@ -36,7 +64,7 @@
     $: {
         if(currUser) {
             team = currUser.team;
-            console.log("Hey team is ",team);
+            userId = currUser.id;
         }
     }
     $: {
@@ -94,9 +122,7 @@
         }
         blueTeam = blueTeam;
         redTeam = redTeam;
-        console.log(blueTeam);
     }
-    
     $ : {
         if(redTeam_has_Spymaster) {
             disableRedSpymasterBtn = true;
@@ -123,7 +149,38 @@
             hideAlertBlock = false;
         }
     }
+    $: {
+        if(themeValue === "Default") {
+            wordList = defaultTheme;
+        }
+        else if(themeValue === "Deep Undercover") {
+            wordList = deepUndercoverTheme;
+        }
+        else if(themeValue === "Duet") {
+            wordList = duetTheme;
+        }
+    }
+    
+    function keepUpdatingUsersOnlineStatus() {
+        setInterval(updateUsersOnlineStatus, 1000);
+    }
 
+    function updateUsersOnlineStatus() {
+
+        for(const id in usersList) {
+            user = usersList[id];
+            if( (user.online === true) || (Date.now() - user.online <= 15000) ) {
+                dbUsers.child(user.id).update({
+                    isOnline : true
+                })
+            }
+            else {
+                dbUsers.child(user.id).update({
+                    isOnline : false
+                })
+            }
+        }
+    }
     function handle_Blue_Player_Btn(){
         dbUser.update({
             team : "Blue",
@@ -166,18 +223,30 @@
             page : "Lobby",
             time : 5,
             shuffledWordList,
-            turn : "Red"
+            turn : "Red",
+            redScore : 9,
+            blueScore : 8
         })
     }
 
-    function processName(name){
+    function processName(user){
+        let name = user.userName;
         let fname = name.split(" ")[0];
         if(fname.length > 10)
         {
             fname = fname.slice(0,8) + "...";
         }
+        if(user.spymaster) {
+            fname = fname + " (Spymaster)";
+        }
+        else if(user.id === userId) {
+            fname = fname + " (You)";
+        }
         return fname;
     }
+
+    // Call keep updating users online status
+    keepUpdatingUsersOnlineStatus();
 </script>
 <main>
     <div class = "gameHeading">
@@ -197,13 +266,14 @@
                             <div class = "emptyTeamMsg">No one has joined Blue team...</div>
                         {/if}
                         {#each blueTeam as user}
-                            {#if user.spymaster}
-                                <div class = "user"> <div class = "name"> {processName(user.userName)} (Spymaster)</div> <div class = "joinedUser"> </div> </div>
-                            {:else if user.id === id}
-                                <div class = "user"> <div class = "name"> {processName(user.userName)} (You) </div> <div class = "joinedUser"> </div> </div>
-                            {:else}
-                                <div class = "user"> <div class = "name"> {processName(user.userName)} </div> <div class = "joinedUser"> </div> </div>
-                            {/if}
+                            <div class="user">
+                                <div class="name"> {processName(user)} </div>
+                                {#if user.isOnline }
+                                    <Tick/>
+                                {:else}
+                                    <LoadingSvg/>
+                                {/if}
+                            </div>
                         {/each}
                     </div>
                 </div>
@@ -227,13 +297,14 @@
                             <div class="emptyTeamMsg">No one has joined Red Team...</div>
                         {/if}
                         {#each redTeam as user}
-                            {#if user.spymaster}
-                                <div class = "user"> <div class = "name"> {processName(user.userName)} (Spymaster) </div> <div class = "joinedUser"> </div> </div>
-                            {:else if user.id === id}
-                                <div class = "user"> <div class = "name"> {processName(user.userName)} (You) </div> <div class = "joinedUser"> </div> </div>
-                            {:else}
-                                <div class = "user"> <div class = "name"> {processName(user.userName)} </div> <div class = "joinedUser"> </div> </div>
-                            {/if}
+                            <div class="user">
+                                <div class="name"> {processName(user)} </div>
+                                {#if user.isOnline}
+                                    <Tick/>
+                                {:else}
+                                    <LoadingSvg/>
+                                {/if}
+                            </div>
                         {/each}
                     </div>
                 </div>
@@ -243,7 +314,22 @@
                 </div>
             </div>
         </div>
+        <form class = "themeForm">
+            <label for = "themeSelectBox" class = "">Choose a label</label>
+            <select id = "themeSelectBox" bind:value = {themeValue}>
+                <option value = "Default" selected>
+                    Default
+                </option>
 
+                <option value = "Deep Undercover">
+                    Deep Undercover
+                </option>
+
+                <option value = "Duet">
+                    Duet
+                </option>
+            </select>
+        </form>
         <button class = "startBtn" on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn}>
 			<div class = "btnText">Start Game</div>
 			<div class = "btnArrow">
@@ -304,9 +390,9 @@
     .heading{
         color : #fff;
         font-family: 'Manrope', sans-serif;
-        font-size : 24px;
+        font-size : 22px;
         line-height: 24px;
-        margin-bottom : 2%;
+        margin-bottom : 1.5%;
         font-weight : 700;
     }
 
@@ -389,11 +475,6 @@
         color: #0C0030;
     }
     
-    .joinedUser{
-        background-image: url('/images/tick.svg');
-        width : 18px;
-        height : 18px;
-    }
     .btn{
         width : 100%;
         display : flex;
@@ -440,6 +521,29 @@
         box-shadow: -5px -5px #7D51FA;
         z-index : 10;
     }
+    .themeForm {
+        margin-top : 30px;
+    }
+	label {
+		display : inline;
+		margin-right : 10px;
+        font-family: 'Manrope', sans-serif;
+		color : #fff;
+        font-size : 18px;
+	}
+	#themeSelectBox{
+		width : 200px;
+        font-family: 'Manrope', sans-serif;
+        font-weight: 700;
+        background-color: #3F1575;
+		color : #fff;
+        border-radius: 8px;
+        border : 1px solid #fff;
+        font-size : 18px;
+	}
+    #themeSelectBox:focus{
+		outline : 0;
+	}
     .startBtn{
 		display : flex;
         background : #ffffff;
@@ -448,7 +552,7 @@
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px -8px 0px #98C8E2;
 		border-radius: 30px;
         padding : 10px 20px;
-        margin-top : 3%;
+        margin-top : 20px;
 	}
 	.startBtn:focus{
 		box-shadow: 0px 0px 0px;
