@@ -151,7 +151,7 @@
             if(lastWordSelected.color === lastWordSelected.selectorTeam && team === lastWordSelected.color){
                 selectedInfoType = 1;
                 if(user.id === userId) {
-                    postWordClickMsg = "Hurrah! You select correct word";
+                    postWordClickMsg = "";
                 }
                 else {
                     let selector = lastWordSelected.selectorName;
@@ -160,7 +160,7 @@
             }
             else if(lastWordSelected.color === lastWordSelected.selectorTeam && team !== lastWordSelected.color){
                 selectedInfoType = 2;
-                postWordClickMsg = "Uff! Your opponent selected correct word";
+                postWordClickMsg = "";
             }
             else if(lastWordSelected.color === "Grey" && team !== turn){
                 selectedInfoType = 3;
