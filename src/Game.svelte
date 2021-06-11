@@ -766,9 +766,8 @@ import DownSvg from "./DownSvg.svelte";
         line-height : 22px;
         text-align: center;
         letter-spacing: 0.04em;
-        min-width : 0px;
         overflow : hidden;
-        text-overflow: ellipsis;
+        word-break: break-all;
     }
     .cursorPointer{
         cursor : pointer;
