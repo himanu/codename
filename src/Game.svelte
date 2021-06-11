@@ -726,7 +726,7 @@ import DownSvg from "./DownSvg.svelte";
         justify-content: center;
         align-items: center;
         border-radius: 46px;
-        padding : 10px;
+        padding : 10px 25px;
         color : #fff;
         font-family: 'Manrope', sans-serif;
         font-weight : 700;
@@ -766,6 +766,9 @@ import DownSvg from "./DownSvg.svelte";
         line-height : 22px;
         text-align: center;
         letter-spacing: 0.04em;
+        min-width : 0px;
+        overflow : hidden;
+        text-overflow: ellipsis;
     }
     .cursorPointer{
         cursor : pointer;
