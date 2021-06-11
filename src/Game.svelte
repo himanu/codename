@@ -749,8 +749,8 @@ import DownSvg from "./DownSvg.svelte";
     }
     .word-matrix {
         display: grid;
-        grid-template-rows : repeat(5,1fr);
-        grid-template-columns: repeat(5,1fr);
+        grid-template-rows : repeat(5,calc(20% - 8px));
+        grid-template-columns: repeat(5,20%);
         background-color: #260C4B;
         padding: 10px;
         grid-gap : 10px;
@@ -1036,6 +1036,7 @@ import DownSvg from "./DownSvg.svelte";
         .word-matrix{
             padding: 8px;
             grid-gap : 8px;
+            grid-template-rows : repeat(5,calc(20% - 6px));
         }
         .word {
             font-size : 16px;
