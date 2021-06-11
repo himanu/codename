@@ -1,10 +1,12 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
-    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbSelectedWordsList, dbPage,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
+    import { beforeUpdate, afterUpdate } from 'svelte';
+    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import Tick from "./Tick.svelte";
     import { getParams } from './utils';
+import DownSvg from "./DownSvg.svelte";
 
     let wordList = [];
     let team;
@@ -15,11 +17,10 @@
     let resultDeclared = false;
     let winner;
     let looser;
-    let clueWord,clueWord_Count;
+    let clueWord,clueWord_Count = 1;
     let clueSenderTeam;
     let redTeam = [],blueTeam = [];
     let is_This_User_Turn;
-    let selectedWordsList = [];
     let redScore = 9, blueScore = 8;
     let lastWordSelected;
     let selectedInfoType = 0;
@@ -28,6 +29,14 @@
     let tableBorderColor;
     let clueMsgTeamIdentifierColor;
     let postWordClickMsg;
+    let logsArray = [];
+    let allUsersOnlineStatus = {};
+    let logsdiv;
+    let autoscroll;
+    let clueCount = [1,2,3,4,5,6,7,8,9];
+    let blueTeam_has_Spymaster = false;
+    let redTeam_has_Spymaster = false;
+    let logsLength;
     let tableBorderMap = {
         0 : "#4C1A96",
         1 : "#3FAB8B",
@@ -41,9 +50,9 @@
     }
 
     //user Profile picture
-    let userProfilePicture = getParams("userProfilePicture");
-    let userName = getParams("userName");
-    let userId = getParams("userId");
+    let userProfilePicture = getParams('userProfilePicture');
+    let userName = getParams('userName');
+    let userId = getParams('userId');
     let users;
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
@@ -105,6 +114,14 @@
         lastWordSelected = snap.val();
     })
 
+    dbLogsArray.on('value',(snap)=>{
+        if(!snap.exists) {
+            return;
+        }
+        logsArray = snap.val();
+        logsdiv.scrollTo(0, logsdiv.scrollHeight);
+    })
+
 
     $: {
         if(lastWordSelected) {
@@ -159,7 +176,7 @@
 
         selectedInfoTypeTimeout = setTimeout(()=>{
                 showSelectedInfo = false;
-        },3000);
+        },5000);
     }
     $: {
         if(looser === "Red") {
@@ -225,18 +242,29 @@
         if(users) {
             redTeam = [];
             blueTeam = [];
+            redTeam_has_Spymaster = false;
+            blueTeam_has_Spymaster = false;
             for(const id in users)
             {
                 let currUser = users[id];
                 if(currUser.team === "Red") {
                     redTeam.push(currUser);
+                    if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
+                        redTeam_has_Spymaster  = true;
+                    }
                 }
                 else if(currUser.team === "Blue"){
                     blueTeam.push(currUser);
+                    if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
+                        blueTeam_has_Spymaster = true;
+                    }
                 }
             }
+            redTeam = redTeam;
+            blueTeam = blueTeam;
         }
     }
+
 
     function keepUpdatingUsersOnlineStatus() {
         setInterval(updateUsersOnlineStatus, 1000);
@@ -246,18 +274,11 @@
 
         for(const id in users) {
             let thisUser = users[id];
-            console.log(thisUser);
-            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 15000) ) {
-                console.log("is online");
-                dbUsers.child(thisUser.id).update({
-                    isOnline : true
-                })
+            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 10000) ) {
+                allUsersOnlineStatus[thisUser.id] = true;
             }
             else {
-                console.log("is offline");
-                dbUsers.child(thisUser.id).update({
-                    isOnline : false
-                })
+                allUsersOnlineStatus[thisUser.id] = false;
             }
         }
     }
@@ -274,11 +295,20 @@
         
         word["selectorName"] = userName;
         word["selectorTeam"] = team;
+        
+        if(!logsArray) {
+            logsArray = [];
+        }
+        logsArray.push({
+            actor : user,
+            action : " selects " + word.name
+        })
 
         if(word.color === "Red") {
             dbGameSession.update({
                 lastWordSelected : word,
-                redScore : redScore - 1
+                redScore : redScore - 1,
+                logsArray
             }) 
 
             if(team !== "Red") {
@@ -288,7 +318,8 @@
         else if(word.color === "Blue") {
             dbGameSession.update({
                 lastWordSelected : word,
-                blueScore : blueScore - 1
+                blueScore : blueScore - 1,
+                logsArray
             })
 
             if(team != "Blue") {
@@ -297,13 +328,15 @@
         }
         else if(word.color === "Grey") {
             dbGameSession.update({
-                lastWordSelected : word
+                lastWordSelected : word,
+                logsArray
             })
             changeTurn();
         }
         else if(word.color === "Black") {
             dbGameSession.update({
-                lastWordSelected : word
+                lastWordSelected : word,
+                logsArray
             })
         }
     }
@@ -311,6 +344,14 @@
     function giveClue(event){
         showSelectedInfo = 0;
         event.preventDefault();
+        if(!logsArray) {
+            logsArray = [];
+        }
+        let actionString = " sends clue " + "(" +  clueWord + " x " + clueWord_Count + ")";
+        logsArray.push({
+            actor : user,
+            action : actionString
+        })
         dbGameSession.update({
             clue : {
                 clueWord,
@@ -319,7 +360,8 @@
                 senderId : userId,
                 clueSenderTeam : turn
             },
-            lastWordSelected : null
+            lastWordSelected : null,
+            logsArray
         })
     }
 
@@ -340,6 +382,21 @@
             })
         }
     }
+
+    function handleEndTurnBtn() {
+        if(!logsArray) {
+            logsArray = [];
+        }
+        logsArray.push({
+            actor : user,
+            action : " presses End Turn button"
+        })
+        dbGameSession.update({
+            logsArray
+        });
+        changeTurn();
+    }
+
     function processName(user){
         let name = user.userName;
         let fname = name.split(" ")[0];
@@ -427,40 +484,27 @@
             {/each}
         </div>
         {#if isSpymaster && team === turn }
-            {#if (!clue || clue.clueSenderTeam != team) }
+            {#if (!clue)}
                 <form class = "form-container" on:submit = {giveClue}>
-                    <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "input-box" required>
-                    <select class = "count-word-box" bind:value = {clueWord_Count}>
-                        <option value = "1">
-                            x 1
-                        </option>
-                        <option value = "2">
-                            x 2
-                        </option>
-                        <option value = "3">
-                            x 3
-                        </option>
-                        <option value = "4">
-                            x 4
-                        </option>
-                        <option value = "5">
-                            x 5
-                        </option>
-                        <option value = "6">
-                            x 6
-                        </option>
-                        <option value = "7">
-                            x 7
-                        </option>
-                        <option value = "8">
-                            x 8
-                        </option>
-                    </select>
+                    <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "clueInputBox" required>
+                    <div class = "clueCountWordBox">
+                        <div class = "defaultClueCount">
+                            x {clueWord_Count}
+                            <DownSvg/>
+                        </div>
+                        <div class="clueCountList">
+                            {#each clueCount as count}
+                                <div class="clueCount" on:click= {()=> clueWord_Count = count}> x {count} </div>
+                            {/each}
+                        </div>
+                    </div>
                     <button class = "give-clue-btn" type = "submit">
                         Give Clue
                     </button>
                 </form>
-                <div class = "sendClueMsg">Send clue to your team</div>
+                <div class = "sendClueMsg">
+                    Send clue to your team
+                </div>
             {/if}
             {#if clue && clue.clueSenderTeam === turn && team === turn}
                 <div class="clueMsgBox">You have send clue {clue.clueWord} x {clue.clueWord_Count} words</div>
@@ -479,8 +523,22 @@
                 <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
             {/if}
             {#if is_This_User_Turn}
-                <button class="endTurnBtn" on:click = {changeTurn}>End Turn</button>
+                <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
             {/if}
+        {/if}
+    </div>
+    <div class = "logsContainer" bind:this = {logsdiv}>
+        {#if logsArray && logsArray.length !== 0}
+            {#each logsArray as log}
+                <div class="log">
+                    <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
+                        {processName(log.actor)}
+                    </div>
+                    <div class="logsAction">
+                        {log.action}
+                    </div>
+                </div>
+            {/each}
         {/if}
     </div>
     <div class="blueTeam_List">
@@ -496,7 +554,7 @@
                             <div class="userName"> { processName(user) }</div>
                         </div>
                         <div class="onlineStatus">
-                            {#if user.isOnline}
+                            {#if allUsersOnlineStatus[user.id] }
                                 <Tick/>
                             {:else}
                                 <LoadingSvg/>
@@ -512,23 +570,21 @@
             Red Team
         </div>
         <div class = "userContainer">
-            <div class = "users">
-                {#each redTeam as user}
-                    <div class="user">
-                        <div class="userDetails">
-                            <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
-                            <div class="userName"> { processName(user) }</div>
-                        </div>
-                        <div class="onlineStatus">
-                            {#if user.isOnline}
-                                <Tick/>
-                            {:else}
-                                <LoadingSvg/>
-                            {/if}
-                        </div>
+            {#each redTeam as user}
+                <div class="user">
+                    <div class="userDetails">
+                        <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                        <div class="userName"> { processName(user) }</div>
                     </div>
-                {/each}
-            </div>
+                    <div class="onlineStatus">
+                        {#if allUsersOnlineStatus[user.id] }
+                            <Tick/>
+                        {:else}
+                            <LoadingSvg/>
+                        {/if}
+                    </div>
+                </div>
+            {/each}
         </div>
     </div>
     {#if showSelectedInfo}
@@ -546,21 +602,17 @@
     {/if}
 </main>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap');
-    ::-webkit-scrollbar {
-        width: 10px;
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800;900&display=swap');
+    *::-webkit-scrollbar,
+    *::-webkit-scrollbar-thumb {
+        width: 26px;
+        border-radius: 13px;
+        border: 10px solid transparent;
+        color : #9395A8;
     }
 
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: #fff
-    }
-        
-        /* Handle */
-    ::-webkit-scrollbar-thumb {
-        height : 10px;
-        background: #2A337E; 
-        border-radius : 5px;
+    *::-webkit-scrollbar-thumb {        
+        box-shadow: inset 0 0 0 10px;
     }
     *:focus {
         outline: none;
@@ -643,27 +695,27 @@
     }
     .spymaster-box{
         background-color: #ffffff;
-        padding : 0px;
-        height : 40px;
-        width : 12.5%;
         border-radius: 46px;
         display : flex;
         align-items : center;
         justify-content: space-between;
-        padding-right : 1%;
+        padding : 0px;
+        height : 40px;
     }
     .spymasterProfilePicture{
         margin : 0px;
-        padding : 0px;
         height : 40px;
-        width : 40px;
         border-radius: 50%;
     }
     .spymaster{
-        font-size : 18px;
+        font-size : 16px;
         font-family: 'Manrope', sans-serif;
         font-weight : 700;
         line-height: 17px;
+        padding : 10px;
+    }
+    .codename {
+        height : 64px;
     }
     .scorecard{
         background-color: #F5C13B;
@@ -672,21 +724,18 @@
         justify-content: center;
         align-items: center;
         border-radius: 46px;
-        padding : 0.5% 1%;
+        padding : 10px;
         color : #fff;
         font-family: 'Manrope', sans-serif;
         font-weight : 700;
         line-height: 20px;
-        font-size: 15px;
-        width : 10%;
+        font-size: 14px;
     }
     .blueScore {
         color : #5E96E8;
-        padding : 1%;
     }
     .redScore {
         color : #E44C4F;
-        padding : 1%;
     }
     
 
@@ -709,9 +758,11 @@
         box-shadow: 2.87862px 4.31793px 4.31793px #1D0D36, inset 0px 1.00428px 0.719655px #BBBBBB;
         border-radius: 6.43678px;
         padding: 25px 10px;
+        font-family : 'Manrope',sans-serif;
+        font-weight : 700;
+        font-size : 21px;
+        line-height : 22px;
         text-align: center;
-        font-weight : bold;
-        line-height: 17px;
         letter-spacing: 0.04em;
     }
     .cursorPointer{
@@ -745,19 +796,65 @@
         width : 100%;
         margin-top : 20px;
     }
-    .input-box{
+    .clueInputBox{
         border : 0px;
         border-radius : 10px;
-        border-top-right-radius: 0px;
-        border-bottom-right-radius: 0px;
+        margin-right : 3px;
+        margin-bottom : 0px;
         flex : 3;
-        margin-right : -10px;
+        padding : 10px;
+        font-family : 'Manrope', sans-serif;
+        font-weight : 500;
+        font-size : 16px;
     }
-    .count-word-box{
+    .clueCountWordBox{
         border : 0px;
         flex : 1;
+        cursor : pointer;
         border-radius : 10px;
         background : #ECECEC;
+        font-family : 'Manrope', sans-serif;
+        font-weight : 600;
+        font-size : 14px;
+        position : relative;
+        background-color : rgba(0,0,0,0.5);
+        color : #fff;
+        padding : 10px;
+    }
+    .clueCountWordBox:hover {
+        background-color : rgba(0,0,0,1);
+        border : 1px solid #fff;
+    }
+    .clueCountWordBox:hover .clueCountList{
+        opacity : 1;
+        visibility : visible;
+    }
+    .defaultClueCount {
+        display : flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .clueCountList {
+        position :absolute;
+        bottom : 100%;
+        left : 0%;
+        width : 100%;
+        opacity : 0;
+        visibility : hidden;
+        transition: opacity 1s linear visibility 1s linear;
+        background-color : #fff;
+        color : black;
+        height : 300px;
+        overflow : auto;
+        border-radius: 10px;
+    }
+    .clueCount {
+        padding : 10px;
+    }
+    .clueCount:hover {
+        background-color: rgba(0,0,0,0.5);
+        color : #fff;
     }
     .give-clue-btn{
         border : 0px;
@@ -767,10 +864,19 @@
         border-radius : 10px;
         flex : 2;
         cursor : pointer;
+        font-family : 'Pluto';
+        font-weight : 700;
+        font-size : 14px;
+        line-height : 13px;
+        margin-bottom: 0px;;
     }
     .sendClueMsg {
         color : #fff;
         text-align : center;
+        font-family: 'Manrope',sans-serif;
+        font-weight : 800;
+        font-size : 16px;
+        line-height: 22px;
     }
     .clueMsgBox{
         display : flex;
@@ -778,22 +884,35 @@
         align-items : center;
         padding : 20px 20px 5px;
         color : #fff;
+        font-family: 'Manrope',sans-serif;
+        font-weight : 700;
+        font-size : 14px;
+        line-height: 20px;
     }
     .clueMsgTeamIdentifier {
         color : #fff;
         padding : 10px 30px;
         border-radius : 40px;
-        font-size : 15px;
-        font-weight: bold;
+        font-family : 'Pluto';
+        font-size : 12px;
+        font-weight: 900;
+        line-height : 15px;
         letter-spacing: 1px;
     }
     .clueMsg{
         color : #fff;
         padding : 10px 10px;
-        font-size : 20px;
+        font-family : 'Manrope';
+        font-weight : 700;
+        font-size : 18px;
+        line-height : 25px;
     }
     .postWordClickMsgBox {
-        color: rgba(255, 255, 255);
+        color: rgba(255, 255, 255,0.5);
+        font-family : 'Manrope';
+        font-weight : 800;
+        font-size : 14px;
+        line-height : 19px;
         text-align : center;
         margin : 0px auto;
         width : 60%;
@@ -807,57 +926,78 @@
         color : #fff;
         box-shadow: 2.14663px 3.21994px 3.21994px rgba(29, 13, 54, 0.2), inset 0px 1px 0px #FFFEFE;
         border-radius: 8px;
-        font-size : 20px;
+        font-family : 'Pluto';
+        font-size : 14px;
+        font-weight : bold;
+        line-height: 13px;
+    }
+    .logsContainer {
+        position : absolute;
+        left : 4%;
+        bottom : 40%;
+        width : 15%;
+        max-height : 150px;
+        overflow : auto;
+        font-family:  'Manrope',sans-serif;
+        font-size : 10px;
+        line-height : 19px;
+    }
+    .log{
+        padding : 5px 0;
+        color : #fff;
+    }
+    .logsActor {
+        margin-top : 5px;
+        font-weight : bold;
+        font-size : 11.5px;
     }
     .redTeam_List{
         position : absolute;
         bottom : 3%;
         right : 4%;
-        width : 15%;
+        width : 12%;
     }
     .blueTeam_List{
         position : absolute;
         bottom : 3%;
         left : 4%;
-        width : 15%;
+        width : 12%;
     }
     .blue_heading{
         font-family: 'Manrope', sans-serif;
-        font-weight : bold;
+        font-weight : 800;
         color : #5E96E8;
         text-align : center;
         padding : 10px;
-        font-size : 18px;
+        font-size : 16px;
+        line-height : 18px;
     }
     .red_heading{
         font-family : 'Manrope', sans-serif;
-        font-weight : bold;
+        font-weight : 800;
         color : #E44C4F;
         text-align: center;
         padding : 10px;
-        font-size : 18px;
+        font-size : 16px;
+        line-height: 18px;
     }
     .userContainer{
         background-color : #fff;
-        height : 150px;
+        max-height : 150px;
         border-radius : 10px;
         padding : 10px;
-    }
-    .users{
-        height : 100%;
-        width : 100%;
-        overflow-y : scroll;
-    }
-
-    .userDetails {
-        display : flex;
+        overflow : auto;
     }
     .user{
-        padding : 10px;
         display : flex;
         align-items : center;
         justify-content : space-between;
+        padding : 10px 0;
     }
+    .userDetails {
+        display : flex;
+    }
+    
     .userProfilePicture{
         width : 20px;
         height : 20px;
@@ -866,8 +1006,9 @@
     .userName{
         padding-left : 10px;
         font-family : 'Manrope', sans-serif;
+        font-size : 12px;
         font-weight : 700;
-        font-size : 14px;
+        line-height : 19px;
     }
     .Word-hide{
         display: none;
@@ -879,8 +1020,42 @@
         left : 50%;
         transform : translateX(-50%);
         padding : 5px;
+        font-family: 'Manrope',sans-serif;
         font-size : 14px;
+        line-height: 20px;
+        font-weight: 700;
         color : #fff;
         border-radius : 10px;
+    }
+    @media screen and (max-width : 1150px) {
+        .word-matrix{
+            padding: 8px;
+            grid-gap : 8px;
+        }
+        .word {
+            font-size : 16px;
+            padding : 10px
+        }
+        .sendClueMsg{
+            font-size : 14px;
+        }
+        .redTeam_List,.blueTeam_List {
+            width : 14%;
+        }
+        .userContainer {
+            padding : 5px;
+        }
+        .user {
+            padding : 5px;
+        }
+        .userName {
+            font-size : 10px;
+            padding-left : 5px;
+        }
+    }
+    @media screen and (max-width : 950px) {
+        .word {
+            font-size : 15px;
+        }
     }
 </style>

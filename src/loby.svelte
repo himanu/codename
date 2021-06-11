@@ -33,17 +33,20 @@
     })
 
      $:{
-        if(users.length) {
-            for(const id in users) {
-                let currentUser = users[id];
-                if(currentUser.team === "Red") {
-                    redTeam.push(user);
-                }
-                else if(currentUser.team === "Blue") {
-                    blueTeam.push(user);
-                }
+        redTeam = [];
+        blueTeam = [];
+        for(const id in users) {
+            let currentUser = users[id];
+            if(currentUser.team === "Red") {
+                redTeam.push(currentUser);
+            }
+            else if(currentUser.team === "Blue") {
+                blueTeam.push(currentUser);
             }
         }
+        redTeam = redTeam;
+        blueTeam = blueTeam;
+    
      }
     
 
@@ -77,7 +80,11 @@
                 <div class = "blueH">Blue Team</div>
                 <div class = "players">
                     {#each blueTeam as user}
-                        <img class = "player" src = '{user.profilePicture? user.profilePicture : './images/smiley.svg'}' alt = 'player profilePicture'>
+                        {#if user.profilePicture}
+                            <img class = "player" src = {user.profilePicture} alt = 'player profilePicture'>
+                        {:else}
+                            <span style='font-size:30px;'>&#128515;</span>
+                        {/if}
                     {/each}
                 </div>
             </div>
@@ -85,7 +92,11 @@
                 <div class = "redH">Red Team</div>
                 <div class = "players">
                     {#each redTeam as user}
-                        <img class = "player" src = '{user.profilePicture? user.profilePicture : './images/smiley.svg'}' alt = 'player profilePicture'>
+                        {#if user.profilePicture}
+                            <img class = "player" src = {user.profilePicture} alt = 'player profilePicture'>
+                        {:else}
+                            <span style='font-size:30px;'>&#128515;</span>
+                        {/if}
                     {/each}
                 </div>
             </div>

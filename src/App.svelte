@@ -15,13 +15,17 @@
     }
     
     dbGameSession.on('value',(snap)=>{
-        if(!snap.exists())
-        return;
+        if(!snap.exists()){
+            return;
+        }
         
         if(snap.val().page === undefined)
             page = "Lobby Screen";
         else
-        page = snap.val().page;
+        {
+            clicked = true;
+            page = snap.val().page;
+        }
     })
 </script>
 {#if clicked === false}

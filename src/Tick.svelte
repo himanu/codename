@@ -9,4 +9,10 @@
         height: 20px;
         margin-right : 10px;
     }
+    @media screen and (max-width : 1000px), screen and (max-height : 670px) {
+		.tick {
+			width : 15px;
+			height : 15px;
+		}
+	}
 </style>

@@ -28,6 +28,7 @@ export const dbPage = dbGameSession.child('page');
 export const dbLastWordSelected = dbGameSession.child('lastWordSelected');
 export const dbRedScore = dbGameSession.child('redScore');
 export const dbBlueScore = dbGameSession.child('blueScore');
+export const dbLogsArray = dbGameSession.child('logsArray');
 //
 export const dbTurn = dbGameSession.child('turn');
 export const dbClue = dbGameSession.child('clue');
@@ -52,8 +53,6 @@ dbUser.update({
     id: getParams('userId'),
     userName: getParams('userName'),
     profilePicture: getParams('userProfilePicture'),
-    isOnline : true
-
 });
 
 

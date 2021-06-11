@@ -3,6 +3,7 @@
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
+    import DownSvg from './DownSvg.svelte';
     import { getParams, shuffleArray, create_NewArray_Of_List } from "./utils";
 
     let redTeam = [];
@@ -21,11 +22,13 @@
     let bluePlayerButtonText;
     let redPlayerButtonText;
     let currUser;
-    let themeValue;
+    let themeValue = "Default";
     let wordList;
     let deepUndercoverTheme;
     let defaultTheme;
     let duetTheme;
+    let onlineBlueTeam = [];
+    let onlineRedTeam = [];
 
     dbDeepUndercover.on('value',(snap)=>{
         if(!snap.exists) {
@@ -101,10 +104,10 @@
                     return player.id != user.id;
                 })
 
-                if(user.spymaster === true) {
+                if(user.spymaster === true && allUserOnlineStatus[user.id]) {
                     blueTeam_has_Spymaster = true;
                 }
-
+                
                 blueTeam.push(user);
             }
             else if(user.team === "Red")
@@ -113,7 +116,7 @@
                     return player.id != user.id;
                 })
 
-                if(user.spymaster === true) {
+                if(user.spymaster === true && allUserOnlineStatus[user.id]) {
                     redTeam_has_Spymaster = true;
                 }
 
@@ -139,8 +142,13 @@
             disableBlueSpymasterBtn = false;
         }
     }
+    $:{
+        onlineBlueTeam = blueTeam.filter((blueUser)=> allUserOnlineStatus[blueUser.id]);
+        onlineRedTeam = redTeam.filter((redUser)=> allUserOnlineStatus[redUser.id]);
+    }
     $ : {
-        if(blueTeam.length > 1 && redTeam.length > 1 && redTeam_has_Spymaster && blueTeam_has_Spymaster) {
+        if( onlineBlueTeam.length > 1 && onlineRedTeam.length > 1 && redTeam_has_Spymaster && blueTeam_has_Spymaster ) {
+
             disableStartGameBtn = false;
             hideAlertBlock = true;
         }
@@ -154,6 +162,7 @@
             wordList = defaultTheme;
         }
         else if(themeValue === "Deep Undercover") {
+            console.log("Hey");
             wordList = deepUndercoverTheme;
         }
         else if(themeValue === "Duet") {
@@ -164,20 +173,15 @@
     function keepUpdatingUsersOnlineStatus() {
         setInterval(updateUsersOnlineStatus, 1000);
     }
-
+    let allUserOnlineStatus = {};
     function updateUsersOnlineStatus() {
-
         for(const id in usersList) {
             user = usersList[id];
-            if( (user.online === true) || (Date.now() - user.online <= 15000) ) {
-                dbUsers.child(user.id).update({
-                    isOnline : true
-                })
+            if( (user.online === true) || (Date.now() - user.online <= 10000) ) {
+                allUserOnlineStatus[user.id] = true;
             }
             else {
-                dbUsers.child(user.id).update({
-                    isOnline : false
-                })
+                allUserOnlineStatus[user.id] = false;
             }
         }
     }
@@ -219,6 +223,7 @@
     }
     function handle_Start_Game_Btn(){
         setShuffledWordList();
+        console.log("Hey themeValue is ",themeValue);
         dbGameSession.update({
             page : "Lobby",
             time : 5,
@@ -263,12 +268,12 @@
                 <div class = "user-list">
                     <div class = "users">
                         {#if blueTeam.length === 0}
-                            <div class = "emptyTeamMsg">No one has joined Blue team...</div>
+                            <div class = "emptyTeamMsg">Empty team ...</div>
                         {/if}
                         {#each blueTeam as user}
                             <div class="user">
                                 <div class="name"> {processName(user)} </div>
-                                {#if user.isOnline }
+                                {#if allUserOnlineStatus[user.id] }
                                     <Tick/>
                                 {:else}
                                     <LoadingSvg/>
@@ -294,15 +299,15 @@
                 <div class = "user-list">
                     <div class = "users">
                         {#if redTeam.length === 0}
-                            <div class="emptyTeamMsg">No one has joined Red Team...</div>
+                            <div class="emptyTeamMsg">Empty team ...</div>
                         {/if}
                         {#each redTeam as user}
                             <div class="user">
                                 <div class="name"> {processName(user)} </div>
-                                {#if user.isOnline}
-                                    <Tick/>
+                                {#if allUserOnlineStatus[user.id] }
+                                    <Tick class = 'onlineStatus'/>
                                 {:else}
-                                    <LoadingSvg/>
+                                    <LoadingSvg class = 'onlineStatus'/>
                                 {/if}
                             </div>
                         {/each}
@@ -314,23 +319,30 @@
                 </div>
             </div>
         </div>
-        <form class = "themeForm">
-            <label for = "themeSelectBox" class = "">Choose a label</label>
-            <select id = "themeSelectBox" bind:value = {themeValue}>
-                <option value = "Default" selected>
-                    Default
-                </option>
-
-                <option value = "Deep Undercover">
-                    Deep Undercover
-                </option>
-
-                <option value = "Duet">
-                    Duet
-                </option>
-            </select>
-        </form>
-        <button class = "startBtn" on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn}>
+        <div class="themeSelectorBox">
+            <div class = "selectATheme">
+                Select a theme
+            </div>
+            <div class = themesBox>
+                <div class="themes">
+                    {themeValue}
+                    <DownSvg/>
+                </div>
+                
+                <div class="themeContainer">
+                    <div class="theme" on:click = {()=>themeValue = "Default"}>
+                        Default
+                    </div>
+                    <div class="theme" on:click = {()=>themeValue = "Deep Undercover"}>
+                        Deep Undercover
+                    </div>
+                    <div class="theme" on:click = {()=>themeValue = "Duet"}>
+                        Duet
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class = "startBtn" on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn} style = "cursor : {disableStartGameBtn ? "cursor" : "pointer"}">
 			<div class = "btnText">Start Game</div>
 			<div class = "btnArrow">
 				<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -339,32 +351,26 @@
 			</div>
 		</button>
         <div class = "alertDiv" class:hide_alertDiv = {hideAlertBlock === true}>
-            Need atleast 2 Player and 1 Spymaster in each team !!!
+            Need atleast 2 online Player and 1 online Spymaster in each team !!!
         </div>
     </div>
 </main>
 
 <style>
-   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap');
 
-    ::-webkit-scrollbar {
-        width: 10px;
+   *::-webkit-scrollbar,
+    *::-webkit-scrollbar-thumb {
+        width: 26px;
+        border-radius: 13px;
+        border: 10px solid transparent;
+        color : #2A337E;
     }
 
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: #fff
+    *::-webkit-scrollbar-thumb {        
+        box-shadow: inset 0 0 0 10px;
     }
-        
-        /* Handle */
-    ::-webkit-scrollbar-thumb {
-        height : 30%;
-        background: #2A337E; 
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px; 
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-    }
+
     main{
         background-image : url(/images/background.svg);
         border-radius: 20px;
@@ -386,11 +392,12 @@
         align-items : center;
         justify-content: center;
         width : 100%;
+        margin-top : 5%;
     }
     .heading{
         color : #fff;
         font-family: 'Manrope', sans-serif;
-        font-size : 22px;
+        font-size : 18px;
         line-height: 24px;
         margin-bottom : 1.5%;
         font-weight : 700;
@@ -410,7 +417,7 @@
         justify-content: space-between;
         align-items: center;
         padding : 15px;
-        width : 30%;
+        width : 25%;
         height : auto;
         background: #ffffff;
         border-radius : 15px;
@@ -426,8 +433,8 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 24px;
-        line-height: 33px;
+        font-size: 20px;
+        line-height: 28px;
         text-align: center;
         color: #5E96E8;
     }
@@ -435,8 +442,8 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 24px;
-        line-height: 33px;
+        font-size: 20px;
+        line-height: 28px;
         text-align: center;
         color: #E96143;
     }
@@ -469,9 +476,12 @@
         justify-content: space-between;
         align-items: center;
         padding : 5px 10px 5px 5px;
+        width : 100%;
     }
     .name{
-        font-weight : bold;
+        font-family: 'Manrope',sans-serif;
+        font-weight : 900;
+        font-size : 14px;
         color: #0C0030;
     }
     
@@ -484,9 +494,11 @@
         border-radius: 41px;
         text-align : center;
         min-width : 40%;
-        min-height : 100%;
+        font-family : 'Manrope';
         font-size : 16px;
+        font-weight : 900;
         line-height: 24px;
+        padding : 5px 10px;
         cursor : pointer;
     }
     .blue .player{
@@ -507,8 +519,8 @@
         display : flex;
         align-items: center;
         justify-content: center;
-        width : 80px;
-        height : 80px;
+        width : 70px;
+        height : 70px;
         background: linear-gradient(0deg, #FFFFF8, #FFFFF8);
         border: 1px solid #7D51FA;
         border-radius: 13.7723px;
@@ -516,39 +528,74 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 24px;
+        font-size: 22px;
         line-height: 33px;
         box-shadow: -5px -5px #7D51FA;
         z-index : 10;
     }
-    .themeForm {
-        margin-top : 30px;
+    .themeSelectorBox {
+        width : 300px;
+        color : #fff;
+        display : flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top : 20px;
     }
-	label {
-		display : inline;
-		margin-right : 10px;
-        font-family: 'Manrope', sans-serif;
-		color : #fff;
-        font-size : 18px;
-	}
-	#themeSelectBox{
-		width : 200px;
-        font-family: 'Manrope', sans-serif;
-        font-weight: 700;
-        background-color: #3F1575;
-		color : #fff;
-        border-radius: 8px;
+    .selectATheme {
+        font-family : 'Manrope' , sans-serif;
+        font-weight : 700;
+        font-size : 14px;
+        line-height : 19px;
+    }
+    .themesBox {
         border : 1px solid #fff;
-        font-size : 18px;
-	}
-    #themeSelectBox:focus{
-		outline : 0;
-	}
+        border-radius : 8px;
+        font-family : 'Manrope' , sans-serif;
+        font-size : 14px;
+        font-weight : 600;
+        cursor : pointer;
+		position : relative;
+        width : 150px;
+        padding : 10px;
+        text-align: left;
+    }
+    .themeContainer {
+        position : absolute;
+		top : 100%;
+        left : 0%;
+		opacity : 0;
+        width : 100%;
+        border-radius : 8px;
+		transition : opacity .5s linear visibility 0.5s linear;
+		margin-bottom : 5px;
+        border : 1px solid #fff;
+        z-index : 100;
+        box-sizing: border-box;
+        background-color: #3F1575;
+        visibility: hidden;
+    }
+    .themes {
+        display : flex;
+        align-items : center;
+        justify-content: space-between;
+    }
+    .themesBox:hover .themeContainer{
+        opacity: 1;
+        visibility : visible;
+    }
+    .theme {
+        margin : 10px 0px;
+        padding-left : 10px;
+    }
+    .theme:hover{
+        background-color: #fff;
+        color : #3F1575;
+    }
+    
     .startBtn{
 		display : flex;
         background : #ffffff;
         align-items : center;
-        cursor: pointer;
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px -8px 0px #98C8E2;
 		border-radius: 30px;
         padding : 10px 20px;
@@ -559,6 +606,9 @@
 	}
 	.btnText{
 		color: #343E98;
+        font-family: 'Manrope', sans-serif;
+        font-weight : 900;
+        font-size : 18px;
 	}
 	.btnArrow{
 		margin : 8px;
@@ -566,9 +616,52 @@
     .alertDiv{
         color : white; 
         padding : 8px;
+        font-family: 'Manrope', sans-serif;
+        font-weight : 700;
+        font-size : 14px;
     }
     .hide_alertDiv{
         display : none;
     }
     
+    @media screen and (max-width : 1150px) {
+        .blueH,.redH {
+            font-size : 0.9em;
+        }
+        .player,.spymaster {
+            font-size : 0.7em;
+        }
+        .vs {
+            width : 60px;
+            height : 60px;
+            font-size : 0.9em;
+        }
+        .heading {
+            font-size : 0.8em;
+        }
+        .emptyTeamMsg{
+            font-size : 14px;
+        }
+        .btnText {
+            font-size : 16px;
+        }
+    }
+    @media screen and (max-width : 1000px), screen and (max-height : 670px) {
+        .player,.spymaster {
+            font-size : 0.6em;
+        }
+        .name {
+            font-size : 11.5px;
+        }
+        .vs {
+            font-size : 0.9em;
+            font-size : 0.8em
+        }
+        .emptyTeamMsg {
+            font-size : 12px;
+        }
+        .btnText {
+            font-size : 15px;
+        }
+    }
 </style>
