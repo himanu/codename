@@ -52,7 +52,7 @@ connectedRef.on('value', (snap) => {
 dbUser.update({
     id: getParams('userId'),
     userName: getParams('userName'),
-    profilePicture: getParams('userProfilePicture'),
+    profilePicture: getParams('userProfilePicture')
 });
 
 

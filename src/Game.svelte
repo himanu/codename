@@ -119,7 +119,9 @@ import DownSvg from "./DownSvg.svelte";
             return;
         }
         logsArray = snap.val();
-        logsdiv.scrollTo(0, logsdiv.scrollHeight);
+        if(logsdiv){
+            logsdiv.scrollTo(0, logsdiv.scrollHeight);
+        }
     })
 
 
