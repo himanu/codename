@@ -18,8 +18,10 @@
     let blueTeam_has_Spymaster = false;
     let shuffledWordList;
     let team;
-    let bluePlayerButtonText;
-    let redPlayerButtonText;
+    let bluePlayerButtonText = "Choose Blue";
+    let redPlayerButtonText = "Choose Red";
+    let blueSpymasterButtonText = "Be Spymaster";
+    let redSpymasterButtonText = "Be Spymaster";
     let currUser;
     let themeValue = 'Default';
     let wordList;
@@ -28,6 +30,7 @@
     let duetTheme;
     let onlineBlueTeam = [];
     let onlineRedTeam = [];
+    let isSpymaster = false;;
     
     dbThemeValue.on('value',(snap)=>{
         if(!snap.exists) {
@@ -73,25 +76,39 @@
         if(currUser) {
             team = currUser.team;
             userId = currUser.id;
+            isSpymaster = currUser.spymaster;
         }
     }
     $: {
         if(team) {
-            if(team === "Blue") {
-                bluePlayerButtonText = "Picked Blue";
-                redPlayerButtonText = "Choose Red";
-            }
-            else if(team === "Red") {
+            if(isSpymaster) {
                 bluePlayerButtonText = "Choose Blue";
-                redPlayerButtonText = "Picked Red";
+                redPlayerButtonText = "Choose Red";
+
+                redSpymasterButtonText = "Be Spymaster";
+                blueSpymasterButtonText = "Be Spymaster";
+                if(team === "Red") {
+                    redSpymasterButtonText = "Spymaster";
+                }
+                else if(team === "Blue") {
+                    blueSpymasterButtonText = "Spymaster";
+                }
             }
             else {
-                bluePlayerButtonText = "Choose Blue" ;
-                redPlayerButtonText = "Choose Red";
+                redSpymasterButtonText = "Be Spymaster";
+                blueSpymasterButtonText = "Be Spymaster";
+                if(team === "Red") {
+                    redPlayerButtonText = "Picked Red";
+                    bluePlayerButtonText = "Choose Blue";
+                }
+                else if(team === "Blue") {
+                    bluePlayerButtonText = "Picked Blue";
+                    redPlayerButtonText = "Choose Red";
+                }
             }
         }
         else {
-            bluePlayerButtonText = "Choose Blue" ;
+            bluePlayerButtonText = "Choose Blue";
             redPlayerButtonText = "Choose Red";
         }
     }
@@ -161,6 +178,10 @@
         }
     }
     $: {
+        if(!themeValue) {
+            themeValue = 'Default';
+        }
+
         if(themeValue === "Default") {
             wordList = defaultTheme;
         }
@@ -296,8 +317,8 @@
                 </div>
 
                 <div class = "btn">
-                    <button class = "player" on:click = {handle_Blue_Player_Btn}> {bluePlayerButtonText} </button>
-                    <button class = "spymaster" id = "blueSpymasterBtn" on:click = {handle_Blue_Spymaster_Btn} disabled = {disableBlueSpymasterBtn}>Be Spymaster</button>
+                    <button class = "player" class:disabledBluePlayerBtn = {team === "Blue" && !isSpymaster} on:click = {handle_Blue_Player_Btn}> {bluePlayerButtonText} </button>
+                    <button class = "spymaster" class:disabledBlueSpymasterBtn = {disableBlueSpymasterBtn} id = "blueSpymasterBtn" on:click = {handle_Blue_Spymaster_Btn}>{blueSpymasterButtonText}</button>
                 </div>
             </div>
 
@@ -331,8 +352,8 @@
                     </div>
                 </div>
                 <div class = "btn">
-                    <button class = "player" on:click = {handle_Red_Player_Btn}> {redPlayerButtonText} </button>
-                    <button class = "spymaster" on:click = {handle_Red_Spymaster_Btn} disabled = {disableRedSpymasterBtn}>Be Spymaster</button>
+                    <button class = "player" class:disabledRedPlayerBtn = {team === "Red" && !isSpymaster} on:click = {handle_Red_Player_Btn}> {redPlayerButtonText} </button>
+                    <button class = "spymaster" class:disabledRedSpymasterBtn = {disableRedSpymasterBtn} on:click = {handle_Red_Spymaster_Btn}> {redSpymasterButtonText} </button>
                 </div>
             </div>
         </div>
@@ -528,6 +549,17 @@
         line-height: 24px;
         padding : 5px 10px;
         cursor : pointer;
+    }
+    .disabledRedPlayerBtn,.disabledBluePlayerBtn {
+        cursor : text;
+    }
+    .disabledBlueSpymasterBtn {
+        opacity : 0.7;
+        cursor : text;
+    }
+    .disabledRedSpymasterBtn {
+        opacity : 0.7;
+        cursor : text;
     }
     .blue .player{
         background-color : #5E96E8;
