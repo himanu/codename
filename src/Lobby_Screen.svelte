@@ -258,7 +258,8 @@
             turn : "Red",
             redScore : 9,
             blueScore : 8,
-            gameStarter : currUser.userName
+            gameStarter : currUser.userName,
+            logsArray
         })
     }
     function changeThemeValue(newThemeValue) {
