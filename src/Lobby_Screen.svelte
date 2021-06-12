@@ -30,7 +30,8 @@
     let duetTheme;
     let onlineBlueTeam = [];
     let onlineRedTeam = [];
-    let isSpymaster = false;;
+    let isSpymaster = false;
+    let logsArray = [];
     
     dbThemeValue.on('value',(snap)=>{
         if(!snap.exists) {
@@ -246,6 +247,10 @@
     }
     function handle_Start_Game_Btn(){
         setShuffledWordList();
+        logsArray.push({
+            actor : user,
+            action : "has started the game"
+        });
         dbGameSession.update({
             page : "Lobby",
             time : 5,

@@ -387,13 +387,17 @@ import DownSvg from "./DownSvg.svelte";
         })
     }
 
-    function changeTurn() {
+    function changeTurn(isEndTurnBtnPressed) {
+        if(isEndTurnBtnPressed) {
+            lastWordSelected = null;
+        }
+        
         showSelectedInfo = false;
         if(turn === "Red")
         {
             dbGameSession.update({
                 turn : "Blue",
-                lastWordSelected : null,
+                lastWordSelected,
                 clue : null
             })
         }
@@ -401,7 +405,7 @@ import DownSvg from "./DownSvg.svelte";
         {
             dbGameSession.update({
                 turn : "Red",
-                lastWordSelected : null,
+                lastWordSelected,
                 clue : null
             })
         }
