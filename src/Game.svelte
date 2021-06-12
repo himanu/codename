@@ -1175,7 +1175,7 @@
         .word {
             font-size : 13px;
         }
-        .WordShow {
+        .Wordshow {
             top : 16%;
         }
     }
