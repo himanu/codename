@@ -46,7 +46,9 @@ import DownSvg from "./DownSvg.svelte";
         5 : "#E1BC36",
         6 : "#3FAB8B",
         7 : "#3B3B3B",
-        8 : "#3FAB8B"
+        8 : "#3FAB8B",
+        9 : "#5E96E8",
+        10 : '#E44C4F'
     }
 
     //user Profile picture
@@ -126,7 +128,7 @@ import DownSvg from "./DownSvg.svelte";
 
 
     $: {
-        if(lastWordSelected) {
+        if(lastWordSelected || turn) {
             showSelectedInfo = true;
             updateSelectionInfoType();
         }
@@ -168,6 +170,15 @@ import DownSvg from "./DownSvg.svelte";
                 selectedInfoType = 6;
                 postWordClickMsg = "Hurrah! Your opponent choose your's team word by mistake, your team get a free word and now it's your team turn."
             }
+        }
+        else if(turn) {
+            if( turn === "Blue") {
+                selectedInfoType = 9;
+            }
+            else if(turn === "Red") {
+                selectedInfoType = 10;
+            }
+            postWordClickMsg = '';
         }
         else {
             selectedInfoType = 0;
@@ -604,6 +615,22 @@ import DownSvg from "./DownSvg.svelte";
 
         <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
         <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected black word</span>
+
+        <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+            {#if team === turn}
+                Your Team turn
+            {:else}
+                Blue Team turn
+            {/if}
+        </span>
+        <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+            {#if team === turn}
+                Your team turn
+            {:else}
+                Red Team turn
+            {/if}
+        </span>
+
     {/if}
 </main>
 <style>
