@@ -33,6 +33,7 @@ export const dbLogsArray = dbGameSession.child('logsArray');
 export const dbTurn = dbGameSession.child('turn');
 export const dbClue = dbGameSession.child('clue');
 export const dbTime = dbGameSession.child('time');
+export const dbThemeValue = dbGameSession.child('themeValue');
 
 
 var connectedRef = firebase.database().ref('.info/connected');
@@ -52,7 +53,8 @@ connectedRef.on('value', (snap) => {
 dbUser.update({
     id: getParams('userId'),
     userName: getParams('userName'),
-    profilePicture: getParams('userProfilePicture')
+    profilePicture: getParams('userProfilePicture'),
+    themeValue = 'Default'
 });
 
 

@@ -1,5 +1,5 @@
 <script>
-    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet} from "./database";
+    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue} from "./database";
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
@@ -22,14 +22,20 @@
     let bluePlayerButtonText;
     let redPlayerButtonText;
     let currUser;
-    let themeValue = "Default";
+    let themeValue;
     let wordList;
     let deepUndercoverTheme;
     let defaultTheme;
     let duetTheme;
     let onlineBlueTeam = [];
     let onlineRedTeam = [];
-
+    
+    dbThemeValue.on('value',(snap)=>{
+        if(!snap.exists) {
+            return ;
+        }
+        themeValue = snap.val();
+    })
     dbDeepUndercover.on('value',(snap)=>{
         if(!snap.exists) {
             return;
@@ -234,6 +240,11 @@
             gameStarter : currUser.userName
         })
     }
+    function changeThemeValue(newThemeValue) {
+        dbGameSession.update({
+            themeValue : newThemeValue
+        })
+    }
 
     function processName(user){
         let name = user.userName;
@@ -343,13 +354,13 @@
                 </div>
                 
                 <div class="themeContainer">
-                    <div class="theme" on:click = {()=>themeValue = "Default"}>
+                    <div class="theme" on:click = {()=> changeThemeValue("Default")}>
                         Default
                     </div>
-                    <div class="theme" on:click = {()=>themeValue = "Deep Undercover"}>
+                    <div class="theme" on:click = {()=> changeThemeValue("Deep Undercover")}>
                         Deep Undercover
                     </div>
-                    <div class="theme" on:click = {()=>themeValue = "Duet"}>
+                    <div class="theme" on:click = {()=> changeThemeValue("Duet")}>
                         Duet
                     </div>
                 </div>
