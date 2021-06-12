@@ -144,11 +144,11 @@ import DownSvg from "./DownSvg.svelte";
             }
             else if(lastWordSelected.color === "Grey" && team !== turn){
                 selectedInfoType = 3;
-                postWordClickMsg = "Uff! Grey word selected by mistake and your team chance is passed";
+                postWordClickMsg = "Grey word selected by mistake and your team chance is passed";
             }
             else if(lastWordSelected.color === "Grey" && team === turn){
                 selectedInfoType = 4;
-                postWordClickMsg = "Hurrah! Your opponent team choose grey word by mistake and now it's your team turn";
+                postWordClickMsg = "Your opponent team choose grey word by mistake and now it's your team turn";
             }
             else if(lastWordSelected.color === "Black" && team === turn){
                 selectedInfoType = 7;
@@ -593,17 +593,17 @@ import DownSvg from "./DownSvg.svelte";
         </div>
     </div>
     {#if showSelectedInfo}
-        <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Correct word Selected</span>
-        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Opponent selected correct word</span>
+        <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
+        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selected correct word</span>
 
-        <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Grey word Selected</span>
-        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Opponent selected grey word </span>
+        <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
+        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected grey word </span>
 
-        <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Opponent word Selected</span>
-        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Opponent selected your word </span>
+        <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
+        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected your word </span>
 
-        <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Uff!!! Black word Selected</span>
-        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">Hurrah!!! Opponent selected black word</span>
+        <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
+        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected black word</span>
     {/if}
 </main>
 <style>
