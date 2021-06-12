@@ -6,7 +6,7 @@
     import LoadingSvg from "./LoadingSvg.svelte";
     import Tick from "./Tick.svelte";
     import { getParams } from './utils';
-import DownSvg from "./DownSvg.svelte";
+    import DownSvg from "./DownSvg.svelte";
 
     let wordList = [];
     let team;
@@ -543,6 +543,9 @@ import DownSvg from "./DownSvg.svelte";
             {/if}
         {:else}
             {#if clue}
+                {#if team === turn}
+                    <div class="selectWord"> Select word </div>
+                {/if}
                 <div class = "clueMsgBox">
                     <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
                     <div class = "clueMsg"> {clue.clueWord} x {clue.clueWord_Count} </div>
@@ -560,6 +563,7 @@ import DownSvg from "./DownSvg.svelte";
     </div>
     <div class = "logsContainer" bind:this = {logsdiv}>
         {#if logsArray && logsArray.length !== 0}
+            <div class = "logHeading">Logs</div>
             {#each logsArray as log}
                 <div class="log">
                     <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
@@ -944,7 +948,7 @@ import DownSvg from "./DownSvg.svelte";
         line-height : 13px;
         margin-bottom: 0px;;
     }
-    .sendClueMsg {
+    .sendClueMsg,.selectWord {
         color : #fff;
         text-align : center;
         font-family: 'Manrope',sans-serif;
@@ -1019,12 +1023,24 @@ import DownSvg from "./DownSvg.svelte";
         position : absolute;
         left : 2%;
         bottom : 40%;
-        width : 15%;
+        width : 10%;
         max-height : 150px;
         overflow : auto;
         font-family:  'Manrope',sans-serif;
         font-size : 10px;
         line-height : 19px;
+        border : 2px solid #4C1A96;
+        border-radius : 8px;
+        text-align : center;
+        padding : 5px;
+    }
+    .logHeading {
+        text-align : center;
+        color :#fff;
+        font-family:  'Manrope',sans-serif;
+        font-size : 14px;
+        line-height : 19px;
+        font-weight : 800;
     }
     .log{
         padding : 5px 0;
@@ -1038,14 +1054,14 @@ import DownSvg from "./DownSvg.svelte";
     .redTeam_List{
         position : absolute;
         bottom : 3%;
-        right : 4%;
-        width : 12%;
+        right : 2%;
+        width : 11%;
     }
     .blueTeam_List{
         position : absolute;
         bottom : 3%;
-        left : 4%;
-        width : 12%;
+        left : 2%;
+        width : 11%;
     }
     .blue_heading{
         font-family: 'Manrope', sans-serif;
@@ -1121,6 +1137,9 @@ import DownSvg from "./DownSvg.svelte";
             font-size : 18px;
             padding : 10px
         }
+        .Word-show {
+            top : 14%;
+        }
     }
     @media screen and (max-width : 1150px) {
         .word-matrix{
@@ -1131,6 +1150,9 @@ import DownSvg from "./DownSvg.svelte";
         .word {
             font-size : 16px;
             padding : 10px
+        }
+        .Word-show{
+            top : 15%;
         }
         .sendClueMsg{
             font-size : 14px;
@@ -1151,7 +1173,10 @@ import DownSvg from "./DownSvg.svelte";
     }
     @media screen and (max-width : 950px) {
         .word {
-            font-size : 15px;
+            font-size : 13px;
+        }
+        .WordShow {
+            top : 16%;
         }
     }
 </style>
