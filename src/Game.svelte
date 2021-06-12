@@ -171,6 +171,15 @@ import DownSvg from "./DownSvg.svelte";
                 postWordClickMsg = "Hurrah! Your opponent choose your's team word by mistake, your team get a free word and now it's your team turn."
             }
         }
+        else if(clue) {
+            postWordClickMsg = '';
+            if(turn === "Blue") {
+                selectedInfoType = 9;
+            }
+            else if(turn === "Red") {
+                selectedInfoType = 10;
+            }
+        }
         else if(turn) {
             if( turn === "Blue") {
                 selectedInfoType = 9;
@@ -384,6 +393,7 @@ import DownSvg from "./DownSvg.svelte";
         {
             dbGameSession.update({
                 turn : "Blue",
+                lastWordSelected : null,
                 clue : null
             })
         }
@@ -391,6 +401,7 @@ import DownSvg from "./DownSvg.svelte";
         {
             dbGameSession.update({
                 turn : "Red",
+                lastWordSelected : null,
                 clue : null
             })
         }
@@ -617,17 +628,41 @@ import DownSvg from "./DownSvg.svelte";
         <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected black word</span>
 
         <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-            {#if team === turn}
-                Your Team turn
+            {#if clue}
+                {#if team === turn}
+                    {#if isSpymaster}
+                        You have sent clue
+                    {:else}
+                        Your spymaster have sent clue
+                    {/if}
+                {:else}
+                    Blue Spymaster have sent clue
+                {/if}
             {:else}
-                Blue Team turn
+                {#if team === turn}
+                    Your Team turn
+                {:else}
+                    Blue Team turn
+                {/if}
             {/if}
         </span>
         <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-            {#if team === turn}
-                Your team turn
+            {#if clue}
+                {#if team === turn}
+                    {#if isSpymaster}
+                        You have sent clue
+                    {:else}
+                        Your spymaster have sent clue
+                    {/if}
+                {:else}
+                    Red Spymaster have sent clue
+                {/if}
             {:else}
-                Red Team turn
+                {#if team === turn}
+                    Your Team turn
+                {:else}
+                    Red Team turn
+                {/if}
             {/if}
         </span>
 
@@ -946,7 +981,7 @@ import DownSvg from "./DownSvg.svelte";
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope';
         font-weight : 800;
-        font-size : 14px;
+        font-size : 18px;
         line-height : 19px;
         text-align : center;
         margin : 5px auto;
@@ -1072,11 +1107,22 @@ import DownSvg from "./DownSvg.svelte";
         color : #fff;
         border-radius : 10px;
     }
+    @media screen and (max-width : 1400px) {
+        .word-matrix {
+            padding : 8px;
+            grid-gap : 8px;
+            grid-template-rows: repeat(5,1fr);
+        }
+        .word {
+            font-size : 18px;
+            padding : 10px
+        }
+    }
     @media screen and (max-width : 1150px) {
         .word-matrix{
             padding: 8px;
             grid-gap : 8px;
-            grid-template-rows : repeat(5,calc(20% - 6px));
+            grid-template-rows : repeat(5,1fr);
         }
         .word {
             font-size : 16px;
