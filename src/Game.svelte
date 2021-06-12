@@ -418,7 +418,8 @@ import DownSvg from "./DownSvg.svelte";
         dbGameSession.update({
             page : "Lobby Screen",
             lastWordSelected : null,
-            clue : null
+            clue : null,
+            logsArray : null
         })
     }
 
@@ -515,11 +516,13 @@ import DownSvg from "./DownSvg.svelte";
                 <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
             {/if}
         {:else}
-            {#if (clue && clue.clueSenderTeam === turn)}
+            {#if clue}
                 <div class = "clueMsgBox">
                     <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
                     <div class = "clueMsg"> {clue.clueWord} x {clue.clueWord_Count} </div>
                 </div>
+            {:else if !isSpymaster && team === turn}
+                <div class = "clueWaiting"> Waiting for clue </div>
             {/if}
             {#if showSelectedInfo}
                 <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
@@ -911,6 +914,16 @@ import DownSvg from "./DownSvg.svelte";
         font-size : 18px;
         line-height : 25px;
     }
+    .clueWaiting {
+        color: rgba(255, 255, 255,1);
+        font-family : 'Manrope';
+        font-weight : 800;
+        font-size : 14px;
+        line-height : 19px;
+        text-align : center;
+        margin : 5px auto;
+        width : 60%;
+    }
     .postWordClickMsgBox {
         color: rgba(255, 255, 255,0.5);
         font-family : 'Manrope';
@@ -918,7 +931,7 @@ import DownSvg from "./DownSvg.svelte";
         font-size : 14px;
         line-height : 19px;
         text-align : center;
-        margin : 0px auto;
+        margin : 5px auto;
         width : 60%;
     }
     .endTurnBtn{
