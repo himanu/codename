@@ -391,7 +391,7 @@ import DownSvg from "./DownSvg.svelte";
         }
         logsArray.push({
             actor : user,
-            action : " presses End Turn button"
+            action : ` ended ${user.team} Turn button`
         })
         dbGameSession.update({
             logsArray
@@ -937,7 +937,7 @@ import DownSvg from "./DownSvg.svelte";
     }
     .logsContainer {
         position : absolute;
-        left : 4%;
+        left : 2%;
         bottom : 40%;
         width : 15%;
         max-height : 150px;
