@@ -230,7 +230,8 @@
             shuffledWordList,
             turn : "Red",
             redScore : 9,
-            blueScore : 8
+            blueScore : 8,
+            gameStarter : currUser.userName
         })
     }
 
