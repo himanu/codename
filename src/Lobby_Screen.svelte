@@ -272,7 +272,12 @@
                         {/if}
                         {#each blueTeam as user}
                             <div class="user">
-                                <div class="name"> {processName(user)} </div>
+                                <div class = "userDetails">
+                                    <div class = "profilePicture">
+                                        {user.profilePicture}
+                                    </div>
+                                    <div class="name"> {processName(user)} </div>
+                                </div>
                                 {#if allUserOnlineStatus[user.id] }
                                     <Tick/>
                                 {:else}
@@ -303,7 +308,14 @@
                         {/if}
                         {#each redTeam as user}
                             <div class="user">
-                                <div class="name"> {processName(user)} </div>
+                                <div class="userDetails"> 
+                                    <div class="profliePicture">
+                                        {user.profilePicture}
+                                    </div>
+                                    <div class = "name">
+                                        {processName(user)} 
+                                    </div>
+                                </div>
                                 {#if allUserOnlineStatus[user.id] }
                                     <Tick class = 'onlineStatus'/>
                                 {:else}
@@ -477,6 +489,12 @@
         align-items: center;
         padding : 5px 10px 5px 5px;
         width : 100%;
+    }
+    .profilePicture {
+        width : 20px;
+        height : 20px;
+        border-radius : 50%;
+        margin-right : 2px;
     }
     .name{
         font-family: 'Manrope',sans-serif;
