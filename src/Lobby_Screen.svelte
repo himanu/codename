@@ -186,7 +186,6 @@
             wordList = defaultTheme;
         }
         else if(themeValue === "Deep Undercover") {
-            console.log("Hey");
             wordList = deepUndercoverTheme;
         }
         else if(themeValue === "Duet") {
@@ -247,7 +246,6 @@
     }
     function handle_Start_Game_Btn(){
         setShuffledWordList();
-        console.log("Hey themeValue is ",themeValue);
         dbGameSession.update({
             page : "Lobby",
             time : 5,
