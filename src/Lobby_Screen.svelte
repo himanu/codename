@@ -22,7 +22,7 @@
     let bluePlayerButtonText;
     let redPlayerButtonText;
     let currUser;
-    let themeValue;
+    let themeValue = 'Default';
     let wordList;
     let deepUndercoverTheme;
     let defaultTheme;
@@ -285,9 +285,7 @@
                         {#each blueTeam as user}
                             <div class="user">
                                 <div class = "userDetails">
-                                    <div class = "profilePicture">
-                                        {user.profilePicture}
-                                    </div>
+                                    <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
                                     <div class="name"> {processName(user)} </div>
                                 </div>
                                 {#if allUserOnlineStatus[user.id] }
@@ -321,9 +319,7 @@
                         {#each redTeam as user}
                             <div class="user">
                                 <div class="userDetails"> 
-                                    <div class="profliePicture">
-                                        {user.profilePicture}
-                                    </div>
+                                    <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
                                     <div class = "name">
                                         {processName(user)} 
                                     </div>
@@ -501,6 +497,11 @@
         align-items: center;
         padding : 5px 10px 5px 5px;
         width : 100%;
+    }
+    .userDetails {
+        display : flex;
+        align-items: center;
+        justify-content: flex-start;
     }
     .profilePicture {
         width : 20px;

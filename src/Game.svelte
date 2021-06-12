@@ -772,15 +772,15 @@ import DownSvg from "./DownSvg.svelte";
     
 
     .table{
-        width : 60%;
+        width : 65%;
         margin : auto;
         position: relative;
         top : 5%;
     }
     .word-matrix {
         display: grid;
-        grid-template-rows : repeat(5,calc(20% - 8px));
-        grid-template-columns: repeat(5,20%);
+        grid-template-rows : repeat(5,1fr);
+        grid-template-columns: repeat(5,1fr);
         background-color: #260C4B;
         padding: 10px;
         grid-gap : 10px;
@@ -792,12 +792,13 @@ import DownSvg from "./DownSvg.svelte";
         padding: 25px 10px;
         font-family : 'Manrope',sans-serif;
         font-weight : 700;
-        font-size : 21px;
+        font-size : 20px;
         line-height : 22px;
         text-align: center;
         letter-spacing: 0.04em;
         overflow : hidden;
         word-break: break-all;
+        min-width : 0;
     }
     .cursorPointer{
         cursor : pointer;

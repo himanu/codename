@@ -53,8 +53,7 @@ connectedRef.on('value', (snap) => {
 dbUser.update({
     id: getParams('userId'),
     userName: getParams('userName'),
-    profilePicture: getParams('userProfilePicture'),
-    themeValue = 'Default'
+    profilePicture: getParams('userProfilePicture')
 });
 
 
