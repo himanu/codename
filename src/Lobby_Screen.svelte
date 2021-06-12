@@ -12,7 +12,6 @@
     let disableRedSpymasterBtn = false;
     let disableBlueSpymasterBtn = false;
     let disableStartGameBtn = true;
-    let hideAlertBlock = false;
     let user;
     let usersList;
     let redTeam_has_Spymaster = false;
@@ -156,11 +155,9 @@
         if( onlineBlueTeam.length > 1 && onlineRedTeam.length > 1 && redTeam_has_Spymaster && blueTeam_has_Spymaster ) {
 
             disableStartGameBtn = false;
-            hideAlertBlock = true;
         }
         else {
             disableStartGameBtn = true;
-            hideAlertBlock = false;
         }
     }
     $: {
@@ -362,7 +359,7 @@
                 </div>
             </div>
         </div>
-        <button class = "startBtn" on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn} style = "cursor : {disableStartGameBtn ? "not-allowed" : "pointer"}">
+        <button class = "startBtn" class:disabledStartBtn = {disableStartGameBtn === true} on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn} style = "cursor : {disableStartGameBtn ? "not-allowed" : "pointer"}">
 			<div class = "btnText">Start Game</div>
 			<div class = "btnArrow">
 				<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -370,7 +367,7 @@
 				</svg>	
 			</div>
 		</button>
-        <div class = "alertDiv" class:hide_alertDiv = {hideAlertBlock === true}>
+        <div class = "alertDiv">
             Need atleast 2 online Player and 1 online Spymaster in each team !!!
         </div>
     </div>
@@ -507,11 +504,11 @@
         width : 20px;
         height : 20px;
         border-radius : 50%;
-        margin-right : 2px;
+        margin-right : 5px;
     }
     .name{
         font-family: 'Manrope',sans-serif;
-        font-weight : 900;
+        font-weight : 700;
         font-size : 14px;
         color: #0C0030;
     }
@@ -650,9 +647,10 @@
         font-family: 'Manrope', sans-serif;
         font-weight : 700;
         font-size : 14px;
+        visibility : hidden;
     }
-    .hide_alertDiv{
-        display : none;
+    .disabledStartBtn:hover + .alertDiv{
+        visibility : visible;
     }
     
     @media screen and (max-width : 1150px) {
