@@ -362,7 +362,7 @@
                 </div>
             </div>
         </div>
-        <button class = "startBtn" on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn} style = "cursor : {disableStartGameBtn ? "cursor" : "pointer"}">
+        <button class = "startBtn" on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn} style = "cursor : {disableStartGameBtn ? "not-allowed" : "pointer"}">
 			<div class = "btnText">Start Game</div>
 			<div class = "btnArrow">
 				<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg">
