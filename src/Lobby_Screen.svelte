@@ -126,9 +126,15 @@
                 redTeam = redTeam.filter((player)=>{
                     return player.id != user.id;
                 })
-
-                if(user.spymaster === true && allUserOnlineStatus[user.id]) {
-                    blueTeam_has_Spymaster = true;
+                
+                //make sure that blues team has one spymaster only
+                if(user.spymaster && allUserOnlineStatus[user.id]) {
+                    if(blueTeam_has_Spymaster) {
+                        user.spymaster = false;
+                    }
+                    else {
+                        blueTeam_has_Spymaster = true;
+                    }
                 }
                 
                 blueTeam.push(user);
@@ -140,7 +146,12 @@
                 })
 
                 if(user.spymaster === true && allUserOnlineStatus[user.id]) {
-                    redTeam_has_Spymaster = true;
+                    if(redTeam_has_Spymaster) {
+                        user.spymaster = false;
+                    }
+                    else {
+                        redTeam_has_Spymaster = true;
+                    }
                 }
 
                 redTeam.push(user);
