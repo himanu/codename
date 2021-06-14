@@ -1,10 +1,11 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
-    import { onMount } from 'svelte';
+    import { afterUpdate } from 'svelte';
     import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
-    import Tick from "./Tick.svelte";
+    import CorrectAnswerTick from "./CorrectAnswerTick.svelte";
+    import Tick from './Tick.svelte';
     import { getParams } from './utils';
     import DownSvg from "./DownSvg.svelte";
 
@@ -129,7 +130,8 @@
         }
     })
 
-    onMount(()=>{
+    afterUpdate(()=>{
+        console.log(logsdiv.scrollHeight);
         logsdiv.scrollTo(0,logsdiv.scrollHeight);
     })
 
@@ -498,19 +500,27 @@
         <div class="fadedBackground"></div>
         <div class = "result">
             {#if winner === team}
-                <Tick/>
+                <CorrectAnswerTick/>
                 <div class = "winning-btn">
-                    Correct Answer
+                    {#if lastWordSelected?.color === team}
+                        Correct Answer
+                    {:else}
+                        Opponent selects black word
+                    {/if}
                     <svg class = "tick-cross" width="20" height="15" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
                     </svg>
                 </div>
-                <div class = "result-text"> {team} team won the game</div>
+                <div class = "result-text"> <strong> Congaratulations </strong> {team} team has won the game</div>
                 <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
             {:else}
                 <Cross/>
                 <div class="loosing-btn">
-                    Wrong Answer!
+                    {#if lastWordSelected.color === 'Black'}
+                        Black word selected
+                    {:else}
+                        Opponent has found all their team words
+                    {/if}
                     <svg class = "tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M8.56539 9.88682L9.96921 8.48294L6.46021 4.97406L9.87206 1.56233L8.46824 0.158459L5.05634 3.57024L1.48597 0L0.0821475 1.40387L3.65247 4.97406L0.0302734 8.59613L1.4341 10L5.05634 6.37789L8.56539 9.88682Z" fill="#FFEBEE"/>
                     </svg>
@@ -616,7 +626,7 @@
                 </div>
             {/if}
             {#if clue && clue.clueSenderTeam === turn && team === turn}
-                <div class="clueMsgBox">You have send clue {clue.clueWord} x {clue.clueWord_Count} words</div>
+                <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
             {/if}
             {#if showSelectedInfo}
                 <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
@@ -628,7 +638,7 @@
                 {/if}
                 <div class = "clueMsgBox">
                     <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
-                    <div class = "clueMsg"> {clue.clueWord} x {clue.clueWord_Count} </div>
+                    <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
                 </div>
             {:else if !isSpymaster && team === turn}
                 <div class = "clueWaiting"> Waiting for clue ...</div>
@@ -706,16 +716,16 @@
     </div>
     {#if showSelectedInfo}
         <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
-        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selected correct word</span>
+        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
 
         <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
-        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected grey word </span>
+        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
 
         <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
-        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected your word </span>
+        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
 
         <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
-        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selected black word</span>
+        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
 
         <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
             {#if clue}
@@ -887,7 +897,7 @@
         background-color : #5E96E8;
         width : 50%;
         height : 100%;
-        transition : 1s;
+        transition : .25s;
         border-radius : 47px;
         box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
     }
@@ -987,6 +997,9 @@
         font-size : 18px;
         line-height : 22px;
         text-align: center;
+        display : flex;
+        align-items : center;
+        justify-content : center;
         letter-spacing: 0.04em;
         overflow : hidden;
         word-break: break-all;
@@ -1173,7 +1186,7 @@
         position : absolute;
         left : 2%;
         bottom : 45%;
-        width : 10%;
+        width : 11%;
         max-height : 150px;
         text-align : center;
     }
@@ -1192,8 +1205,8 @@
         border : 2px solid #4C1A96;
         border-radius : 8px;
         padding : 5px;
-        overflow : scroll;
-        max-height : 120px;
+        overflow : auto;
+        max-height : 200px;
     }
     .log{
         padding : 5px 0;
@@ -1249,6 +1262,8 @@
     }
     .userDetails {
         display : flex;
+        align-items : center;
+        justify-content: center;
     }
     
     .userProfilePicture{
