@@ -566,7 +566,27 @@
 
     <div class="turnIndicatorBox">
         <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
-            {turn} Team Turn
+            {#if !clue}
+                {#if team !== turn}
+                    {turn} Team Spymaster Turn
+                {:else}
+                    {#if isSpymaster}
+                        Your turn
+                    {:else}
+                        Your Spymaster turn
+                    {/if}
+                {/if}
+            {:else}
+                {#if team !== turn}
+                    {turn} Team Players turn
+                {:else}
+                    {#if isSpymaster}
+                        Your Team Players turn
+                    {:else}
+                        Your turn
+                    {/if}
+                {/if}
+            {/if}
         </div>
     </div>
         
@@ -1143,7 +1163,7 @@
     .clueMsg{
         color : #fff;
         margin-left : 10px;
-        font-family : 'Manrope';
+        font-family : 'Manrope',sans-serif;
         font-weight : 700;
         font-size : 14px;
         line-height : 25px;
