@@ -551,7 +551,7 @@
                     <div class = "clueMsg"> {clue.clueWord} x {clue.clueWord_Count} </div>
                 </div>
             {:else if !isSpymaster && team === turn}
-                <div class = "clueWaiting"> Waiting for clue </div>
+                <div class = "clueWaiting"> Waiting for clue ...</div>
             {/if}
             {#if showSelectedInfo}
                 <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
@@ -874,7 +874,7 @@
     .form-container{
         display : flex;
         width : 100%;
-        margin-top : 20px;
+        margin-top : 10px;
     }
     .clueInputBox{
         border : 0px;
@@ -957,6 +957,7 @@
         font-weight : 800;
         font-size : 16px;
         line-height: 22px;
+        margin-top : 5px;
     }
     .clueMsgBox{
         display : flex;
@@ -1021,28 +1022,30 @@
         font-weight : bold;
         line-height: 13px;
     }
-    .logsContainer {
+    .logsBox {
         position : absolute;
         left : 2%;
         bottom : 40%;
         width : 10%;
         max-height : 150px;
+        text-align : center;
+    }
+    .logHeading {
+        color :#fff;
+        font-family:  'Manrope',sans-serif;
+        font-size : 14px;
+        line-height : 19px;
+        font-weight : 800;
+        padding : 5px;
+    }
+    .logsContainer {
         overflow : auto;
         font-family:  'Manrope',sans-serif;
         font-size : 10px;
         line-height : 19px;
         border : 2px solid #4C1A96;
         border-radius : 8px;
-        text-align : center;
         padding : 5px;
-    }
-    .logHeading {
-        text-align : center;
-        color :#fff;
-        font-family:  'Manrope',sans-serif;
-        font-size : 14px;
-        line-height : 19px;
-        font-weight : 800;
     }
     .log{
         padding : 5px 0;
