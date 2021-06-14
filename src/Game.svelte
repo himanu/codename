@@ -766,9 +766,9 @@
         position : relative;
         display : flex;
         justify-content: space-between;
-        width : 90%;
+        width : 97%;
         margin : auto;
-        top : 2%;
+        top : 1.5%;
     }
     .spymaster-box{
         background-color: #ffffff;
