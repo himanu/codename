@@ -1269,7 +1269,7 @@
     .Word-show{
         display : inline;
         position: absolute;
-        top : 16%;
+        top : 18%;
         left : 50%;
         transform : translateX(-50%);
         padding : 5px;
