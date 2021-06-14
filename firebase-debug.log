@@ -1,0 +1,210 @@
+[debug] [2021-06-13T06:36:57.840Z] ----------------------------------------------------------------------
+[debug] [2021-06-13T06:36:57.842Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Dell\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2021-06-13T06:36:57.842Z] CLI Version:   9.11.0
+[debug] [2021-06-13T06:36:57.842Z] Platform:      win32
+[debug] [2021-06-13T06:36:57.842Z] Node Version:  v15.0.1
+[debug] [2021-06-13T06:36:57.846Z] Time:          Sun Jun 13 2021 12:06:57 GMT+0530 (India Standard Time)
+[debug] [2021-06-13T06:36:57.847Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2021-06-13T06:36:57.856Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-06-13T06:36:57.856Z] > authorizing via signed-in user (himanshu.yadav@letsdive.io)
+[debug] [2021-06-13T06:36:57.856Z] [iam] checking project da-cn-dev for permissions ["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]
+[debug] [2021-06-13T06:36:57.858Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-06-13T06:36:57.859Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:36:58.354Z] <<< HTTP RESPONSE 200 {"date":"Sun, 13 Jun 2021 06:36:57 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:36:58.368Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/da-cn-dev:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]}
+[debug] [2021-06-13T06:37:00.430Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:36:59 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=1338","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:00.433Z] > refreshing access token with scopes: []
+[debug] [2021-06-13T06:37:00.433Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:37:00.792Z] <<< HTTP RESPONSE 200 {"expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","date":"Sun, 13 Jun 2021 06:36:59 GMT","pragma":"no-cache","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:00.811Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev [none]
+[debug] [2021-06-13T06:37:01.489Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev 200
+[debug] [2021-06-13T06:37:01.490Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev {"projectId":"da-cn-dev","projectNumber":"50285255069","displayName":"da-cn-dev","name":"projects/da-cn-dev","resources":{"hostingSite":"da-cn-dev","realtimeDatabaseInstance":"da-cn-dev-default-rtdb"},"state":"ACTIVE"}
+[debug] [2021-06-13T06:37:01.490Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev [none]
+[debug] [2021-06-13T06:37:02.038Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev 200
+[debug] [2021-06-13T06:37:02.039Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev {"projectId":"da-cn-dev","projectNumber":"50285255069","displayName":"da-cn-dev","name":"projects/da-cn-dev","resources":{"hostingSite":"da-cn-dev","realtimeDatabaseInstance":"da-cn-dev-default-rtdb"},"state":"ACTIVE"}
+[info] 
+[info] === Deploying to 'da-cn-dev'...
+[info] 
+[info] i  deploying database, hosting 
+[info] i  database: checking rules syntax... 
+[debug] [2021-06-13T06:37:02.047Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-06-13T06:37:02.048Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:37:02.458Z] <<< HTTP RESPONSE 200 {"date":"Sun, 13 Jun 2021 06:37:01 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:02.469Z] >>> HTTP REQUEST GET https://firebasedatabase.googleapis.com/v1beta/projects/da-cn-dev/locations/-/instances/da-cn-dev-default-rtdb  
+ 
+[debug] [2021-06-13T06:37:03.301Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:37:02 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:03.305Z] >>> HTTP REQUEST PUT https://da-cn-dev-default-rtdb.firebaseio.com/.settings/rules.json?dryRun=true  
+ {
+    "rules": {
+      ".read": true,
+      ".write": true
+    }
+  }
+[debug] [2021-06-13T06:37:04.659Z] <<< HTTP RESPONSE 200 {"server":"nginx","date":"Sun, 13 Jun 2021 06:37:03 GMT","content-type":"application/json; charset=utf-8","content-length":"15","connection":"keep-alive","access-control-allow-origin":"*","cache-control":"no-cache","strict-transport-security":"max-age=31556926; includeSubDomains; preload"}
+[info] +  database: rules syntax for database da-cn-dev-default-rtdb is valid 
+[debug] [2021-06-13T06:37:04.665Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions  
+ {"config":{"rewrites":[{"glob":"**","path":"/index.html"}],"headers":[{"glob":"**","headers":{"Strict-Transport-Security":"max-age=31536000 ; includeSubDomains","X-Frame-Options":"allow","X-Content-Type-Options":"nosniff","Content-Security-Policy":"frame-ancestors https://*.letsdive.io/","Referrer-Policy":"no-referrer"}}]},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2021-06-13T06:37:08.002Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:37:06 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] i  hosting[da-cn-dev]: beginning deploy... 
+[info] i  hosting[da-cn-dev]: found 10 files in public 
+[debug] [2021-06-13T06:37:08.180Z] > refreshing access token with scopes: []
+[debug] [2021-06-13T06:37:08.180Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:37:08.183Z] [hosting] hash cache [cHVibGlj] stored for 10 files
+[debug] [2021-06-13T06:37:08.184Z] [hosting][hash queue][FINAL] {"max":152,"min":0,"avg":17.9,"active":0,"complete":10,"success":10,"errored":0,"retried":0,"total":10,"elapsed":159}
+[debug] [2021-06-13T06:37:08.554Z] <<< HTTP RESPONSE 200 {"expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","date":"Sun, 13 Jun 2021 06:37:07 GMT","pragma":"no-cache","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:08.574Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions/1f5b2b5f12064e2c:populateFiles [none]
+[debug] [2021-06-13T06:37:08.574Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions/1f5b2b5f12064e2c:populateFiles {"files":{"/favicon.png":"4e81307d839c59f6b2d3548ad4ec33c016a699849aa39c4c2e10501d583d84f2","/global.css":"c7a3e2e6f317480b2a6262b59d4bdb5fb0a36b4313100022f383dacd928103ce","/index.html":"1c45d0f803fcc8766adb89184bc6616522d3fe3afb6451d0b6ae8a6790d7a3b1","/images/background.svg":"75429e27096fe2ff23d762c34b3c84062280115c16eb1537ba890f4c35a1fc25","/images/player1.svg":"313435676f472312335357bab2121c3dc590f256fe66d9f27dee1474b7c97040","/images/player2.svg":"ccbf4ff855261b54f7f39b96a166905e077b162310f8ccfceaa1a91428227872","/images/tick.svg":"9abbb0629cf98cbf81ae93ec49714fe26b024249e1671e9d32d82343357cc4a1","/build/bundle.css":"fddaebd84510f4e35353dc37381e9e9a9812f3c2dc4447148fd7c2bdd66fb381","/build/bundle.js":"4fcab28a152d048791f741d0bed811e23a212940f50d77ccd0264ea183f5bfbd","/build/bundle.js.map":"2a08f423175054a95b75447b364667bb2e21baf114e60dfde7812dbbb8fc85fc"}}
+[debug] [2021-06-13T06:37:10.517Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions/1f5b2b5f12064e2c:populateFiles 200
+[debug] [2021-06-13T06:37:10.517Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions/1f5b2b5f12064e2c:populateFiles {"uploadRequiredHashes":["fddaebd84510f4e35353dc37381e9e9a9812f3c2dc4447148fd7c2bdd66fb381","4fcab28a152d048791f741d0bed811e23a212940f50d77ccd0264ea183f5bfbd","2a08f423175054a95b75447b364667bb2e21baf114e60dfde7812dbbb8fc85fc"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files"}
+[debug] [2021-06-13T06:37:10.519Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/fddaebd84510f4e35353dc37381e9e9a9812f3c2dc4447148fd7c2bdd66fb381 [none]
+[debug] [2021-06-13T06:37:10.519Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/fddaebd84510f4e35353dc37381e9e9a9812f3c2dc4447148fd7c2bdd66fb381 [stream]
+[debug] [2021-06-13T06:37:10.521Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/4fcab28a152d048791f741d0bed811e23a212940f50d77ccd0264ea183f5bfbd [none]
+[debug] [2021-06-13T06:37:10.521Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/4fcab28a152d048791f741d0bed811e23a212940f50d77ccd0264ea183f5bfbd [stream]
+[debug] [2021-06-13T06:37:10.523Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/2a08f423175054a95b75447b364667bb2e21baf114e60dfde7812dbbb8fc85fc [none]
+[debug] [2021-06-13T06:37:10.523Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/2a08f423175054a95b75447b364667bb2e21baf114e60dfde7812dbbb8fc85fc [stream]
+[debug] [2021-06-13T06:37:10.524Z] [hosting][populate queue][FINAL] {"max":2339,"min":2339,"avg":2339,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":2344}
+[debug] [2021-06-13T06:37:10.525Z] [hosting] uploads queued: 3
+[debug] [2021-06-13T06:37:12.709Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/fddaebd84510f4e35353dc37381e9e9a9812f3c2dc4447148fd7c2bdd66fb381 200
+[debug] [2021-06-13T06:37:12.710Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/fddaebd84510f4e35353dc37381e9e9a9812f3c2dc4447148fd7c2bdd66fb381 [stream]
+[debug] [2021-06-13T06:37:12.714Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/4fcab28a152d048791f741d0bed811e23a212940f50d77ccd0264ea183f5bfbd 200
+[debug] [2021-06-13T06:37:12.714Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/4fcab28a152d048791f741d0bed811e23a212940f50d77ccd0264ea183f5bfbd [stream]
+[debug] [2021-06-13T06:37:13.383Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/2a08f423175054a95b75447b364667bb2e21baf114e60dfde7812dbbb8fc85fc 200
+[debug] [2021-06-13T06:37:13.383Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/da-cn-dev/versions/1f5b2b5f12064e2c/files/2a08f423175054a95b75447b364667bb2e21baf114e60dfde7812dbbb8fc85fc [stream]
+[debug] [2021-06-13T06:37:13.383Z] [hosting][upload queue][FINAL] {"max":2865,"min":2193,"avg":2418.3333333333335,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":2866}
+[info] +  hosting[da-cn-dev]: file upload complete 
+[debug] [2021-06-13T06:37:13.385Z] [hosting] deploy completed after 5380ms
+[info] i  database: releasing rules... 
+[debug] [2021-06-13T06:37:13.388Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-06-13T06:37:13.388Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:37:13.797Z] <<< HTTP RESPONSE 200 {"cache-control":"no-cache, no-store, max-age=0, must-revalidate","pragma":"no-cache","expires":"Mon, 01 Jan 1990 00:00:00 GMT","date":"Sun, 13 Jun 2021 06:37:12 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:13.816Z] >>> HTTP REQUEST GET https://firebasedatabase.googleapis.com/v1beta/projects/da-cn-dev/locations/-/instances/da-cn-dev-default-rtdb  
+ 
+[debug] [2021-06-13T06:37:14.411Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:37:13 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:14.415Z] >>> HTTP REQUEST PUT https://da-cn-dev-default-rtdb.firebaseio.com/.settings/rules.json  
+ {
+    "rules": {
+      ".read": true,
+      ".write": true
+    }
+  }
+[debug] [2021-06-13T06:37:15.886Z] <<< HTTP RESPONSE 200 {"server":"nginx","date":"Sun, 13 Jun 2021 06:37:13 GMT","content-type":"application/json; charset=utf-8","content-length":"15","connection":"keep-alive","access-control-allow-origin":"*","cache-control":"no-cache","strict-transport-security":"max-age=31556926; includeSubDomains; preload"}
+[info] +  database: rules for database da-cn-dev-default-rtdb released successfully 
+[debug] [2021-06-13T06:37:15.888Z] [
+  {
+    "config": {
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000 ; includeSubDomains"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "allow"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "Content-Security-Policy",
+              "value": "frame-ancestors https://*.letsdive.io/"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "no-referrer"
+            }
+          ]
+        }
+      ],
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "site": "da-cn-dev"
+    },
+    "site": "da-cn-dev",
+    "version": "sites/da-cn-dev/versions/1f5b2b5f12064e2c"
+  }
+]
+[info] i  hosting[da-cn-dev]: finalizing version... 
+[debug] [2021-06-13T06:37:15.890Z] >>> HTTP REQUEST PATCH https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions/1f5b2b5f12064e2c?updateMask=status  
+ {"status":"FINALIZED"}
+[debug] [2021-06-13T06:37:18.037Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:37:16 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:18.038Z] [hosting] finalized version for da-cn-dev: {"name":"sites/da-cn-dev/versions/1f5b2b5f12064e2c","status":"FINALIZED","config":{"headers":[{"headers":{"X-Content-Type-Options":"nosniff","Content-Security-Policy":"frame-ancestors https://*.letsdive.io/","Referrer-Policy":"no-referrer","Strict-Transport-Security":"max-age=31536000 ; includeSubDomains","X-Frame-Options":"allow"},"glob":"**"}],"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2021-06-13T06:37:06.374771Z","createUser":{"email":"himanshu.yadav@letsdive.io"},"finalizeTime":"2021-06-13T06:37:16.444757Z","finalizeUser":{"email":"himanshu.yadav@letsdive.io"}}
+[info] +  hosting[da-cn-dev]: version finalized 
+[info] i  hosting[da-cn-dev]: releasing new version... 
+[debug] [2021-06-13T06:37:18.040Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/releases?version_name=sites/da-cn-dev/versions/1f5b2b5f12064e2c  
+ {"message":null}
+[debug] [2021-06-13T06:37:39.095Z] Error: connect ETIMEDOUT 172.217.167.10:443
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1129:16)
+[error] 
+[error] Error: Server Error. connect ETIMEDOUT 172.217.167.10:443
+[debug] [2021-06-13T06:37:43.765Z] ----------------------------------------------------------------------
+[debug] [2021-06-13T06:37:43.767Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Dell\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2021-06-13T06:37:43.767Z] CLI Version:   9.11.0
+[debug] [2021-06-13T06:37:43.767Z] Platform:      win32
+[debug] [2021-06-13T06:37:43.767Z] Node Version:  v15.0.1
+[debug] [2021-06-13T06:37:43.768Z] Time:          Sun Jun 13 2021 12:07:43 GMT+0530 (India Standard Time)
+[debug] [2021-06-13T06:37:43.768Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2021-06-13T06:37:43.776Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-06-13T06:37:43.776Z] > authorizing via signed-in user (himanshu.yadav@letsdive.io)
+[debug] [2021-06-13T06:37:43.776Z] [iam] checking project da-cn-dev for permissions ["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]
+[debug] [2021-06-13T06:37:43.778Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/da-cn-dev:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasedatabase.instances.update","firebasehosting.sites.update"]}
+[debug] [2021-06-13T06:37:45.485Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:37:44 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=1319","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:45.489Z] > refreshing access token with scopes: []
+[debug] [2021-06-13T06:37:45.490Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:37:45.847Z] <<< HTTP RESPONSE 200 {"cache-control":"no-cache, no-store, max-age=0, must-revalidate","date":"Sun, 13 Jun 2021 06:37:44 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","pragma":"no-cache","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:45.862Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev [none]
+[debug] [2021-06-13T06:37:46.529Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev 200
+[debug] [2021-06-13T06:37:46.529Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev {"projectId":"da-cn-dev","projectNumber":"50285255069","displayName":"da-cn-dev","name":"projects/da-cn-dev","resources":{"hostingSite":"da-cn-dev","realtimeDatabaseInstance":"da-cn-dev-default-rtdb"},"state":"ACTIVE"}
+[debug] [2021-06-13T06:37:46.529Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev [none]
+[debug] [2021-06-13T06:37:47.057Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev 200
+[debug] [2021-06-13T06:37:47.057Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/da-cn-dev {"projectId":"da-cn-dev","projectNumber":"50285255069","displayName":"da-cn-dev","name":"projects/da-cn-dev","resources":{"hostingSite":"da-cn-dev","realtimeDatabaseInstance":"da-cn-dev-default-rtdb"},"state":"ACTIVE"}
+[info] 
+[info] === Deploying to 'da-cn-dev'...
+[info] 
+[info] i  deploying database, hosting 
+[info] i  database: checking rules syntax... 
+[debug] [2021-06-13T06:37:47.067Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2021-06-13T06:37:47.067Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2021-06-13T06:37:47.456Z] <<< HTTP RESPONSE 200 {"expires":"Mon, 01 Jan 1990 00:00:00 GMT","date":"Sun, 13 Jun 2021 06:37:46 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","pragma":"no-cache","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:47.472Z] >>> HTTP REQUEST GET https://firebasedatabase.googleapis.com/v1beta/projects/da-cn-dev/locations/-/instances/da-cn-dev-default-rtdb  
+ 
+[debug] [2021-06-13T06:37:48.058Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sun, 13 Jun 2021 06:37:46 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-T051=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2021-06-13T06:37:48.062Z] >>> HTTP REQUEST PUT https://da-cn-dev-default-rtdb.firebaseio.com/.settings/rules.json?dryRun=true  
+ {
+    "rules": {
+      ".read": true,
+      ".write": true
+    }
+  }
+[debug] [2021-06-13T06:37:49.128Z] <<< HTTP RESPONSE 200 {"server":"nginx","date":"Sun, 13 Jun 2021 06:37:47 GMT","content-type":"application/json; charset=utf-8","content-length":"15","connection":"keep-alive","access-control-allow-origin":"*","cache-control":"no-cache","strict-transport-security":"max-age=31556926; includeSubDomains; preload"}
+[info] +  database: rules syntax for database da-cn-dev-default-rtdb is valid 
+[debug] [2021-06-13T06:37:49.136Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/da-cn-dev/versions  
+ {"config":{"rewrites":[{"glob":"**","path":"/index.html"}],"headers":[{"glob":"**","headers":{"Strict-Transport-Security":"max-age=31536000 ; includeSubDomains","X-Frame-Options":"allow","X-Content-Type-Options":"nosniff","Content-Security-Policy":"frame-ancestors https://*.letsdive.io/","Referrer-Policy":"no-referrer"}}]},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2021-06-13T06:38:10.188Z] Error: connect ETIMEDOUT 172.217.167.10:443
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1129:16)
+[error] 
+[error] Error: Server Error. connect ETIMEDOUT 172.217.167.10:443

@@ -561,20 +561,22 @@
             {/if}
         {/if}
     </div>
-    <div class = "logsContainer" bind:this = {logsdiv}>
-        {#if logsArray && logsArray.length !== 0}
-            <div class = "logHeading">Logs</div>
-            {#each logsArray as log}
-                <div class="log">
-                    <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
-                        {processName(log.actor)}
+    <div class="logsBox">
+        <div class = "logHeading">Logs</div>
+        <div class = "logsContainer" bind:this = {logsdiv}>
+            {#if logsArray && logsArray.length !== 0}
+                {#each logsArray as log}
+                    <div class="log">
+                        <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
+                            {processName(log.actor)}
+                        </div>
+                        <div class="logsAction">
+                            {log.action}
+                        </div>
                     </div>
-                    <div class="logsAction">
-                        {log.action}
-                    </div>
-                </div>
-            {/each}
-        {/if}
+                {/each}
+            {/if}
+        </div>
     </div>
     <div class="blueTeam_List">
         <div class = "blue_heading">
@@ -992,7 +994,7 @@
         font-size : 18px;
         line-height : 19px;
         text-align : center;
-        margin : 5px auto;
+        margin : 10px auto;
         width : 60%;
     }
     .postWordClickMsgBox {
@@ -1002,7 +1004,7 @@
         font-size : 14px;
         line-height : 19px;
         text-align : center;
-        margin : 5px auto;
+        margin : 10px auto;
         width : 60%;
     }
     .endTurnBtn{
