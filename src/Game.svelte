@@ -1,7 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
-    import { beforeUpdate, afterUpdate } from 'svelte';
+    import { onMount } from 'svelte';
     import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import Tick from "./Tick.svelte";
@@ -32,11 +32,12 @@
     let logsArray = [];
     let allUsersOnlineStatus = {};
     let logsdiv;
-    let autoscroll;
     let clueCount = [1,2,3,4,5,6,7,8,9];
     let blueTeam_has_Spymaster = false;
     let redTeam_has_Spymaster = false;
-    let logsLength;
+    let turnIndicatorBackgroundColor;
+    let view;
+    let leftValue;
     let tableBorderMap = {
         0 : "#4C1A96",
         1 : "#3FAB8B",
@@ -56,6 +57,8 @@
     let userName = getParams('userName');
     let userId = getParams('userId');
     let users;
+    let isSpymaster = false;
+    let textColorOfSpymaster,textColorOfPlayer;
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
     dbUser.on('value',(snap)=>{
@@ -126,7 +129,18 @@
         }
     })
 
+    onMount(()=>{
+        logsdiv.scrollTo(0,logsdiv.scrollHeight);
+    })
 
+    $: {
+        if(turn === "Red") {
+            turnIndicatorBackgroundColor = tableBorderMap[10];
+        }
+        else if(turn === "Blue") {
+            turnIndicatorBackgroundColor = tableBorderMap[9];
+        }
+    }
     $: {
         if(lastWordSelected || turn) {
             showSelectedInfo = true;
@@ -173,6 +187,7 @@
         }
         else if(clue) {
             postWordClickMsg = '';
+            console.log("Am i run");
             if(turn === "Blue") {
                 selectedInfoType = 9;
             }
@@ -190,6 +205,7 @@
             postWordClickMsg = '';
         }
         else {
+            console.log("Hey 0 is called");
             selectedInfoType = 0;
         }
     }
@@ -230,7 +246,24 @@
         }
     } 
 
-    $: isSpymaster = user.spymaster;
+    $:{
+        isSpymaster = user.spymaster;
+        if(isSpymaster) {
+            view = "Spymaster";
+        }
+    }
+    $: {
+        if(view === 'Spymaster') {
+            textColorOfSpymaster = '#fff';
+            textColorOfPlayer = '#000';
+            leftValue = '0%';
+        }
+        else if(view === 'Player') {
+            textColorOfSpymaster = '#000';
+            textColorOfPlayer = '#fff';
+            leftValue = '50%';
+        }
+    } 
     $: team = user.team;
     $: {
         if(team === "Blue") {
@@ -422,7 +455,7 @@
         dbGameSession.update({
             logsArray
         });
-        changeTurn();
+        changeTurn(1);
     }
 
     function processName(user){
@@ -439,6 +472,14 @@
             fname = fname + " (You)";
         }
         return fname;
+    }
+    function changeView() {
+        if(view === 'Spymaster') {
+            view = 'Player';
+        }
+        else if(view === 'Player') {
+            view = 'Spymaster';
+        }
     }
     function handleRestartBtn() {
         dbGameSession.update({
@@ -482,9 +523,27 @@
         </div>
     {/if}
     <div class = "gameHeading">
-        <div class = "spymaster-box">
-            <img class = "spymasterProfilePicture" src = {userProfilePicture} alt = "Your Spymaster" style = "border : 3px solid {profile_picture_border_color}">
-            <div class = "spymaster" style = "color : {profile_picture_border_color}">SPY MASTER</div>
+        <div class = 'playerDetails'>
+            {#if isSpymaster}
+                <div class = "spymasterBox" on:click = {changeView}>
+                    <div class = "spymaster" style = 'color : {textColorOfSpymaster}'>
+                        SPYMASTER
+                    </div>
+                    <div class = "player" style = 'color : {textColorOfPlayer}'>
+                        PLAYER
+                    </div>
+                    <div class = "slider" style = "left : {leftValue}">
+                    </div>
+                </div>
+            {:else}
+                <div class = "player-box">
+                    <img class = "playerProfilePicture" src = {userProfilePicture} alt = "Your Spymaster" style = "border : 3px solid {profile_picture_border_color}">
+                    <div class = "player" style = "color : {profile_picture_border_color}">PLAYER</div>
+                </div>
+            {/if}
+            <div class = "teamIndicator" style = "background-color : {profile_picture_border_color}">
+                {team} Team
+            </div>
         </div>
         <div class = "codename">
             <CodeName/> 
@@ -494,12 +553,19 @@
             <div class="redScore">Red Score - {redScore}</div>
         </div>
     </div>
+
+    <div class="turnIndicatorBox">
+        <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
+            {turn} Team Turn
+        </div>
+    </div>
+        
     <div class = "table">
         <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
             {#each wordList as word}
-                {#if isSpymaster || word.selectedBy}
+                {#if (isSpymaster && view === 'Spymaster') || word.selectedBy}
                     {#if word.color === "Grey"}
-                        <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                    <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
                     {:else if word.color === "Red"}
                         <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
                     {:else if word.color === "Blue"}
@@ -507,7 +573,21 @@
                     {:else if word.color === "Black"}
                         <div class = "word blackTeamWord"> {word.name}</div>
                     {/if}
-                {:else}
+                {:else if (isSpymaster && view === 'Player')}
+                    {#if word.selectedBy}
+                        {#if word.color === "Grey"}
+                            <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                        {:else if word.color === "Red"}
+                            <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                        {:else if word.color === "Blue"}
+                            <div class = "word blueTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                        {:else if word.color === "Black"}
+                            <div class = "word blackTeamWord"> {word.name}</div>
+                        {/if}
+                    {:else}
+                        <div class = "word simpleWord"> {word.name} </div>
+                    {/if}
+                {:else }
                     <div class = "word simpleWord" class:cursorPointer = {is_This_User_Turn} on:click = {checkWord(word)}> {word.name} </div>
                 {/if}
             {/each}
@@ -645,7 +725,9 @@
                     {:else}
                         Your spymaster have sent clue
                     {/if}
-                {:else}
+                {:else if turn === "Red"}
+                    Red Spymaster have sent clue
+                {:else if turn === "Blue"}
                     Blue Spymaster have sent clue
                 {/if}
             {:else}
@@ -770,31 +852,84 @@
         margin : auto;
         top : 1.5%;
     }
-    .spymaster-box{
+    .playerDetails {
+        flex : 1;
+    }
+    .spymasterBox {
+        background-color : #fff;
+        display : flex;
+        justify-content : space-between;
+        align-items : center;
+        position : relative;
+        cursor : pointer;
+        font-family : 'Manrope',sans-serif;
+        font-size : 14px;
+        border-radius : 47px;
+        height : 50%;
+    }
+    .spymaster {
+        width : 50%;
+        text-align : center;
+        transition : 0.25s;
+        padding : 10px;
+        z-index : 1;
+    }
+    .player {
+        width : 50%;
+        text-align : center;
+        transition : .25s;
+        padding : 10px;
+        z-index : 1;
+    }
+    .slider {
+        position : absolute;
+        top : 0px;
+        background-color : #5E96E8;
+        width : 50%;
+        height : 100%;
+        transition : 1s;
+        border-radius : 47px;
+        box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+    }
+    .teamIndicator {
+        color : #fff;
+        padding : 5px;
+        font-family : 'Manrope',sans-serif;
+        font-weight : 700;
+        font-size : 14px;
+        text-align : center;
+        margin-top : 5%;
+        border-radius: 47px;
+    }
+    .player-box{
         background-color: #ffffff;
         border-radius: 46px;
+        flex : 1;
         display : flex;
         align-items : center;
-        justify-content: space-between;
         padding : 0px;
         height : 40px;
     }
-    .spymasterProfilePicture{
+    .playerProfilePicture{
         margin : 0px;
         height : 40px;
         border-radius: 50%;
     }
-    .spymaster{
-        font-size : 16px;
+    .player{
+        font-size : 14px;
         font-family: 'Manrope', sans-serif;
         font-weight : 700;
         line-height: 17px;
         padding : 10px;
+        text-align : center;
     }
     .codename {
         height : 64px;
+        flex : 4;
+        text-align : center;
     }
     .scorecard{
+        flex : 0.5;
         background-color: #F5C13B;
         display : flex;
         flex-direction:  column;
@@ -814,13 +949,25 @@
     .redScore {
         color : #E44C4F;
     }
-    
+    .turnIndicatorBox {
+        text-align: center;
+        margin : 15px 5px;
+    }
+    .turnIndicator {
+        display: inline;
+        color : #fff;
+        padding : 5px 10px;
+        border-radius : 10px;
+        font-family: 'Manrope', sans-serif;
+        font-weight : 700;
+        line-height: 20px;
+        font-size: 14px;
+    }
 
     .table{
         width : 65%;
-        margin : auto;
+        margin : 5px auto 0px;
         position: relative;
-        top : 5%;
     }
     .word-matrix {
         display: grid;
@@ -837,7 +984,7 @@
         padding: 25px 10px;
         font-family : 'Manrope',sans-serif;
         font-weight : 700;
-        font-size : 20px;
+        font-size : 18px;
         line-height : 22px;
         text-align: center;
         letter-spacing: 0.04em;
@@ -944,7 +1091,7 @@
         border-radius : 10px;
         flex : 2;
         cursor : pointer;
-        font-family : 'Pluto';
+        font-family : 'Manrope';
         font-weight : 700;
         font-size : 14px;
         line-height : 13px;
@@ -953,9 +1100,10 @@
     .sendClueMsg,.selectWord {
         color : #fff;
         text-align : center;
-        font-family: 'Manrope',sans-serif;
+        font-family: 'Manrope', sans-serif;
         font-weight : 800;
-        font-size : 16px;
+        line-height: 20px;
+        font-size: 14px;
         line-height: 22px;
         margin-top : 5px;
     }
@@ -963,7 +1111,7 @@
         display : flex;
         justify-content: center;
         align-items : center;
-        padding : 20px 20px 5px;
+        margin-top : 15px;
         color : #fff;
         font-family: 'Manrope',sans-serif;
         font-weight : 700;
@@ -972,27 +1120,26 @@
     }
     .clueMsgTeamIdentifier {
         color : #fff;
-        padding : 10px 30px;
-        border-radius : 40px;
-        font-family : 'Pluto';
-        font-size : 12px;
-        font-weight: 900;
-        line-height : 15px;
-        letter-spacing: 1px;
+        padding : 5px 10px;
+        border-radius : 10px;
+        font-family: 'Manrope', sans-serif;
+        font-weight : 700;
+        line-height: 20px;
+        font-size: 14px;
     }
     .clueMsg{
         color : #fff;
-        padding : 10px 10px;
+        margin-left : 10px;
         font-family : 'Manrope';
         font-weight : 700;
-        font-size : 18px;
+        font-size : 14px;
         line-height : 25px;
     }
     .clueWaiting {
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope';
         font-weight : 800;
-        font-size : 18px;
+        font-size : 14px;
         line-height : 19px;
         text-align : center;
         margin : 10px auto;
@@ -1009,7 +1156,7 @@
         width : 60%;
     }
     .endTurnBtn{
-        margin : 8px auto 0px;
+        margin : 15px auto 0px;
         padding : 1% 2%;
         cursor : pointer;
         display : block;
@@ -1017,15 +1164,15 @@
         color : #fff;
         box-shadow: 2.14663px 3.21994px 3.21994px rgba(29, 13, 54, 0.2), inset 0px 1px 0px #FFFEFE;
         border-radius: 8px;
-        font-family : 'Pluto';
-        font-size : 14px;
-        font-weight : bold;
-        line-height: 13px;
+        font-family: 'Manrope', sans-serif;
+        font-weight : 800;
+        line-height: 20px;
+        font-size: 14px;
     }
     .logsBox {
         position : absolute;
         left : 2%;
-        bottom : 40%;
+        bottom : 45%;
         width : 10%;
         max-height : 150px;
         text-align : center;
@@ -1039,13 +1186,14 @@
         padding : 5px;
     }
     .logsContainer {
-        overflow : auto;
         font-family:  'Manrope',sans-serif;
         font-size : 10px;
         line-height : 19px;
         border : 2px solid #4C1A96;
         border-radius : 8px;
         padding : 5px;
+        overflow : scroll;
+        max-height : 120px;
     }
     .log{
         padding : 5px 0;
@@ -1121,7 +1269,7 @@
     .Word-show{
         display : inline;
         position: absolute;
-        top : 13%;
+        top : 16%;
         left : 50%;
         transform : translateX(-50%);
         padding : 5px;
