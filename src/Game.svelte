@@ -62,6 +62,7 @@
     let users;
     let isSpymaster = false;
     let textColorOfSpymaster,textColorOfPlayer;
+    import Lobby_Screen from './Lobby_Screen.svelte' 
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
     dbUser.on('value',(snap)=>{
@@ -133,7 +134,8 @@
     })
 
     afterUpdate(()=>{
-        logsdiv.scrollTo(0,logsdiv.scrollHeight);
+        if(user.team)
+            logsdiv.scrollTo(0,logsdiv.scrollHeight);
     })
 
     $: {
@@ -217,7 +219,7 @@
 
         selectedInfoTypeTimeout = setTimeout(()=>{
                 showSelectedInfo = false;
-        },5000);
+        },250000);
     }
     $: {
         if(looser === "Red") {
@@ -515,117 +517,109 @@
 
 </script>
 <main>
-    {#if resultDeclared}
-        <div class="fadedBackground"></div>
-        <div class = "result">
-            {#if winner === team}
-                <CorrectAnswerTick/>
-                <div class = "winning-btn">
-                    {#if lastWordSelected?.color === team}
-                        Correct Answer
-                    {:else}
-                        Opponent selects black word
-                    {/if}
-                    <svg class = "tick-cross" width="20" height="15" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
-                    </svg>
-                </div>
-                <div class = "result-text"> <strong> Congaratulations </strong> {team} team has won the game</div>
-                <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
-            {:else}
-                <Cross/>
-                <div class="loosing-btn">
-                    {#if lastWordSelected.color === 'Black'}
-                        Black word selected
-                    {:else}
-                        Opponent has found all their team words
-                    {/if}
-                    <svg class = "tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.56539 9.88682L9.96921 8.48294L6.46021 4.97406L9.87206 1.56233L8.46824 0.158459L5.05634 3.57024L1.48597 0L0.0821475 1.40387L3.65247 4.97406L0.0302734 8.59613L1.4341 10L5.05634 6.37789L8.56539 9.88682Z" fill="#FFEBEE"/>
-                    </svg>
-                        
-                </div>
-                <div class="result-text">Your team has lost the Game</div>
-                <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
-            {/if}
+    {#if !user.team}
+        <Lobby_Screen/>
+    {:else}
+        {#if resultDeclared}
+            <div class="fadedBackground"></div>
+            <div class = "result">
+                {#if winner === team}
+                    <CorrectAnswerTick/>
+                    <div class = "winning-btn">
+                        {#if lastWordSelected?.color === team}
+                            Correct Answer
+                        {:else}
+                            Opponent selects black word
+                        {/if}
+                        <svg class = "tick-cross" width="20" height="15" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class = "result-text"> <strong> Congaratulations </strong> {team} team has won the game</div>
+                    <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
+                {:else}
+                    <Cross/>
+                    <div class="loosing-btn">
+                        {#if lastWordSelected.color === 'Black'}
+                            Black word selected
+                        {:else}
+                            Opponent has found all their team words
+                        {/if}
+                        <svg class = "tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.56539 9.88682L9.96921 8.48294L6.46021 4.97406L9.87206 1.56233L8.46824 0.158459L5.05634 3.57024L1.48597 0L0.0821475 1.40387L3.65247 4.97406L0.0302734 8.59613L1.4341 10L5.05634 6.37789L8.56539 9.88682Z" fill="#FFEBEE"/>
+                        </svg>
+                            
+                    </div>
+                    <div class="result-text">Your team has lost the Game</div>
+                    <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
+                {/if}
 
-        </div>
-    {/if}
-    <div class = "gameHeading">
-        <div class = 'playerDetails'>
-            {#if isSpymaster}
-                <div class = "spymasterBox" on:click = {changeView}>
-                    <div class = "spymaster" style = 'color : {textColorOfSpymaster}'>
-                        SPYMASTER
+            </div>
+        {/if}
+        <div class = "gameHeading">
+            <div class = 'playerDetails'>
+                {#if isSpymaster}
+                    <div class = "spymasterBox" on:click = {changeView}>
+                        <div class = "spymaster" style = 'color : {textColorOfSpymaster}'>
+                            SPYMASTER
+                        </div>
+                        <div class = "player" style = 'color : {textColorOfPlayer}'>
+                            PLAYER
+                        </div>
+                        <div class = "slider" style = "left : {leftValue};background-color : {profile_picture_border_color}">
+                        </div>
                     </div>
-                    <div class = "player" style = 'color : {textColorOfPlayer}'>
-                        PLAYER
+                {:else}
+                    <div class = "player-box">
+                        <img class = "playerProfilePicture" src = {userProfilePicture} alt = "Your Spymaster" style = "border : 3px solid {profile_picture_border_color}">
+                        <div class = "player" style = "color : {profile_picture_border_color}">PLAYER</div>
                     </div>
-                    <div class = "slider" style = "left : {leftValue};background-color : {profile_picture_border_color}">
-                    </div>
+                {/if}
+                <div class = "teamIndicator" style = "background-color : {profile_picture_border_color}">
+                    {team} Team
                 </div>
-            {:else}
-                <div class = "player-box">
-                    <img class = "playerProfilePicture" src = {userProfilePicture} alt = "Your Spymaster" style = "border : 3px solid {profile_picture_border_color}">
-                    <div class = "player" style = "color : {profile_picture_border_color}">PLAYER</div>
-                </div>
-            {/if}
-            <div class = "teamIndicator" style = "background-color : {profile_picture_border_color}">
-                {team} Team
+            </div>
+            <div class = "codename">
+                <CodeName/> 
+            </div>
+            <div class="scorecard">
+                <div class="blueScore">Blue Score - {blueScore}</div>
+                <div class="redScore">Red Score - {redScore}</div>
             </div>
         </div>
-        <div class = "codename">
-            <CodeName/> 
-        </div>
-        <div class="scorecard">
-            <div class="blueScore">Blue Score - {blueScore}</div>
-            <div class="redScore">Red Score - {redScore}</div>
-        </div>
-    </div>
 
-    <div class="turnIndicatorBox">
-        <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
-            {#if !clue}
-                {#if team !== turn}
-                    {turn} Team Spymaster Turn.
-                {:else}
-                    {#if isSpymaster}
-                        Your turn, send clue.
+        <div class="turnIndicatorBox">
+            <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
+                {#if !clue}
+                    {#if team !== turn}
+                        {turn} Team Spymaster Turn.
                     {:else}
-                        Your Spymaster turn, wait for clue.
+                        {#if isSpymaster}
+                            Your turn, send clue.
+                        {:else}
+                            Your Spymaster turn, wait for clue.
+                        {/if}
+                    {/if}
+                {:else}
+                    {#if team !== turn}
+                        {turn} Team Players turn.
+                    {:else}
+                        {#if isSpymaster}
+                            Your Team Players turn.
+                        {:else}
+                            Your turn, guess your words.
+                        {/if}
                     {/if}
                 {/if}
-            {:else}
-                {#if team !== turn}
-                    {turn} Team Players turn.
-                {:else}
-                    {#if isSpymaster}
-                        Your Team Players turn.
-                    {:else}
-                        Your turn, guess your words.
-                    {/if}
-                {/if}
-            {/if}
+            </div>
         </div>
-    </div>
-        
-    <div class = "table">
-        <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
-            {#each wordList as word}
-                {#if (isSpymaster && view === 'Spymaster') || word.selectedBy}
-                    {#if word.color === "Grey"}
-                    <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
-                    {:else if word.color === "Red"}
-                        <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
-                    {:else if word.color === "Blue"}
-                        <div class = "word blueTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
-                    {:else if word.color === "Black"}
-                        <div class = "word blackTeamWord"> {word.name}</div>
-                    {/if}
-                {:else if (isSpymaster && view === 'Player')}
-                    {#if word.selectedBy}
+            
+        <div class = "table">
+            <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
+                {#each wordList as word}
+                    {#if (isSpymaster && view === 'Spymaster') || word.selectedBy}
                         {#if word.color === "Grey"}
-                            <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                        <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
                         {:else if word.color === "Red"}
                             <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
                         {:else if word.color === "Blue"}
@@ -633,120 +627,154 @@
                         {:else if word.color === "Black"}
                             <div class = "word blackTeamWord"> {word.name}</div>
                         {/if}
-                    {:else}
-                        <div class = "word simpleWord"> {word.name} </div>
+                    {:else if (isSpymaster && view === 'Player')}
+                        {#if word.selectedBy}
+                            {#if word.color === "Grey"}
+                                <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                            {:else if word.color === "Red"}
+                                <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                            {:else if word.color === "Blue"}
+                                <div class = "word blueTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                            {:else if word.color === "Black"}
+                                <div class = "word blackTeamWord"> {word.name}</div>
+                            {/if}
+                        {:else}
+                            <div class = "word simpleWord"> {word.name} </div>
+                        {/if}
+                    {:else }
+                        <div class = "word simpleWord" class:cursorPointer = {is_This_User_Turn} on:click = {checkWord(word)}> {word.name} </div>
                     {/if}
-                {:else }
-                    <div class = "word simpleWord" class:cursorPointer = {is_This_User_Turn} on:click = {checkWord(word)}> {word.name} </div>
-                {/if}
-            {/each}
-        </div>
-        {#if isSpymaster && team === turn }
-            {#if (!clue)}
-                <form class = "form-container" on:submit = {giveClue}>
-                    <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "clueInputBox" required>
-                    <div class = "clueCountWordBox">
-                        <div class = "defaultClueCount">
-                            x {clueWord_Count}
-                            <DownSvg/>
+                {/each}
+            </div>
+            {#if isSpymaster && team === turn }
+                {#if (!clue)}
+                    <form class = "form-container" on:submit = {giveClue}>
+                        <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "clueInputBox" required>
+                        <div class = "clueCountWordBox">
+                            <div class = "defaultClueCount">
+                                x {clueWord_Count}
+                                <DownSvg/>
+                            </div>
+                            <div class="clueCountList">
+                                {#each clueCount as count}
+                                    <div class="clueCount" on:click= {()=> clueWord_Count = count}> x {count} </div>
+                                {/each}
+                            </div>
                         </div>
-                        <div class="clueCountList">
-                            {#each clueCount as count}
-                                <div class="clueCount" on:click= {()=> clueWord_Count = count}> x {count} </div>
-                            {/each}
-                        </div>
+                        <button class = "give-clue-btn" type = "submit">
+                            Give Clue
+                        </button>
+                    </form>
+                    <div class = "sendClueMsg">
+                        Send clue to your team
                     </div>
-                    <button class = "give-clue-btn" type = "submit">
-                        Give Clue
-                    </button>
-                </form>
-                <div class = "sendClueMsg">
-                    Send clue to your team
-                </div>
 
-            {/if}
-            {#if clue && clue.clueSenderTeam === turn && team === turn}
-                <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
-            {/if}
+                {/if}
+                {#if clue && clue.clueSenderTeam === turn && team === turn}
+                    <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
+                {/if}
 
-            {#if (team === "Red" && !redTeamPlayersCount) || (team === "Blue" && !blueTeamPlayersCount)}
-                <div class = "noOnlinePlayer">
-                    No online player in your team. To continue the game ask someone to join .
-                </div>
-            {/if}
+                {#if (team === "Red" && !redTeamPlayersCount) || (team === "Blue" && !blueTeamPlayersCount)}
+                    <div class = "noOnlinePlayer">
+                        No online player in your team. To continue the game ask someone to join .
+                    </div>
+                {/if}
 
-            {#if showSelectedInfo}
-                <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
-            {/if}
-        {:else}
-            {#if clue}
-                <div class = "clueMsgBox">
-                    <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
-                    <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
-                </div>
-                {#if turn !== team}
-                    {#if ((turn === "Red" && !redTeamPlayersCount) || (turn === "Blue" && !blueTeamPlayersCount))}
-                        <div class="noOnlinePlayer">
-                            No online player in {turn} team. To continue the game ask someone to join.
-                        </div>
-                    {/if}
+                {#if showSelectedInfo}
+                    <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
                 {/if}
             {:else}
-                {#if !isSpymaster && team === turn}
-                    <div class = "clueWaiting"> Waiting for clue ...</div>
-                    {#if team === "Red" && !redTeam_has_Spymaster}
-                        <div class="redSpymasterDisappear">
-                            Your Spymaster is offline. To continue the game ask him to join.
-                        </div>
-                    {:else if team === "Blue" && !blueTeam_has_Spymaster}
-                        <div class="blueSpymasterDisappear">
-                            Your Spymaster is offline. To continue the game ask him to join.
-                        </div>
+                {#if clue}
+                    <div class = "clueMsgBox">
+                        <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
+                        <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
+                    </div>
+                    {#if turn !== team}
+                        {#if ((turn === "Red" && !redTeamPlayersCount) || (turn === "Blue" && !blueTeamPlayersCount))}
+                            <div class="noOnlinePlayer">
+                                No online player in {turn} team. To continue the game ask someone to join.
+                            </div>
+                        {/if}
                     {/if}
-                {:else if team !== turn}
-                    {#if turn === "Red" && !redTeam_has_Spymaster}
-                        <div class="redSpymasterDisappear">
-                            Red Spymaster is offline. To continue the game ask him to join.
-                        </div>
-                    {:else if turn === "Blue" && !blueTeam_has_Spymaster}
-                        <div class="blueSpymasterDisappear">
-                            Blue Spymaster is offline. To continue the game ask him to join.
-                        </div>
+                {:else}
+                    {#if !isSpymaster && team === turn}
+                        <div class = "clueWaiting"> Waiting for clue ...</div>
+                        {#if team === "Red" && !redTeam_has_Spymaster}
+                            <div class="redSpymasterDisappear">
+                                Your Spymaster is offline. To continue the game ask him to join.
+                            </div>
+                        {:else if team === "Blue" && !blueTeam_has_Spymaster}
+                            <div class="blueSpymasterDisappear">
+                                Your Spymaster is offline. To continue the game ask him to join.
+                            </div>
+                        {/if}
+                    {:else if team !== turn}
+                        {#if turn === "Red" && !redTeam_has_Spymaster}
+                            <div class="redSpymasterDisappear">
+                                Red Spymaster is offline. To continue the game ask him to join.
+                            </div>
+                        {:else if turn === "Blue" && !blueTeam_has_Spymaster}
+                            <div class="blueSpymasterDisappear">
+                                Blue Spymaster is offline. To continue the game ask him to join.
+                            </div>
+                        {/if}
                     {/if}
                 {/if}
-            {/if}
-            {#if showSelectedInfo}
-                <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
-            {/if}
-            {#if is_This_User_Turn}
-                <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
-            {/if}
-        {/if}
-    </div>
-    <div class="logsBox">
-        <div class = "logHeading">Logs</div>
-        <div class = "logsContainer" bind:this = {logsdiv}>
-            {#if logsArray && logsArray.length !== 0}
-                {#each logsArray as log}
-                    <div class="log">
-                        <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
-                            {processName(log.actor)}
-                        </div>
-                        <div class="logsAction">
-                            {log.action}
-                        </div>
-                    </div>
-                {/each}
+                {#if showSelectedInfo}
+                    <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
+                {/if}
+                {#if is_This_User_Turn}
+                    <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
+                {/if}
             {/if}
         </div>
-    </div>
-    <div class="blueTeam_List">
-        <div class = "blue_heading">
-            Blue Team
+        <div class="logsBox">
+            <div class = "logHeading">Logs</div>
+            <div class = "logsContainer" bind:this = {logsdiv}>
+                {#if logsArray && logsArray.length !== 0}
+                    {#each logsArray as log}
+                        <div class="log">
+                            <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
+                                {processName(log.actor)}
+                            </div>
+                            <div class="logsAction">
+                                {log.action}
+                            </div>
+                        </div>
+                    {/each}
+                {/if}
+            </div>
         </div>
-        <div class = "userContainer">
-            <div class = "users">
-                {#each blueTeam as user}
+        <div class="blueTeam_List">
+            <div class = "blue_heading">
+                Blue Team
+            </div>
+            <div class = "userContainer">
+                <div class = "users">
+                    {#each blueTeam as user}
+                        <div class="user">
+                            <div class="userDetails">
+                                <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                                <div class="userName"> { processName(user) }</div>
+                            </div>
+                            <div class="onlineStatus">
+                                {#if allUsersOnlineStatus[user.id] }
+                                    <Tick/>
+                                {:else}
+                                    <LoadingSvg/>
+                                {/if}
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+        </div>
+        <div class="redTeam_List">
+            <div class = "red_heading">
+                Red Team
+            </div>
+            <div class = "userContainer">
+                {#each redTeam as user}
                     <div class="user">
                         <div class="userDetails">
                             <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
@@ -763,83 +791,61 @@
                 {/each}
             </div>
         </div>
-    </div>
-    <div class="redTeam_List">
-        <div class = "red_heading">
-            Red Team
-        </div>
-        <div class = "userContainer">
-            {#each redTeam as user}
-                <div class="user">
-                    <div class="userDetails">
-                        <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
-                        <div class="userName"> { processName(user) }</div>
-                    </div>
-                    <div class="onlineStatus">
-                        {#if allUsersOnlineStatus[user.id] }
-                            <Tick/>
+        {#if showSelectedInfo}
+            <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
+            <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
+
+            <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
+            <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
+
+            <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
+            <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
+
+            <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
+            <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
+
+            <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+                {#if clue}
+                    {#if team === turn}
+                        {#if isSpymaster}
+                            You have sent clue
                         {:else}
-                            <LoadingSvg/>
+                            Your spymaster have sent clue
                         {/if}
-                    </div>
-                </div>
-            {/each}
-        </div>
-    </div>
-    {#if showSelectedInfo}
-        <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
-        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
-
-        <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
-        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
-
-        <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
-        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
-
-        <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
-        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
-
-        <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-            {#if clue}
-                {#if team === turn}
-                    {#if isSpymaster}
-                        You have sent clue
-                    {:else}
-                        Your spymaster have sent clue
-                    {/if}
-                {:else if turn === "Red"}
-                    Red Spymaster have sent clue
-                {:else if turn === "Blue"}
-                    Blue Spymaster have sent clue
-                {/if}
-            {:else}
-                {#if team === turn}
-                    Your Team turn
-                {:else}
-                    Blue Team turn
-                {/if}
-            {/if}
-        </span>
-        <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-            {#if clue}
-                {#if team === turn}
-                    {#if isSpymaster}
-                        You have sent clue
-                    {:else}
-                        Your spymaster have sent clue
+                    {:else if turn === "Red"}
+                        Red Spymaster have sent clue
+                    {:else if turn === "Blue"}
+                        Blue Spymaster have sent clue
                     {/if}
                 {:else}
-                    Red Spymaster have sent clue
+                    {#if team === turn}
+                        Your Team turn
+                    {:else}
+                        Blue Team turn
+                    {/if}
                 {/if}
-            {:else}
-                {#if team === turn}
-                    Your Team turn
+            </span>
+            <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+                {#if clue}
+                    {#if team === turn}
+                        {#if isSpymaster}
+                            You have sent clue
+                        {:else}
+                            Your spymaster have sent clue
+                        {/if}
+                    {:else}
+                        Red Spymaster have sent clue
+                    {/if}
                 {:else}
-                    Red Team turn
+                    {#if team === turn}
+                        Your Team turn
+                    {:else}
+                        Red Team turn
+                    {/if}
                 {/if}
-            {/if}
-        </span>
+            </span>
 
+        {/if}
     {/if}
 </main>
 <style>
