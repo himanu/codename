@@ -305,8 +305,10 @@
                 let currUser = users[id];
                 if(currUser.team === "Red") {
                     redTeam.push(currUser);
-                    if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
-                        redTeam_has_Spymaster  = true;
+                    if(currUser.spymaster) {
+                        if(allUsersOnlineStatus[currUser.id]) {
+                            redTeam_has_Spymaster  = true;
+                        }
                     }
                 }
                 else if(currUser.team === "Blue"){
@@ -315,12 +317,6 @@
                         blueTeam_has_Spymaster = true;
                     }
                 }
-            }
-            if(!blueTeam_has_Spymaster) {
-                console.log("Blue team spymaster has left the game");
-            }
-            if(!redTeam_has_Spymaster) {
-                console.log("Red team spymaster has left the game")
             }
             redTeam = redTeam;
             blueTeam = blueTeam;
@@ -663,8 +659,29 @@
                     <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
                 </div>
                 
-            {:else if !isSpymaster && team === turn}
-                <div class = "clueWaiting"> Waiting for clue ...</div>
+            {:else}
+                {#if !isSpymaster && team === turn}
+                    <div class = "clueWaiting"> Waiting for clue ...</div>
+                    {#if team === "Red" && !redTeam_has_Spymaster}
+                        <div class="redSpymasterDisappear">
+                            Your Spymaster is offline. To continue the game ask him to join.
+                        </div>
+                    {:else if team === "Blue" && !blueTeam_has_Spymaster}
+                        <div class="blueSpymasterDisappear">
+                            Your Spymaster is offline. To continue the game ask him to join.
+                        </div>
+                    {/if}
+                {:else if team !== turn}
+                    {#if turn === "Red" && !redTeam_has_Spymaster}
+                        <div class="redSpymasterDisappear">
+                            Red Spymaster is offline. To continue the game ask him to join.
+                        </div>
+                    {:else if turn === "Blue" && !blueTeam_has_Spymaster}
+                        <div class="blueSpymasterDisappear">
+                            Blue Spymaster is offline. To continue the game ask him to join.
+                        </div>
+                    {/if}
+                {/if}
             {/if}
             {#if showSelectedInfo}
                 <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
@@ -672,16 +689,6 @@
             {#if is_This_User_Turn}
                 <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
             {/if}
-        {/if}
-        {#if !redTeam_has_Spymaster}
-                <div class="redSpymasterDisappear">
-                    Red team Spymaster is offline please ask him to join 
-                </div>
-        {/if}
-        {#if !blueTeam_has_Spymaster}
-            <div class="blueSpymasterDisappear">
-                Blue team Spymaster is offline please ask him to join 
-            </div>
         {/if}
     </div>
     <div class="logsBox">
@@ -1182,6 +1189,16 @@
         line-height : 25px;
     }
     .clueWaiting {
+        color: rgba(255, 255, 255,1);
+        font-family : 'Manrope',sans-serif;
+        font-weight : 800;
+        font-size : 14px;
+        line-height : 19px;
+        text-align : center;
+        margin : 10px auto;
+        width : 60%;
+    }
+    .redSpymasterDisappear,.blueSpymasterDisappear {
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope',sans-serif;
         font-weight : 800;
