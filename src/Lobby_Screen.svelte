@@ -267,7 +267,7 @@
         }
     }
     function handle_Blue_Player_Btn(){
-        if(page) {
+        if(page && page !== 'Lobby Screen') {
             team = "Blue";
             return ;
         }
@@ -278,7 +278,7 @@
     }
 
     function handle_Red_Player_Btn(){
-        if(page) {
+        if(page && page !== 'Lobby Screen') {
             team = "Red";
             return ;
         }
@@ -311,7 +311,7 @@
         }
     }
     function handle_Start_Game_Btn(){
-        if(page) {
+        if(page && page !== 'Lobby Screen') {
             dbUser.update({
                 team ,
                 spymaster : false
@@ -433,7 +433,7 @@
                 </div>
             </div>
         </div>
-        {#if !page}
+        {#if !page || page === 'Lobby Screen'}
             <div class="themeSelectorBox">
                 <div class = "selectATheme">
                     Select a theme
