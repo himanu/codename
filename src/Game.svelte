@@ -1,7 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
-    import { afterUpdate } from 'svelte';
+    import { afterUpdate, beforeUpdate} from 'svelte';
     import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import CorrectAnswerTick from "./CorrectAnswerTick.svelte";
@@ -132,10 +132,14 @@
             logsdiv.scrollTo(0, logsdiv.scrollHeight);
         }
     })
-
+    let autoscroll;
+    beforeUpdate(()=>{
+        autoscroll = logsdiv && (logsdiv.offsetHeight + logsdiv.scrollTop) > (logsdiv.scrollHeight - 20);
+    })
     afterUpdate(()=>{
-        if(user.team)
-            logsdiv.scrollTo(0,logsdiv.scrollHeight);
+        if(autoscroll) {
+            logsdiv.scrollTo(0, logsdiv.scrollHeight);
+        }
     })
 
     $: {
