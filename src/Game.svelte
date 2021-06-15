@@ -1143,7 +1143,7 @@
         line-height : 13px;
         margin-bottom: 0px;;
     }
-    .sendClueMsg,.selectWord {
+    .sendClueMsg {
         color : #fff;
         text-align : center;
         font-family: 'Manrope', sans-serif;
