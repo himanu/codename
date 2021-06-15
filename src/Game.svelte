@@ -219,7 +219,7 @@
 
         selectedInfoTypeTimeout = setTimeout(()=>{
                 showSelectedInfo = false;
-        },250000);
+        },5000);
     }
     $: {
         if(looser === "Red") {
@@ -605,7 +605,7 @@
                         {turn} Team Players turn.
                     {:else}
                         {#if isSpymaster}
-                            Your Team Players turn.
+                            Your Team turn.
                         {:else}
                             Your turn, guess your words.
                         {/if}
@@ -645,6 +645,61 @@
                         <div class = "word simpleWord" class:cursorPointer = {is_This_User_Turn} on:click = {checkWord(word)}> {word.name} </div>
                     {/if}
                 {/each}
+                {#if showSelectedInfo}
+                    <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
+                    <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
+
+                    <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
+                    <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
+
+                    <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
+                    <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
+
+                    <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
+                    <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
+
+                    <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+                        {#if clue}
+                            {#if team === turn}
+                                {#if isSpymaster}
+                                    You have sent clue
+                                {:else}
+                                    Your spymaster have sent clue
+                                {/if}
+                            {:else if turn === "Red"}
+                                Red Spymaster have sent clue
+                            {:else if turn === "Blue"}
+                                Blue Spymaster have sent clue
+                            {/if}
+                        {:else}
+                            {#if team === turn}
+                                Your Team turn
+                            {:else}
+                                Blue Team turn
+                            {/if}
+                        {/if}
+                    </span>
+                    <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+                        {#if clue}
+                            {#if team === turn}
+                                {#if isSpymaster}
+                                    You have sent clue
+                                {:else}
+                                    Your spymaster have sent clue
+                                {/if}
+                            {:else}
+                                Red Spymaster have sent clue
+                            {/if}
+                        {:else}
+                            {#if team === turn}
+                                Your Team turn
+                            {:else}
+                                Red Team turn
+                            {/if}
+                        {/if}
+                    </span>
+
+                {/if}
             </div>
             {#if isSpymaster && team === turn }
                 {#if (!clue)}
@@ -791,61 +846,6 @@
                 {/each}
             </div>
         </div>
-        {#if showSelectedInfo}
-            <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
-            <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
-
-            <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
-            <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
-
-            <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
-            <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
-
-            <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
-            <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
-
-            <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-                {#if clue}
-                    {#if team === turn}
-                        {#if isSpymaster}
-                            You have sent clue
-                        {:else}
-                            Your spymaster have sent clue
-                        {/if}
-                    {:else if turn === "Red"}
-                        Red Spymaster have sent clue
-                    {:else if turn === "Blue"}
-                        Blue Spymaster have sent clue
-                    {/if}
-                {:else}
-                    {#if team === turn}
-                        Your Team turn
-                    {:else}
-                        Blue Team turn
-                    {/if}
-                {/if}
-            </span>
-            <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-                {#if clue}
-                    {#if team === turn}
-                        {#if isSpymaster}
-                            You have sent clue
-                        {:else}
-                            Your spymaster have sent clue
-                        {/if}
-                    {:else}
-                        Red Spymaster have sent clue
-                    {/if}
-                {:else}
-                    {#if team === turn}
-                        Your Team turn
-                    {:else}
-                        Red Team turn
-                    {/if}
-                {/if}
-            </span>
-
-        {/if}
     {/if}
 </main>
 <style>
@@ -1058,6 +1058,7 @@
         position: relative;
     }
     .word-matrix {
+        position : relative;
         display: grid;
         grid-template-rows : repeat(5,1fr);
         grid-template-columns: repeat(5,1fr);
@@ -1192,7 +1193,7 @@
         color : #fff;
         text-align : center;
         font-family: 'Manrope', sans-serif;
-        font-weight : 800;
+        font-weight : 700;
         line-height: 20px;
         font-size: 14px;
         line-height: 22px;
@@ -1229,7 +1230,7 @@
     .clueWaiting {
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope',sans-serif;
-        font-weight : 800;
+        font-weight : 700;
         font-size : 14px;
         line-height : 19px;
         text-align : center;
@@ -1239,7 +1240,7 @@
     .redSpymasterDisappear,.blueSpymasterDisappear {
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope',sans-serif;
-        font-weight : 800;
+        font-weight : 700;
         font-size : 14px;
         line-height : 19px;
         text-align : center;
@@ -1249,7 +1250,7 @@
     .noOnlinePlayer {
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope',sans-serif;
-        font-weight : 800;
+        font-weight : 700;
         font-size : 14px;
         line-height : 19px;
         text-align : center;
@@ -1258,8 +1259,8 @@
     }
     .postWordClickMsgBox {
         color: rgba(255, 255, 255,0.5);
-        font-family : 'Manrope';
-        font-weight : 800;
+        font-family : 'Manrope',sans-serif;
+        font-weight : 700;
         font-size : 14px;
         line-height : 19px;
         text-align : center;
@@ -1382,7 +1383,7 @@
     .Word-show{
         display : inline;
         position: absolute;
-        top : 18%;
+        top : -5%;
         left : 50%;
         transform : translateX(-50%);
         padding : 5px;
@@ -1403,9 +1404,6 @@
             font-size : 18px;
             padding : 10px
         }
-        .Word-show {
-            top : 14%;
-        }
     }
     @media screen and (max-width : 1150px) {
         .word-matrix{
@@ -1416,9 +1414,6 @@
         .word {
             font-size : 16px;
             padding : 10px
-        }
-        .Word-show{
-            top : 15%;
         }
         .sendClueMsg{
             font-size : 14px;
@@ -1440,9 +1435,6 @@
     @media screen and (max-width : 950px) {
         .word {
             font-size : 13px;
-        }
-        .Word-show {
-            top : 16%;
         }
     }
 </style>
