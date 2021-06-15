@@ -131,7 +131,6 @@
     })
 
     afterUpdate(()=>{
-        console.log(logsdiv.scrollHeight);
         logsdiv.scrollTo(0,logsdiv.scrollHeight);
     })
 
@@ -316,6 +315,12 @@
                         blueTeam_has_Spymaster = true;
                     }
                 }
+            }
+            if(!blueTeam_has_Spymaster) {
+                console.log("Blue team spymaster has left the game");
+            }
+            if(!redTeam_has_Spymaster) {
+                console.log("Red team spymaster has left the game")
             }
             redTeam = redTeam;
             blueTeam = blueTeam;
@@ -542,7 +547,7 @@
                     <div class = "player" style = 'color : {textColorOfPlayer}'>
                         PLAYER
                     </div>
-                    <div class = "slider" style = "left : {leftValue}">
+                    <div class = "slider" style = "left : {leftValue};background-color : {profile_picture_border_color}">
                     </div>
                 </div>
             {:else}
@@ -669,6 +674,16 @@
             {#if is_This_User_Turn}
                 <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
             {/if}
+        {/if}
+        {#if !redTeam_has_Spymaster}
+                <div class="redSpymasterDisappear">
+                    Red team Spymaster is offline please ask him to join 
+                </div>
+        {/if}
+        {#if !blueTeam_has_Spymaster}
+            <div class="blueSpymasterDisappear">
+                Blue team Spymaster is offline please ask him to join 
+            </div>
         {/if}
     </div>
     <div class="logsBox">
@@ -914,7 +929,6 @@
     .slider {
         position : absolute;
         top : 0px;
-        background-color : #5E96E8;
         width : 50%;
         height : 100%;
         transition : .25s;
