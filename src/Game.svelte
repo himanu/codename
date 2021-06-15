@@ -457,7 +457,7 @@
         }
         logsArray.push({
             actor : user,
-            action : ` ended ${user.team} Turn button`
+            action : ` clicked End Turn button`
         })
         dbGameSession.update({
             logsArray
@@ -573,22 +573,22 @@
         <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
             {#if !clue}
                 {#if team !== turn}
-                    {turn} Team Spymaster Turn
+                    {turn} Team Spymaster Turn.
                 {:else}
                     {#if isSpymaster}
-                        Your turn
+                        Your turn, send clue.
                     {:else}
-                        Your Spymaster turn
+                        Your Spymaster turn, wait for clue.
                     {/if}
                 {/if}
             {:else}
                 {#if team !== turn}
-                    {turn} Team Players turn
+                    {turn} Team Players turn.
                 {:else}
                     {#if isSpymaster}
-                        Your Team Players turn
+                        Your Team Players turn.
                     {:else}
-                        Your turn
+                        Your turn, guess your words.
                     {/if}
                 {/if}
             {/if}
@@ -658,13 +658,11 @@
             {/if}
         {:else}
             {#if clue}
-                {#if team === turn}
-                    <div class="selectWord"> Select word </div>
-                {/if}
                 <div class = "clueMsgBox">
                     <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
                     <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
                 </div>
+                
             {:else if !isSpymaster && team === turn}
                 <div class = "clueWaiting"> Waiting for clue ...</div>
             {/if}
@@ -1185,7 +1183,7 @@
     }
     .clueWaiting {
         color: rgba(255, 255, 255,1);
-        font-family : 'Manrope';
+        font-family : 'Manrope',sans-serif;
         font-weight : 800;
         font-size : 14px;
         line-height : 19px;
