@@ -39,6 +39,8 @@
     let turnIndicatorBackgroundColor;
     let view;
     let leftValue;
+    let redTeamPlayersCount = 0;
+    let blueTeamPlayersCount = 0;
     let tableBorderMap = {
         0 : "#4C1A96",
         1 : "#3FAB8B",
@@ -300,6 +302,8 @@
             blueTeam = [];
             redTeam_has_Spymaster = false;
             blueTeam_has_Spymaster = false;
+            redTeamPlayersCount = 0;
+            blueTeamPlayersCount = 0;
             for(const id in users)
             {
                 let currUser = users[id];
@@ -310,14 +314,28 @@
                             redTeam_has_Spymaster  = true;
                         }
                     }
+                    else {
+                        if(allUsersOnlineStatus[currUser.id]) {
+                            redTeamPlayersCount += 1;
+                        }
+                    }
                 }
                 else if(currUser.team === "Blue"){
                     blueTeam.push(currUser);
-                    if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
-                        blueTeam_has_Spymaster = true;
+                    if(currUser.spymaster) {
+                        if(allUsersOnlineStatus[currUser.id]) {
+                            blueTeam_has_Spymaster = true;
+                        }
+                    }
+                    else {
+                        if(allUsersOnlineStatus[currUser.id]) {
+                            blueTeamPlayersCount += 1;
+                        }
                     }
                 }
             }
+            redTeamPlayersCount = redTeamPlayersCount;
+            blueTeamPlayersCount = blueTeamPlayersCount;
             redTeam = redTeam;
             blueTeam = blueTeam;
         }
@@ -645,10 +663,18 @@
                 <div class = "sendClueMsg">
                     Send clue to your team
                 </div>
+
             {/if}
             {#if clue && clue.clueSenderTeam === turn && team === turn}
                 <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
             {/if}
+
+            {#if (team === "Red" && !redTeamPlayersCount) || (team === "Blue" && !blueTeamPlayersCount)}
+                <div class = "noOnlinePlayer">
+                    No online player in your team. To continue the game ask someone to join .
+                </div>
+            {/if}
+
             {#if showSelectedInfo}
                 <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
             {/if}
@@ -658,7 +684,13 @@
                     <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
                     <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
                 </div>
-                
+                {#if turn !== team}
+                    {#if ((turn === "Red" && !redTeamPlayersCount) || (turn === "Blue" && !blueTeamPlayersCount))}
+                        <div class="noOnlinePlayer">
+                            No online player in {turn} team. To continue the game ask someone to join.
+                        </div>
+                    {/if}
+                {/if}
             {:else}
                 {#if !isSpymaster && team === turn}
                     <div class = "clueWaiting"> Waiting for clue ...</div>
@@ -1199,6 +1231,16 @@
         width : 60%;
     }
     .redSpymasterDisappear,.blueSpymasterDisappear {
+        color: rgba(255, 255, 255,1);
+        font-family : 'Manrope',sans-serif;
+        font-weight : 800;
+        font-size : 14px;
+        line-height : 19px;
+        text-align : center;
+        margin : 10px auto;
+        width : 60%;
+    }
+    .noOnlinePlayer {
         color: rgba(255, 255, 255,1);
         font-family : 'Manrope',sans-serif;
         font-weight : 800;
