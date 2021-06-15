@@ -1,5 +1,6 @@
 <script>
     import CodeName from "./CodeName.svelte";
+    import Tick from './Tick.svelte';
     import { dbGameSession,dbUser,dbUsers ,dbTime} from "./database";
     let leftTime;
     let time;
@@ -7,11 +8,13 @@
     let redTeam = [];
     let blueTeam = [];
     let users;
+    let userId;
     
     dbUser.on('value',(snap)=>{
         if(!snap.exists)
         return;
         user = snap.val();
+        userId = user.id;
     })
 
     dbGameSession.on('value',(snap)=>{
@@ -55,56 +58,102 @@
     var interval = setInterval(updateTime,1000);
 	function updateTime(){
         leftTime = time - Date.now();
-        if(leftTime === 0) {
+        leftTime = Math.floor( leftTime/1000 );
+        if(leftTime <= 0) {
             clearInterval(interval);
             dbGameSession.update({
                 page : "Game Screen"
             })
         }	
 	}
+    function processName(user) {
+        let name = user.userName;
+        let fname = name.split(" ")[0];
+        if(fname.length > 10)
+        {
+            fname = fname.slice(0,8) + "...";
+        }
+        if(user.spymaster) {
+            fname = fname + " (Spymaster)";
+        }
+        else if(user.id === userId) {
+            fname = fname + " (You)";
+        }
+        return fname;
+    }
 </script>
 <main>
     <div class = "gameHeading">
-        <CodeName/>
+        <CodeName/> 
     </div>
-    <div class = "container">
+    <div class="container">
         <div class = "teams">
             <div class = "blue">
-                <div class = "blueH">Blue Team</div>
-                <div class = "players">
-                    {#each blueTeam as user}
-                        {#if user.profilePicture}
-                            <img class = "player" src = {user.profilePicture} alt = 'player profilePicture'>
-                        {:else}
-                            <span style='font-size:30px;'>&#128515;</span>
+                <div class = "blueH">Blue Team({blueTeam.length})</div>
+                
+                <div class = "user-list">
+                    <div class = "users">
+                        {#if blueTeam.length === 0}
+                            <div class = "emptyTeamMsg">Empty team ...</div>
                         {/if}
-                    {/each}
+                        {#each blueTeam as user}
+                            <div class="user">
+                                <div class = "userDetails">
+                                    <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
+                                    <div class="name"> {processName(user)} </div>
+                                </div>
+                                <Tick/>
+                            </div>
+                        {/each}
+                    </div>
                 </div>
             </div>
+    
+            <div class="vsBox">
+                <div class="vs">VS</div>
+            </div>
+    
             <div class = "red">
-                <div class = "redH">Red Team</div>
-                <div class = "players">
-                    {#each redTeam as user}
-                        {#if user.profilePicture}
-                            <img class = "player" src = {user.profilePicture} alt = 'player profilePicture'>
-                        {:else}
-                            <span style='font-size:30px;'>&#128515;</span>
+                <div class = "redH">Red Team({redTeam.length})</div>
+    
+                <div class = "user-list">
+                    <div class = "users">
+                        {#if redTeam.length === 0}
+                            <div class="emptyTeamMsg">Empty team ...</div>
                         {/if}
-                    {/each}
+                        {#each redTeam as user}
+                            <div class="user">
+                                <div class="userDetails"> 
+                                    <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
+                                    <div class = "name">
+                                        {processName(user)} 
+                                    </div>
+                                </div>
+                                <Tick/>
+                            </div>
+                        {/each}
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="vs">
-            VS
         </div>
         <div class = "text">
-            Game will start in {time} seconds...
+            Game will start in {leftTime} seconds...
         </div>
     </div>
 </main>
 <style>
    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&display=swap');
+   *::-webkit-scrollbar,
+    *::-webkit-scrollbar-thumb {
+        width: 26px;
+        border-radius: 13px;
+        border: 10px solid transparent;
+        color : #2A337E;
+    }
+
+    *::-webkit-scrollbar-thumb {        
+        box-shadow: inset 0 0 0 10px;
+    }
     main{
         background-image : url(/images/background.svg);
         border-radius: 20px;
@@ -112,20 +161,22 @@
         width : 100%;
         height : 100%;
         text-align : center;
-        display : flex;
-        justify-content: center;
-        align-items: center;
     }
     .gameHeading{
-        position : absolute;
-        top : 5%;
+        padding : 3%;
     }
-    .container{
-        display: flex;
-        flex-direction : column;
-        align-items : center;
+    .container {
+        position : absolute;
+        top : 50%;
+        left : 50%;
+        transform: translate(-50%,-50%);
+        width : 60%;
+    }
+    .teams{
+        display : flex;
         justify-content: center;
         width : 100%;
+        margin : auto;
     }
     .text{
         color : #fff;
@@ -135,22 +186,18 @@
         margin-top : 5%;
         font-weight : 700;
     }
-    .teams{
-        display : flex;
-        justify-content: center;
-        width : 100%;
-    }
+    
     .red,.blue{
         display : flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         padding : 15px;
-        width : 362px;
-        height : 135px;
+        width : 50%;
+        height : auto;
         background: #ffffff;
         border-radius : 15px;
-        margin : 0px 30px;
+        margin : 0px;
     }
     .blue{
         box-shadow : -5px -5px #5E96E8;
@@ -159,14 +206,14 @@
         box-shadow: -5px -5px #E96143;
     }
     .blueH,.redH{
-        margin-bottom : 28px;
+        margin : 0px;
     }
     .blueH{
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 24px;
-        line-height: 33px;
+        font-size: 20px;
+        line-height: 28px;
         text-align: center;
         color: #5E96E8;
     }
@@ -174,31 +221,71 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 24px;
-        line-height: 33px;
+        font-size: 20px;
+        line-height: 28px;
         text-align: center;
         color: #E96143;
     }
-    .players{
-        width : 100%;
-        display : flex;
-        justify-content: space-evenly;
-        align-items: center;
+    .user-list{
+        max-height : 100px;
+        width : 85%;
+        margin : 5% 5%;
+        max-height: 50%;
+        background-color: #fff;
+        border-radius: 15px;
+        padding : 10px 5px 10px 10px;
     }
-    .player{
-        box-shadow: 0px 11.3008px 14.126px rgba(0, 0, 0, 0.15);
-        width : 35px;
-        height : 35px;
+    .blue > .user-list{
+        border: 1px solid #5E96E8;
+    }
+    .red > .user-list{
+        border: 1px solid #E96143;
+    }
+    .users{
+        width : 100%;
+        height : 100%;
+        overflow-y: scroll;
+    }
+    .emptyTeamMsg{
+        font-size : 16px;
+        color : grey;
+        font-style: oblique;
+    }
+    .user{
+        display : flex;
+        justify-content: space-between;
+        align-items: center;
+        padding : 5px 10px 5px 5px;
+        width : 100%;
+    }
+    .userDetails {
+        display : flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .profilePicture {
+        width : 20px;
+        height : 20px;
         border-radius : 50%;
+        margin-right : 5px;
+    }
+    .name{
+        font-family: 'Manrope',sans-serif;
+        font-weight : 700;
+        font-size : 14px;
+        color: #0C0030;
+    }
+    .vsBox {
+        display : flex;
+        align-items : center;
+        z-index : 1;
     }
     .vs{
-        position : absolute;
-        bottom : 50%;
         display : flex;
         align-items: center;
         justify-content: center;
-        width : 80px;
-        height : 80px;
+        width : 70px;
+        height : 70px;
         background: linear-gradient(0deg, #FFFFF8, #FFFFF8);
         border: 1px solid #7D51FA;
         border-radius: 13.7723px;
@@ -206,8 +293,34 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 24px;
+        font-size: 22px;
         line-height: 33px;
-        box-shadow: 5px 5px #7D51FA;
+        box-shadow: -5px -5px #7D51FA;
+        z-index : 10;
+    }
+    @media screen and (max-width : 1150px) {
+        .blueH,.redH {
+            font-size : 0.9em;
+        }
+        .vs {
+            width : 60px;
+            height : 60px;
+            font-size : 0.9em;
+        }
+        .emptyTeamMsg{
+            font-size : 14px;
+        }
+    }
+    @media screen and (max-width : 1000px), screen and (max-height : 670px) {
+        .name {
+            font-size : 11.5px;
+        }
+        .vs {
+            font-size : 0.9em;
+            font-size : 0.8em
+        }
+        .emptyTeamMsg {
+            font-size : 12px;
+        }
     }
 </style>

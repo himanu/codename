@@ -40,7 +40,6 @@
             return;
         }
         page = snap.val();
-        console.log(page);
     })
     dbThemeValue.on('value',(snap)=>{
         if(!snap.exists) {
@@ -73,7 +72,6 @@
         if(!snap.exists) {
             return ;
         }
-        console.log("Hey dbUsers get called");
         usersList = snap.val();
     })
 
@@ -81,13 +79,11 @@
         if(!snap.exists) {
             return ;
         }
-        console.log("Hey dbUser get called");
         currUser = snap.val();
         isSpymaster = currUser.spymaster;
     })
     $: {
         if(currUser) {
-            console.log("hey currUser get called");
             team = currUser.team;
             userId = currUser.id;
             isSpymaster = currUser.spymaster;
@@ -95,7 +91,6 @@
     }
     $: {
         if(team) {
-            console.log("Het team get called ",isSpymaster);
             if(isSpymaster) {
                 bluePlayerButtonText = "Choose Blue";
                 redPlayerButtonText = "Choose Red";
@@ -110,7 +105,6 @@
                 }
             }
             else {
-                console.log("Hey i am getting called");
                 redSpymasterButtonText = "Be Spymaster";
                 blueSpymasterButtonText = "Be Spymaster";
                 if(team === "Red") {
@@ -158,7 +152,6 @@
                         user.spymaster = false;
 
                         // make update to the database and make him normal player
-                        console.log(user.userName, " is make as normal player");
                         if(user.id === userId) {
                             isSpymaster = false;
                         }
@@ -405,8 +398,8 @@
                 </div>
             </div>
 
-            <div class  = "vs">
-                VS          
+            <div class  = "vsBox">
+                <div class = "vs"> VS </div>         
             </div>
 
             <div class = "red">
@@ -539,7 +532,7 @@
         height : auto;
         background: #ffffff;
         border-radius : 15px;
-        margin : 0px 30px;
+        margin : 0px;
     }
     .blue{
         box-shadow : -5px -5px #5E96E8;
@@ -568,6 +561,7 @@
     .user-list{
         max-height : 100px;
         width : 85%;
+        max-height : 50%;
         margin : 5% 5%;
         background-color: #fff;
         border-radius: 15px;
@@ -623,9 +617,9 @@
         border-radius: 41px;
         text-align : center;
         min-width : 40%;
-        font-family : 'Manrope';
-        font-size : 16px;
-        font-weight : 900;
+        font-family : 'Manrope', sans-serif;
+        font-size : 14px;
+        font-weight : 800;
         line-height: 24px;
         padding : 5px 10px;
         cursor : pointer;
@@ -653,9 +647,12 @@
         background-color: #ffffff;
         border-color : black;
     }
+    .vsBox {
+        display : flex;
+        align-items : center;
+        z-index : 1;
+    }
     .vs{
-        position : absolute;
-        bottom : 30%;
         display : flex;
         align-items: center;
         justify-content: center;
