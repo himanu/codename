@@ -1,6 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import { dbGameSession,dbUser,dbUsers ,dbTime} from "./database";
+    let leftTime;
     let time;
     let user;
     let redTeam = [];
@@ -14,8 +15,9 @@
     })
 
     dbGameSession.on('value',(snap)=>{
-        if(!snap.exists)
+        if(!snap.exists) {
             return;
+        }
     })
 
     dbTime.on('value',(snap)=>{
@@ -46,23 +48,14 @@
         }
         redTeam = redTeam;
         blueTeam = blueTeam;
-    
      }
     
 
 
     var interval = setInterval(updateTime,1000);
 	function updateTime(){
-		time = time - 1;
-        if(time>=0)
-        {
-            dbGameSession.update({
-                time 
-            })
-        }
-        
-		if(time === 0)
-		{
+        leftTime = time - Date.now();
+        if(leftTime === 0) {
             clearInterval(interval);
             dbGameSession.update({
                 page : "Game Screen"

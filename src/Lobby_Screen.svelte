@@ -73,6 +73,7 @@
         if(!snap.exists) {
             return ;
         }
+        console.log("Hey dbUsers get called");
         usersList = snap.val();
     })
 
@@ -80,10 +81,13 @@
         if(!snap.exists) {
             return ;
         }
+        console.log("Hey dbUser get called");
         currUser = snap.val();
+        isSpymaster = currUser.spymaster;
     })
     $: {
         if(currUser) {
+            console.log("hey currUser get called");
             team = currUser.team;
             userId = currUser.id;
             isSpymaster = currUser.spymaster;
@@ -91,6 +95,7 @@
     }
     $: {
         if(team) {
+            console.log("Het team get called ",isSpymaster);
             if(isSpymaster) {
                 bluePlayerButtonText = "Choose Blue";
                 redPlayerButtonText = "Choose Red";
@@ -105,6 +110,7 @@
                 }
             }
             else {
+                console.log("Hey i am getting called");
                 redSpymasterButtonText = "Be Spymaster";
                 blueSpymasterButtonText = "Be Spymaster";
                 if(team === "Red") {
@@ -130,7 +136,8 @@
         for(const id in usersList)
         {
             user = usersList[id];
-
+            
+            // Code when new user visit game after game has been started.
             if(user.id === userId && !user.team) {
                 if(team === "Blue" && allUserOnlineStatus[userId]) {
                     blueTeam.push(user);
@@ -145,10 +152,19 @@
                     return player.id != user.id;
                 })
                 
-                //make sure that blues team has one spymaster only
+                //make sure that blue team has one spymaster only
                 if(user.spymaster && allUserOnlineStatus[user.id]) {
                     if(blueTeam_has_Spymaster) {
                         user.spymaster = false;
+
+                        // make update to the database and make him normal player
+                        console.log(user.userName, " is make as normal player");
+                        if(user.id === userId) {
+                            isSpymaster = false;
+                        }
+                        dbUsers.child(user.id).update({
+                            spymaster : false
+                        })
                     }
                     else {
                         blueTeam_has_Spymaster = true;
@@ -166,14 +182,23 @@
                 if(user.spymaster === true && allUserOnlineStatus[user.id]) {
                     if(redTeam_has_Spymaster) {
                         user.spymaster = false;
+
+                        if(user.id === userId) {
+                            isSpymaster = false;
+                        }
+                        // make update to the database and make him normal player
+                        dbUsers.child(user.id).update({
+                            spymaster : false
+                        })
                     }
                     else {
                         redTeam_has_Spymaster = true;
                     }
                 }
-
+                
                 redTeam.push(user);
             }
+
         }
         blueTeam = blueTeam;
         redTeam = redTeam;
@@ -307,7 +332,7 @@
         });
         dbGameSession.update({
             page : "Lobby",
-            time : 5,
+            time : Date.now() + 5000,
             shuffledWordList,
             turn : "Red",
             redScore : 9,
