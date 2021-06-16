@@ -8,6 +8,8 @@
     import Tick from './Tick.svelte';
     import { getParams } from './utils';
     import DownSvg from "./DownSvg.svelte";
+    import Lobby_Screen from './Lobby_Screen.svelte' 
+    import DisconnectedSvg from "./DisconnectedSvg.svelte";
 
     let wordList = [];
     let team;
@@ -62,7 +64,6 @@
     let users;
     let isSpymaster = false;
     let textColorOfSpymaster,textColorOfPlayer;
-    import Lobby_Screen from './Lobby_Screen.svelte' 
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
     dbUser.on('value',(snap)=>{
@@ -137,7 +138,7 @@
         autoscroll = logsdiv && (logsdiv.offsetHeight + logsdiv.scrollTop) > (logsdiv.scrollHeight - 20);
     })
     afterUpdate(()=>{
-        if(autoscroll) {
+        if(autoscroll && logsdiv) {
             logsdiv.scrollTo(0, logsdiv.scrollHeight);
         }
     })
@@ -316,12 +317,12 @@
                 if(currUser.team === "Red") {
                     redTeam.push(currUser);
                     if(currUser.spymaster) {
-                        if(allUsersOnlineStatus[currUser.id]) {
+                        if( isThisUserOnline(currUser) ) {
                             redTeam_has_Spymaster  = true;
                         }
                     }
                     else {
-                        if(allUsersOnlineStatus[currUser.id]) {
+                        if( isThisUserOnline(currUser) ) {
                             redTeamPlayersCount += 1;
                         }
                     }
@@ -329,12 +330,12 @@
                 else if(currUser.team === "Blue"){
                     blueTeam.push(currUser);
                     if(currUser.spymaster) {
-                        if(allUsersOnlineStatus[currUser.id]) {
+                        if(isThisUserOnline(currUser)) {
                             blueTeam_has_Spymaster = true;
                         }
                     }
                     else {
-                        if(allUsersOnlineStatus[currUser.id]) {
+                        if(isThisUserOnline(currUser)) {
                             blueTeamPlayersCount += 1;
                         }
                     }
@@ -347,28 +348,33 @@
         }
     }
 
-
-    function keepUpdatingUsersOnlineStatus() {
-        setInterval(updateUsersOnlineStatus, 1000);
+    function isThisUserOnline(currUser) {
+        return ( (currUser.online === true) || (Date.now() - user.online <= 5000) ); 
     }
+    // function keepUpdatingUsersOnlineStatus() {
+    //     setInterval(updateUsersOnlineStatus, 1000);
+    // }
 
-    function updateUsersOnlineStatus() {
+    // function updateUsersOnlineStatus() {
 
-        for(const id in users) {
-            let thisUser = users[id];
-            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 10000) ) {
-                allUsersOnlineStatus[thisUser.id] = true;
-            }
-            else {
-                allUsersOnlineStatus[thisUser.id] = false;
-            }
-        }
-    }
+    //     for(const id in users) {
+    //         let thisUser = users[id];
+    //         if( (thisUser.online === true) || (Date.now() - thisUser.online <= 10000) ) {
+    //             allUsersOnlineStatus[thisUser.id] = true;
+    //         }
+    //         else {
+    //             allUsersOnlineStatus[thisUser.id] = false;
+    //         }
+    //     }
+    // }
 
     function checkWord(word) {
         if(!is_This_User_Turn)
-        return ;
-        
+        {
+            console.log("Not your turn");
+            return ;
+        }
+        console.log("your turn");
         let dbWord = dbWordList.child(word.id);
 
         dbWord.update({
@@ -513,7 +519,8 @@
             page : "Lobby Screen",
             lastWordSelected : null,
             clue : null,
-            logsArray : null
+            logsArray : null,
+            themeValue : 'Default'
         })
     }
 
@@ -544,7 +551,7 @@
                 {:else}
                     <Cross/>
                     <div class="loosing-btn">
-                        {#if lastWordSelected.color === 'Black'}
+                        {#if lastWordSelected?.color === 'Black'}
                             Black word selected
                         {:else}
                             Opponent has found all their team words
@@ -817,8 +824,12 @@
                                 <div class="userName"> { processName(user) }</div>
                             </div>
                             <div class="onlineStatus">
-                                {#if allUsersOnlineStatus[user.id] }
-                                    <Tick/>
+                                {#if isThisUserOnline(user)}
+                                    {#if user.online === true}
+                                        <Tick/>
+                                    {:else}
+                                        <DisconnectedSvg/>
+                                    {/if}
                                 {:else}
                                     <LoadingSvg/>
                                 {/if}
@@ -840,8 +851,12 @@
                             <div class="userName"> { processName(user) }</div>
                         </div>
                         <div class="onlineStatus">
-                            {#if allUsersOnlineStatus[user.id] }
-                                <Tick/>
+                            {#if isThisUserOnline(user)}
+                                {#if user.online === true}
+                                    <Tick/>
+                                {:else}
+                                    <DisconnectedSvg/>
+                                {/if}
                             {:else}
                                 <LoadingSvg/>
                             {/if}
@@ -947,6 +962,19 @@
     .playerDetails {
         flex : 1;
     }
+    @media screen and (max-width : 1100px)  {
+        .playerDetails {
+            flex : 2;
+        }
+        .scorecard {
+            flex : 1;
+            font-size : 12px;
+        }
+        .spymasterBox,.teamIndicator ,.player,.turnIndicator{
+            font-size : 12px;
+        }
+    }
+
     .spymasterBox {
         background-color : #fff;
         display : flex;
@@ -1074,7 +1102,7 @@
     .word {
         box-shadow: 2.87862px 4.31793px 4.31793px #1D0D36, inset 0px 1.00428px 0.719655px #BBBBBB;
         border-radius: 6.43678px;
-        padding: 25px 10px;
+        padding: 20px;
         font-family : 'Manrope',sans-serif;
         font-weight : 700;
         font-size : 18px;
@@ -1409,14 +1437,14 @@
             padding : 10px
         }
     }
-    @media screen and (max-width : 1150px) {
+    @media screen and (max-width : 1150px), screen and (max-height : 720px){
         .word-matrix{
             padding: 8px;
             grid-gap : 8px;
             grid-template-rows : repeat(5,1fr);
         }
         .word {
-            font-size : 16px;
+            font-size : 14px;
             padding : 10px
         }
         .sendClueMsg{

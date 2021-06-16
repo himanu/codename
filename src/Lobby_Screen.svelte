@@ -6,6 +6,7 @@
     import DownSvg from './DownSvg.svelte';
     import DisconnectedSvg from './DisconnectedSvg.svelte';
     import { getParams, shuffleArray, create_NewArray_Of_List } from "./utils";
+import { onMount } from "svelte";
 
     let redTeam = [];
     let blueTeam = [];
@@ -131,13 +132,12 @@
         for(const id in usersList)
         {
             user = usersList[id];
-            
             // Code when new user visit game after game has been started.
             if(user.id === userId && !user.team) {
-                if(team === "Blue" && allUserOnlineStatus[userId]) {
+                if(team === "Blue" && isThisUserActive(user)) {
                     blueTeam.push(user);
                 }
-                else if(team === "Red" && allUserOnlineStatus[userId]) {
+                else if(team === "Red" && isThisUserActive(user)) {
                     redTeam.push(user);
                 }
             }
@@ -148,7 +148,7 @@
                 })
                 
                 //make sure that blue team has one spymaster only
-                if(user.spymaster && allUserOnlineStatus[user.id]) {
+                if(user.spymaster && isThisUserActive(user)) {
                     if(blueTeam_has_Spymaster) {
                         user.spymaster = false;
 
@@ -173,7 +173,7 @@
                     return player.id != user.id;
                 })
 
-                if(user.spymaster === true && allUserOnlineStatus[user.id]) {
+                if(user.spymaster === true && isThisUserActive(user)) {
                     if(redTeam_has_Spymaster) {
                         user.spymaster = false;
 
@@ -214,8 +214,8 @@
         }
     }
     $:{
-        onlineBlueTeam = blueTeam.filter((blueUser)=> allUserOnlineStatus[blueUser.id]);
-        onlineRedTeam = redTeam.filter((redUser)=> allUserOnlineStatus[redUser.id]);
+        onlineBlueTeam = blueTeam.filter((blueUser)=> isThisUserActive(blueUser));
+        onlineRedTeam = redTeam.filter((redUser)=> isThisUserActive(redUser));
     }
     $ : {
         if( onlineBlueTeam.length > 1 && onlineRedTeam.length > 1 && redTeam_has_Spymaster && blueTeam_has_Spymaster && team) {
@@ -240,7 +240,6 @@
         if(!themeValue) {
             themeValue = 'Default';
         }
-
         if(themeValue === "Default") {
             wordList = defaultTheme;
         }
@@ -251,22 +250,26 @@
             wordList = duetTheme;
         }
     }
-    
-    function keepUpdatingUsersOnlineStatus() {
-        setInterval(updateUsersOnlineStatus, 1000);
+    function isThisUserActive(user) {
+        return ( (user.online === true) || (Date.now() - user.online <= 5000));
     }
-    let allUserOnlineStatus = {};
-    function updateUsersOnlineStatus() {
-        for(const id in usersList) {
-            user = usersList[id];
-            if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
-                allUserOnlineStatus[user.id] = true;
-            }
-            else {
-                allUserOnlineStatus[user.id] = false;
-            }
-        }
-    }
+
+    // function keepUpdatingUsersOnlineStatus() {
+    //     setInterval(updateUsersOnlineStatus, 1000);
+    // }
+    // let allUserOnlineStatus = {};
+    // function updateUsersOnlineStatus() {
+    //     for(const id in usersList) {
+    //         user = usersList[id];
+    //         if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
+    //             allUserOnlineStatus[user.id] = true;
+    //         }
+    //         else {
+    //             allUserOnlineStatus[user.id] = false;
+    //         }
+    //     }
+    // }
+
     function handle_Blue_Player_Btn(){
         if(page && page !== 'Lobby Screen') {
             team = "Blue";
@@ -326,7 +329,7 @@
         });
         dbGameSession.update({
             page : "Lobby",
-            time : Date.now() + 5000,
+            time : Date.now() + 6000,
             shuffledWordList,
             turn : "Red",
             redScore : 9,
@@ -358,7 +361,7 @@
     }
 
     // Call keep updating users online status
-    keepUpdatingUsersOnlineStatus();
+    // keepUpdatingUsersOnlineStatus();
 </script>
 <main>
     <div class = "gameHeading">
@@ -383,7 +386,7 @@
                                     <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
                                     <div class="name"> {processName(user)} </div>
                                 </div>
-                                {#if allUserOnlineStatus[user.id] }
+                                {#if isThisUserActive(user) }
                                     {#if user.online === true}
                                         <Tick/>
                                     {:else}
@@ -423,7 +426,7 @@
                                         {processName(user)} 
                                     </div>
                                 </div>
-                                {#if allUserOnlineStatus[user.id] }
+                                {#if isThisUserActive(user) }
                                     {#if user.online === true}
                                         <Tick/>
                                     {:else}
@@ -771,7 +774,7 @@
         visibility : visible;
     }
     
-    @media screen and (max-width : 1150px) {
+    @media screen and (max-width : 1150px),screen and (max-height : 700px) {
         .blueH,.redH {
             font-size : 0.9em;
         }
@@ -793,7 +796,7 @@
             font-size : 16px;
         }
     }
-    @media screen and (max-width : 1000px), screen and (max-height : 670px) {
+    @media screen and (max-width : 1000px), screen and (max-height : 650px) {
         .player,.spymaster {
             font-size : 0.6em;
         }

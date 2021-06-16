@@ -2,7 +2,7 @@
     import CodeName from "./CodeName.svelte";
     import Tick from './Tick.svelte';
     import { dbGameSession,dbUser,dbUsers ,dbTime} from "./database";
-    let leftTime;
+    let leftTime = 5;
     let time;
     let user;
     let redTeam = [];
@@ -56,7 +56,7 @@
 
 
     var interval = setInterval(updateTime,1000);
-	function updateTime(){
+	function updateTime() {
         leftTime = time - Date.now();
         leftTime = Math.floor( leftTime/1000 );
         if(leftTime <= 0) {
@@ -81,6 +81,7 @@
         }
         return fname;
     }
+    updateTime();
 </script>
 <main>
     <div class = "gameHeading">
