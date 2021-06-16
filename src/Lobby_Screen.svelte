@@ -326,7 +326,7 @@
         });
         dbGameSession.update({
             page : "Lobby",
-            time : Date.now() + 250000,
+            time : Date.now() + 5000,
             shuffledWordList,
             turn : "Red",
             redScore : 9,
