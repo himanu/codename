@@ -20,6 +20,7 @@ export const dbDeepUndercover = dbCodenameWords.child('deepUndercover');
 export const dbDefault = dbCodenameWords.child('default');
 export const dbDuet = dbCodenameWords.child('duet');
 export const dbGameSession = dbRoot.child(getGameSessionId());
+//dbGamesessionrounds ,roundValue
 export const dbUsers = dbGameSession.child('users');
 export const dbUser = dbUsers.child(getParams('userId'));
 export const dbWordList = dbGameSession.child('shuffledWordList');
