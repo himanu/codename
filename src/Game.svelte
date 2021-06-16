@@ -317,12 +317,12 @@
                 if(currUser.team === "Red") {
                     redTeam.push(currUser);
                     if(currUser.spymaster) {
-                        if( isThisUserOnline(currUser) ) {
+                        if( allUsersOnlineStatus[currUser.id] ) {
                             redTeam_has_Spymaster  = true;
                         }
                     }
                     else {
-                        if( isThisUserOnline(currUser) ) {
+                        if( allUsersOnlineStatus[currUser.id] ) {
                             redTeamPlayersCount += 1;
                         }
                     }
@@ -330,12 +330,12 @@
                 else if(currUser.team === "Blue"){
                     blueTeam.push(currUser);
                     if(currUser.spymaster) {
-                        if(isThisUserOnline(currUser)) {
+                        if(allUsersOnlineStatus[currUser.id]) {
                             blueTeam_has_Spymaster = true;
                         }
                     }
                     else {
-                        if(isThisUserOnline(currUser)) {
+                        if(allUsersOnlineStatus[currUser.id]) {
                             blueTeamPlayersCount += 1;
                         }
                     }
@@ -348,25 +348,23 @@
         }
     }
 
-    function isThisUserOnline(currUser) {
-        return ( (currUser.online === true) || (Date.now() - user.online <= 5000) ); 
+    
+    function keepUpdatingUsersOnlineStatus() {
+        setInterval(updateUsersOnlineStatus, 1000);
     }
-    // function keepUpdatingUsersOnlineStatus() {
-    //     setInterval(updateUsersOnlineStatus, 1000);
-    // }
 
-    // function updateUsersOnlineStatus() {
+    function updateUsersOnlineStatus() {
 
-    //     for(const id in users) {
-    //         let thisUser = users[id];
-    //         if( (thisUser.online === true) || (Date.now() - thisUser.online <= 10000) ) {
-    //             allUsersOnlineStatus[thisUser.id] = true;
-    //         }
-    //         else {
-    //             allUsersOnlineStatus[thisUser.id] = false;
-    //         }
-    //     }
-    // }
+        for(const id in users) {
+            let thisUser = users[id];
+            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 10000) ) {
+                allUsersOnlineStatus[thisUser.id] = true;
+            }
+            else {
+                allUsersOnlineStatus[thisUser.id] = false;
+            }
+        }
+    }
 
     function checkWord(word) {
         if(!is_This_User_Turn)
@@ -824,8 +822,8 @@
                                 <div class="userName"> { processName(user) }</div>
                             </div>
                             <div class="onlineStatus">
-                                {#if isThisUserOnline(user)}
-                                    {#if user.online === true}
+                                {#if allUsersOnlineStatus[user.id]}
+.id]                                  {#if user.online === true}
                                         <Tick/>
                                     {:else}
                                         <DisconnectedSvg/>
@@ -851,8 +849,8 @@
                             <div class="userName"> { processName(user) }</div>
                         </div>
                         <div class="onlineStatus">
-                            {#if isThisUserOnline(user)}
-                                {#if user.online === true}
+                            {#if allUsersOnlineStatus[user.id]}
+.id]                              {#if user.online === true}
                                     <Tick/>
                                 {:else}
                                     <DisconnectedSvg/>
