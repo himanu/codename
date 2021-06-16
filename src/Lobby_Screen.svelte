@@ -4,6 +4,7 @@
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
     import DownSvg from './DownSvg.svelte';
+    import DisconnectedSvg from './DisconnectedSvg.svelte';
     import { getParams, shuffleArray, create_NewArray_Of_List } from "./utils";
 
     let redTeam = [];
@@ -258,7 +259,7 @@
     function updateUsersOnlineStatus() {
         for(const id in usersList) {
             user = usersList[id];
-            if( (user.online === true) || (Date.now() - user.online <= 10000) ) {
+            if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
                 allUserOnlineStatus[user.id] = true;
             }
             else {
@@ -325,7 +326,7 @@
         });
         dbGameSession.update({
             page : "Lobby",
-            time : Date.now() + 5000,
+            time : Date.now() + 250000,
             shuffledWordList,
             turn : "Red",
             redScore : 9,
@@ -383,9 +384,13 @@
                                     <div class="name"> {processName(user)} </div>
                                 </div>
                                 {#if allUserOnlineStatus[user.id] }
-                                    <Tick/>
+                                    {#if user.online === true}
+                                        <Tick/>
+                                    {:else}
+                                        <LoadingSvg/>
+                                    {/if}
                                 {:else}
-                                    <LoadingSvg/>
+                                    <DisconnectedSvg/>
                                 {/if}
                             </div>
                         {/each}
@@ -419,9 +424,13 @@
                                     </div>
                                 </div>
                                 {#if allUserOnlineStatus[user.id] }
-                                    <Tick class = 'onlineStatus'/>
+                                    {#if user.online === true}
+                                        <Tick/>
+                                    {:else}
+                                        <LoadingSvg/>
+                                    {/if}
                                 {:else}
-                                    <LoadingSvg class = 'onlineStatus'/>
+                                    <DisconnectedSvg />
                                 {/if}
                             </div>
                         {/each}
@@ -787,6 +796,9 @@
     @media screen and (max-width : 1000px), screen and (max-height : 670px) {
         .player,.spymaster {
             font-size : 0.6em;
+        }
+        .red,.blue {
+            width : 30%;
         }
         .name {
             font-size : 11.5px;
