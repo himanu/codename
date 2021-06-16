@@ -1,12 +1,11 @@
 <script>
-    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage} from "./database";
+    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound} from "./database";
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
     import DownSvg from './DownSvg.svelte';
     import DisconnectedSvg from './DisconnectedSvg.svelte';
     import { getParams, shuffleArray, create_NewArray_Of_List } from "./utils";
-import { onMount } from "svelte";
 
     let redTeam = [];
     let blueTeam = [];
@@ -37,48 +36,48 @@ import { onMount } from "svelte";
     let page;
     let alertDivText;
     
-    dbPage.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbPage().on('value',(snap)=>{
+        if(!snap.exists()) {
             return;
         }
         page = snap.val();
     })
-    dbThemeValue.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbThemeValue().on('value',(snap)=>{
+        if(!snap.exists()) {
             return ;
         }
         themeValue = snap.val();
     })
     dbDeepUndercover.on('value',(snap)=>{
-        if(!snap.exists) {
+        if(!snap.exists()) {
             return;
         }
         deepUndercoverTheme = snap.val();
     })
 
     dbDefault.on('value',(snap)=>{
-        if(!snap.exists) {
+        if(!snap.exists()) {
             return;
         }
         defaultTheme = snap.val();
     })
 
     dbDuet.on('value',(snap)=>{
-        if(!snap.exists) {
+        if(!snap.exists()) {
             return;
         }
         duetTheme = snap.val();
     })
     
-    dbUsers.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbUsers().on('value',(snap)=>{
+        if(!snap.exists()) {
             return ;
         }
         usersList = snap.val();
     })
 
-    dbUser.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbUser().on('value',(snap)=>{
+        if(!snap.exists()) {
             return ;
         }
         currUser = snap.val();
@@ -134,10 +133,10 @@ import { onMount } from "svelte";
             user = usersList[id];
             // Code when new user visit game after game has been started.
             if(user.id === userId && !user.team) {
-                if(team === "Blue" && isThisUserActive(user)) {
+                if(team === "Blue" && allUserOnlineStatus[user.id]) {
                     blueTeam.push(user);
                 }
-                else if(team === "Red" && isThisUserActive(user)) {
+                else if(team === "Red" && allUserOnlineStatus[user.id]) {
                     redTeam.push(user);
                 }
             }
@@ -148,7 +147,7 @@ import { onMount } from "svelte";
                 })
                 
                 //make sure that blue team has one spymaster only
-                if(user.spymaster && isThisUserActive(user)) {
+                if(user.spymaster && allUserOnlineStatus[user.id]) {
                     if(blueTeam_has_Spymaster) {
                         user.spymaster = false;
 
@@ -156,7 +155,7 @@ import { onMount } from "svelte";
                         if(user.id === userId) {
                             isSpymaster = false;
                         }
-                        dbUsers.child(user.id).update({
+                        dbUsers().child(user.id).update({
                             spymaster : false
                         })
                     }
@@ -173,7 +172,7 @@ import { onMount } from "svelte";
                     return player.id != user.id;
                 })
 
-                if(user.spymaster === true && isThisUserActive(user)) {
+                if(user.spymaster === true && allUserOnlineStatus[user.id]) {
                     if(redTeam_has_Spymaster) {
                         user.spymaster = false;
 
@@ -181,7 +180,7 @@ import { onMount } from "svelte";
                             isSpymaster = false;
                         }
                         // make update to the database and make him normal player
-                        dbUsers.child(user.id).update({
+                        dbUsers().child(user.id).update({
                             spymaster : false
                         })
                     }
@@ -214,8 +213,8 @@ import { onMount } from "svelte";
         }
     }
     $:{
-        onlineBlueTeam = blueTeam.filter((blueUser)=> isThisUserActive(blueUser));
-        onlineRedTeam = redTeam.filter((redUser)=> isThisUserActive(redUser));
+        onlineBlueTeam = blueTeam.filter((blueUser)=> allUserOnlineStatus[blueUser.id]);
+        onlineRedTeam = redTeam.filter((redUser)=> allUserOnlineStatus[redUser.id]);
     }
     $ : {
         if( onlineBlueTeam.length > 1 && onlineRedTeam.length > 1 && redTeam_has_Spymaster && blueTeam_has_Spymaster && team) {
@@ -250,32 +249,30 @@ import { onMount } from "svelte";
             wordList = duetTheme;
         }
     }
-    function isThisUserActive(user) {
-        return ( (user.online === true) || (Date.now() - user.online <= 5000));
-    }
 
-    // function keepUpdatingUsersOnlineStatus() {
-    //     setInterval(updateUsersOnlineStatus, 1000);
-    // }
-    // let allUserOnlineStatus = {};
-    // function updateUsersOnlineStatus() {
-    //     for(const id in usersList) {
-    //         user = usersList[id];
-    //         if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
-    //             allUserOnlineStatus[user.id] = true;
-    //         }
-    //         else {
-    //             allUserOnlineStatus[user.id] = false;
-    //         }
-    //     }
-    // }
+    function keepUpdatingUsersOnlineStatus() {
+        setInterval(updateUsersOnlineStatus, 1000);
+    }
+    let allUserOnlineStatus = {};
+    function updateUsersOnlineStatus() {
+        for(const id in usersList) {
+            user = usersList[id];
+            if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
+                allUserOnlineStatus[user.id] = true;
+            }
+            else {
+                allUserOnlineStatus[user.id] = false;
+            }
+        }
+    }
+    updateUsersOnlineStatus();
 
     function handle_Blue_Player_Btn(){
         if(page && page !== 'Lobby Screen') {
             team = "Blue";
             return ;
         }
-        dbUser.update({
+        dbUser().update({
             team : "Blue",
             spymaster : false
         })
@@ -286,21 +283,21 @@ import { onMount } from "svelte";
             team = "Red";
             return ;
         }
-        dbUser.update({
+        dbUser().update({
             team : "Red",
             spymaster : false
         })
     }
 
     function handle_Blue_Spymaster_Btn(){
-        dbUser.update({
+        dbUser().update({
             spymaster : true,
             team : "Blue"
         })
     }
 
     function handle_Red_Spymaster_Btn(){
-        dbUser.update({
+        dbUser().update({
             spymaster : true,
             team : "Red"
         })
@@ -316,7 +313,7 @@ import { onMount } from "svelte";
     }
     function handle_Start_Game_Btn(){
         if(page && page !== 'Lobby Screen') {
-            dbUser.update({
+            dbUser().update({
                 team ,
                 spymaster : false
             });
@@ -327,7 +324,7 @@ import { onMount } from "svelte";
             actor : user,
             action : "has started the game"
         });
-        dbGameSession.update({
+        dbGameSessionRound().update({
             page : "Lobby",
             time : Date.now() + 6000,
             shuffledWordList,
@@ -339,7 +336,7 @@ import { onMount } from "svelte";
         })
     }
     function changeThemeValue(newThemeValue) {
-        dbGameSession.update({
+        dbGameSessionRound().update({
             themeValue : newThemeValue
         })
     }
@@ -361,7 +358,7 @@ import { onMount } from "svelte";
     }
 
     // Call keep updating users online status
-    // keepUpdatingUsersOnlineStatus();
+    keepUpdatingUsersOnlineStatus();
 </script>
 <main>
     <div class = "gameHeading">
@@ -386,7 +383,7 @@ import { onMount } from "svelte";
                                     <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
                                     <div class="name"> {processName(user)} </div>
                                 </div>
-                                {#if isThisUserActive(user) }
+                                {#if allUserOnlineStatus[user.id] }
                                     {#if user.online === true}
                                         <Tick/>
                                     {:else}
@@ -426,7 +423,7 @@ import { onMount } from "svelte";
                                         {processName(user)} 
                                     </div>
                                 </div>
-                                {#if isThisUserActive(user) }
+                                {#if allUserOnlineStatus[user.id] }
                                     {#if user.online === true}
                                         <Tick/>
                                     {:else}
@@ -633,6 +630,7 @@ import { onMount } from "svelte";
         font-size : 14px;
         font-weight : 800;
         line-height: 24px;
+        letter-spacing : 0.5px;
         padding : 5px 10px;
         cursor : pointer;
     }

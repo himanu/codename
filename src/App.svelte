@@ -2,7 +2,7 @@
     let page = "Loading";
     let clicked = false;
     import Loading from './Loading.svelte';
-    import {dbGameSession, dbUser} from './database.js';
+    import {dbGameSession, dbUser,dbGameSessionRound} from './database.js';
     import LobbyScreen from './Lobby_Screen.svelte';
     import Game from './Game.svelte';
     import CustomButton from './CustomButton.svelte';
@@ -14,7 +14,7 @@
         }
     }
     
-    dbGameSession.on('value',(snap)=>{
+    dbGameSessionRound().on('value',(snap)=>{
         if(!snap.exists()){
             return;
         }

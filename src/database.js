@@ -14,44 +14,63 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+let roundValue = 1;
+
+function getRoundValue() {
+    return roundValue;
+}
+
 export const dbRoot = firebase.database().ref('codename');
 export const dbCodenameWords = firebase.database().ref('codenameWords');
 export const dbDeepUndercover = dbCodenameWords.child('deepUndercover');
 export const dbDefault = dbCodenameWords.child('default');
 export const dbDuet = dbCodenameWords.child('duet');
 export const dbGameSession = dbRoot.child(getGameSessionId());
-//dbGamesessionrounds ,roundValue
-export const dbUsers = dbGameSession.child('users');
-export const dbUser = dbUsers.child(getParams('userId'));
-export const dbWordList = dbGameSession.child('shuffledWordList');
-export const dbSelectedWordsList = dbGameSession.child('selectedWordsList');
-export const dbPage = dbGameSession.child('page');
-export const dbLastWordSelected = dbGameSession.child('lastWordSelected');
-export const dbRedScore = dbGameSession.child('redScore');
-export const dbBlueScore = dbGameSession.child('blueScore');
-export const dbLogsArray = dbGameSession.child('logsArray');
-//
-export const dbTurn = dbGameSession.child('turn');
-export const dbClue = dbGameSession.child('clue');
-export const dbTime = dbGameSession.child('time');
-export const dbThemeValue = dbGameSession.child('themeValue');
 
+const dbGameSessionRoundValue = dbGameSession.child("roundValue");
+const dbGameSessionRounds = dbGameSession.child("rounds");
+
+export const dbGameSessionRound = () => dbGameSessionRounds.child(getRoundValue());
+
+export const dbUsers = () => dbGameSessionRound().child('users');
+export const dbUser = () => dbUsers().child(getParams('userId'));
+export const dbWordList = () => dbGameSessionRound().child('shuffledWordList');
+export const dbSelectedWordsList = () => dbGameSessionRound().child('selectedWordsList');
+export const dbPage = () => dbGameSessionRound().child('page');
+export const dbLastWordSelected = () => dbGameSessionRound().child('lastWordSelected');
+export const dbRedScore = () => dbGameSessionRound().child('redScore');
+export const dbBlueScore = () => dbGameSessionRound().child('blueScore');
+export const dbLogsArray = () => dbGameSessionRound().child('logsArray');
+//
+export const dbTurn = () => dbGameSessionRound().child('turn');
+export const dbClue = () => dbGameSessionRound().child('clue');
+export const dbTime = () => dbGameSessionRound().child('time');
+export const dbThemeValue = () => dbGameSessionRound().child('themeValue');
+
+dbGameSessionRoundValue.on("value", (snap) => {
+    if(!snap.exists()) {
+        dbGameSessionRoundValue.set(1);
+        roundValue = 1;
+        return ;
+    }
+    roundValue = snap.val();
+})
 
 var connectedRef = firebase.database().ref('.info/connected');
 connectedRef.on('value', (snap) => {
     if (snap.val() === true) {
 
-		dbUser.update({
+		dbUser().update({
             online : true
         });
 
-        dbUser.onDisconnect().update({
+        dbUser().onDisconnect().update({
             online : firebase.database.ServerValue.TIMESTAMP
         });
     }
 });
 
-dbUser.update({
+dbUser().update({
     id: getParams('userId'),
     userName: getParams('userName'),
     profilePicture: getParams('userProfilePicture')

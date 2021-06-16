@@ -1,7 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Tick from './Tick.svelte';
-    import { dbGameSession,dbUser,dbUsers ,dbTime} from "./database";
+    import { dbGameSession,dbUser,dbUsers ,dbTime,dbGameSessionRound} from "./database";
     let leftTime = 5;
     let time;
     let user;
@@ -10,27 +10,22 @@
     let users;
     let userId;
     
-    dbUser.on('value',(snap)=>{
+    dbUser().on('value',(snap)=>{
         if(!snap.exists)
         return;
         user = snap.val();
         userId = user.id;
     })
 
-    dbGameSession.on('value',(snap)=>{
-        if(!snap.exists) {
-            return;
-        }
-    })
 
-    dbTime.on('value',(snap)=>{
+    dbTime().on('value',(snap)=>{
         if(!snap.exists){
             return ;
         }
         time = snap.val();
     })
 
-    dbUsers.on('value',(snap)=>{
+    dbUsers().on('value',(snap)=>{
         if(!snap.exists){
             return ;
         }
@@ -61,7 +56,7 @@
         leftTime = Math.floor( leftTime/1000 );
         if(leftTime <= 0) {
             clearInterval(interval);
-            dbGameSession.update({
+            dbGameSessionRound().update({
                 page : "Game Screen"
             })
         }	

@@ -2,7 +2,7 @@
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
     import { afterUpdate, beforeUpdate} from 'svelte';
-    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore} from "./database";
+    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound } from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import CorrectAnswerTick from "./CorrectAnswerTick.svelte";
     import Tick from './Tick.svelte';
@@ -66,66 +66,69 @@
     let textColorOfSpymaster,textColorOfPlayer;
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
-    dbUser.on('value',(snap)=>{
-        if(!snap.exists)
+    dbUser().on('value',(snap)=>{
+        if(!snap.exists())
         return;
         user = snap.val();
     })
 
     //To fill redTeam and blueTeam
-    dbUsers.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbUsers().on('value',(snap)=>{
+        if(!snap.exists()) {
             return;
         }
-
         users = snap.val();
     })
 
     
-    dbClue.on('value',(snap)=>{
-        if(!snap.exists){
+    dbClue().on('value',(snap)=>{
+        if(!snap.exists()){
+            clue = null;
             return;
         }
         clue = snap.val();
     })
 
-    dbTurn.on('value',(snap)=>{
-        if(!snap.exists){
+    dbTurn().on('value',(snap)=>{
+        if(!snap.exists()){
+            turn = null;
             return;
         }
         turn = snap.val();
     })
 
-    dbWordList.on('value',(snap)=>{
-        if(!snap.exists){
+    dbWordList().on('value',(snap)=>{
+        if(!snap.exists()){
             return;
         }
         wordList = snap.val();
     })
 
     //new code added
-    dbBlueScore.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbBlueScore().on('value',(snap)=>{
+        if(!snap.exists()) {
             return; 
         }
         blueScore = snap.val();
     })
-    dbRedScore.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbRedScore().on('value',(snap)=>{
+        if(!snap.exists()) {
             return;
         }
         redScore = snap.val();
     })
 
-    dbLastWordSelected.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbLastWordSelected().on('value',(snap)=>{
+        if(!snap.exists()) {
+            lastWordSelected = null;
             return;
         }
         lastWordSelected = snap.val();
+        console.log("lastWordSelected is ",lastWordSelected);
     })
 
-    dbLogsArray.on('value',(snap)=>{
-        if(!snap.exists) {
+    dbLogsArray().on('value',(snap)=>{
+        if(!snap.exists()) {
             return;
         }
         logsArray = snap.val();
@@ -152,14 +155,14 @@
         }
     }
     $: {
-        if(lastWordSelected || turn) {
+        if(lastWordSelected || turn || clue) {
             showSelectedInfo = true;
             updateSelectionInfoType();
         }
     }
     $: {
-
         if(lastWordSelected) {
+            console.log("Hey some word get selected");
             if(lastWordSelected.color === lastWordSelected.selectorTeam && team === lastWordSelected.color){
                 selectedInfoType = 1;
                 postWordClickMsg = "";
@@ -196,8 +199,8 @@
             }
         }
         else if(clue) {
+            console.log("Hey clue message should appear");
             postWordClickMsg = '';
-            console.log("Am i run");
             if(turn === "Blue") {
                 selectedInfoType = 9;
             }
@@ -206,6 +209,7 @@
             }
         }
         else if(turn) {
+            console.log("Hey turn message should appear");
             if( turn === "Blue") {
                 selectedInfoType = 9;
             }
@@ -215,7 +219,6 @@
             postWordClickMsg = '';
         }
         else {
-            console.log("Hey 0 is called");
             selectedInfoType = 0;
         }
     }
@@ -357,7 +360,7 @@
 
         for(const id in users) {
             let thisUser = users[id];
-            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 10000) ) {
+            if( (thisUser.online === true) || (Date.now() - thisUser.online <= 5000) ) {
                 allUsersOnlineStatus[thisUser.id] = true;
             }
             else {
@@ -365,15 +368,14 @@
             }
         }
     }
+    updateUsersOnlineStatus()
 
     function checkWord(word) {
         if(!is_This_User_Turn)
         {
-            console.log("Not your turn");
             return ;
         }
-        console.log("your turn");
-        let dbWord = dbWordList.child(word.id);
+        let dbWord = dbWordList().child(word.id);
 
         dbWord.update({
             selectedBy : userId
@@ -391,36 +393,70 @@
         })
 
         if(word.color === "Red") {
-            dbGameSession.update({
-                lastWordSelected : word,
-                redScore : redScore - 1,
-                logsArray
-            }) 
 
-            if(team !== "Red") {
-                changeTurn();
+            if(turn !== "Red") {
+                dbGameSessionRound().update({
+                    lastWordSelected : word,
+                    redScore : redScore - 1,
+                    logsArray,
+                    clue : null,
+                    turn : 'Red'
+                })
             }
+            else {
+                dbGameSessionRound().update({
+                    lastWordSelected : word,
+                    redScore : redScore - 1,
+                    logsArray,
+                    clue,
+                    turn : 'Red'
+                })
+            }
+            
         }
         else if(word.color === "Blue") {
-            dbGameSession.update({
-                lastWordSelected : word,
-                blueScore : blueScore - 1,
-                logsArray
-            })
 
-            if(team != "Blue") {
-                changeTurn();
+            if(turn != "Blue") {
+                dbGameSessionRound().update({
+                    lastWordSelected : word,
+                    blueScore : blueScore - 1,
+                    logsArray,
+                    clue : null,
+                    turn : 'Blue'
+                })
             }
+            else {
+                dbGameSessionRound().update({
+                    lastWordSelected : word,
+                    blueScore : blueScore - 1,
+                    logsArray,
+                    clue,
+                    turn : 'Blue'
+                })
+            }
+            
         }
         else if(word.color === "Grey") {
-            dbGameSession.update({
-                lastWordSelected : word,
-                logsArray
-            })
-            changeTurn();
+            if(turn === 'Red') {
+                dbGameSessionRound().update({
+                    lastWordSelected : word,
+                    logsArray,
+                    clue : null,
+                    turn : 'Blue'
+                })
+            }
+            else if(turn === 'Blue') {
+                dbGameSessionRound().update({
+                    lastWordSelected : word,
+                    logsArray,
+                    clue : null,
+                    turn : 'Red'
+                })
+            }
+            
         }
         else if(word.color === "Black") {
-            dbGameSession.update({
+            dbGameSessionRound().update({
                 lastWordSelected : word,
                 logsArray
             })
@@ -428,7 +464,6 @@
     }
     //to send clues to the other player
     function giveClue(event){
-        showSelectedInfo = 0;
         event.preventDefault();
         if(!logsArray) {
             logsArray = [];
@@ -438,7 +473,7 @@
             actor : user,
             action : actionString
         })
-        dbGameSession.update({
+        dbGameSessionRound().update({
             clue : {
                 clueWord,
                 clueWord_Count,
@@ -451,30 +486,6 @@
         })
     }
 
-    function changeTurn(isEndTurnBtnPressed) {
-        if(isEndTurnBtnPressed) {
-            lastWordSelected = null;
-        }
-        
-        showSelectedInfo = false;
-        if(turn === "Red")
-        {
-            dbGameSession.update({
-                turn : "Blue",
-                lastWordSelected,
-                clue : null
-            })
-        }
-        else if(turn === "Blue")
-        {
-            dbGameSession.update({
-                turn : "Red",
-                lastWordSelected,
-                clue : null
-            })
-        }
-    }
-
     function handleEndTurnBtn() {
         if(!logsArray) {
             logsArray = [];
@@ -483,10 +494,19 @@
             actor : user,
             action : ` clicked End Turn button`
         })
-        dbGameSession.update({
-            logsArray
+        if(turn === 'Red') {
+            turn = 'Blue';
+        }
+        else {
+            turn = 'Red';
+        }
+
+        dbGameSessionRound().update({
+            logsArray,
+            turn,
+            clue : null,
+            lastWordSelected : null
         });
-        changeTurn(1);
     }
 
     function processName(user){
@@ -513,7 +533,7 @@
         }
     }
     function handleRestartBtn() {
-        dbGameSession.update({
+        dbGameSessionRound().update({
             page : "Lobby Screen",
             lastWordSelected : null,
             clue : null,
@@ -599,7 +619,7 @@
 
         <div class="turnIndicatorBox">
             <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
-                {#if !clue}
+                {#if !clue || (clue.clueSenderTeam !== turn)}
                     {#if team !== turn}
                         {turn} Team Spymaster Turn.
                     {:else}
@@ -711,7 +731,7 @@
                 {/if}
             </div>
             {#if isSpymaster && team === turn }
-                {#if (!clue)}
+                {#if (!clue || clue.clueSenderTeam !== turn)}
                     <form class = "form-container" on:submit = {giveClue}>
                         <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "clueInputBox" required>
                         <div class = "clueCountWordBox">
@@ -748,7 +768,7 @@
                     <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
                 {/if}
             {:else}
-                {#if clue}
+                {#if clue && clue.clueSenderTeam === turn}
                     <div class = "clueMsgBox">
                         <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
                         <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
@@ -823,13 +843,13 @@
                             </div>
                             <div class="onlineStatus">
                                 {#if allUsersOnlineStatus[user.id]}
-.id]                                  {#if user.online === true}
+                                    {#if user.online === true}
                                         <Tick/>
                                     {:else}
-                                        <DisconnectedSvg/>
+                                        <LoadingSvg/>
                                     {/if}
                                 {:else}
-                                    <LoadingSvg/>
+                                    <DisconnectedSvg/>
                                 {/if}
                             </div>
                         </div>
@@ -850,13 +870,13 @@
                         </div>
                         <div class="onlineStatus">
                             {#if allUsersOnlineStatus[user.id]}
-.id]                              {#if user.online === true}
+                                {#if user.online === true}
                                     <Tick/>
                                 {:else}
-                                    <DisconnectedSvg/>
+                                    <LoadingSvg/>
                                 {/if}
                             {:else}
-                                <LoadingSvg/>
+                                <DisconnectedSvg/>
                             {/if}
                         </div>
                     </div>
