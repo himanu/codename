@@ -1,7 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Tick from './Tick.svelte';
-    import { dbGameSession,dbUser,dbUsers ,dbTime,dbGameSessionRound} from "./database";
+    import { dbGameSession,dbUser,dbUsers ,dbTime,dbGameSessionRound,listenFirebaseKey} from "./database";
     let leftTime = 5;
     let time;
     let user;
@@ -10,7 +10,7 @@
     let users;
     let userId;
     
-    dbUser().on('value',(snap)=>{
+    dbUser.on('value',(snap)=>{
         if(!snap.exists)
         return;
         user = snap.val();
@@ -18,14 +18,22 @@
     })
 
 
-    dbTime().on('value',(snap)=>{
-        if(!snap.exists){
-            return ;
-        }
-        time = snap.val();
+    listenFirebaseKey(dbTime, (dbTimeRef) => {
+        dbTimeRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return;
+            }
+            time = snap.val();
+        })
     })
-
-    dbUsers().on('value',(snap)=>{
+    // dbTime().on('value',(snap)=>{
+    //     if(!snap.exists){
+    //         return ;
+    //     }
+    //     time = snap.val();
+    // })
+    
+    dbUsers.on('value',(snap)=>{
         if(!snap.exists){
             return ;
         }
@@ -56,9 +64,14 @@
         leftTime = Math.floor( leftTime/1000 );
         if(leftTime <= 0) {
             clearInterval(interval);
-            dbGameSessionRound().update({
-                page : "Game Screen"
+            listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                dbGameSessionRoundRef.update({
+                    page : "Game Screen"
+                })
             })
+            // dbGameSessionRound().update({
+            //     page : "Game Screen"
+            // })
         }	
 	}
     function processName(user) {

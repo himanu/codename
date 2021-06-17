@@ -1,5 +1,5 @@
 <script>
-    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound} from "./database";
+    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound,listenFirebaseKey} from "./database";
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
@@ -36,18 +36,35 @@
     let page;
     let alertDivText;
     
-    dbPage().on('value',(snap)=>{
-        if(!snap.exists()) {
-            return;
-        }
-        page = snap.val();
+    listenFirebaseKey(dbPage, dbPageRef => {
+        dbPageRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return;
+            }
+            page = snap.val();
+        })
     })
-    dbThemeValue().on('value',(snap)=>{
-        if(!snap.exists()) {
-            return ;
-        }
-        themeValue = snap.val();
+    // dbPage().on('value',(snap)=>{
+    //     if(!snap.exists()) {
+    //         return;
+    //     }
+    //     page = snap.val();
+    // })
+    listenFirebaseKey(dbThemeValue, (dbThemeValueRef) => {
+        dbThemeValueRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return 
+            }
+            themeValue = snap.val();
+        })
     })
+    // dbThemeValue().on('value',(snap)=>{
+    //     if(!snap.exists()) {
+    //         return ;
+    //     }
+    //     themeValue = snap.val();
+    // })
+    
     dbDeepUndercover.on('value',(snap)=>{
         if(!snap.exists()) {
             return;
@@ -69,14 +86,24 @@
         duetTheme = snap.val();
     })
     
-    dbUsers().on('value',(snap)=>{
+    
+    dbUsers.on('value',(snap)=>{
         if(!snap.exists()) {
             return ;
         }
         usersList = snap.val();
     })
 
-    dbUser().on('value',(snap)=>{
+    // listenFirebaseKey(dbUser, (dbUser) => {
+    //     dbUser.on('value',(snap)=>{
+    //         if(!snap.exists()) {
+    //             return;
+    //         }
+    //         currUser = snap.val();
+    //         isSpymaster = currUser.spymaster;
+    //     })
+    // })
+    dbUser.on('value',(snap)=>{
         if(!snap.exists()) {
             return ;
         }
@@ -155,7 +182,12 @@
                         if(user.id === userId) {
                             isSpymaster = false;
                         }
-                        dbUsers().child(user.id).update({
+                        // listenFirebaseKey(dbUsers,(dbUsersRef)=>{
+                        //     dbUsersRef.child(user.id).update({
+                        //         spymaster : false
+                        //     })
+                        // })
+                        dbUsers.child(user.id).update({
                             spymaster : false
                         })
                     }
@@ -180,7 +212,12 @@
                             isSpymaster = false;
                         }
                         // make update to the database and make him normal player
-                        dbUsers().child(user.id).update({
+                        // listenFirebaseKey(dbUsers,(dbUsersRef)=>{
+                        //     dbUsersRef.child(user.id).update({
+                        //         spymaster : false
+                        //     })
+                        // })
+                        dbUsers.child(user.id).update({
                             spymaster : false
                         })
                     }
@@ -272,7 +309,7 @@
             team = "Blue";
             return ;
         }
-        dbUser().update({
+        dbUser.update({
             team : "Blue",
             spymaster : false
         })
@@ -283,21 +320,34 @@
             team = "Red";
             return ;
         }
-        dbUser().update({
+        // listenFirebaseKey(dbUser,(dbUserRef)=>{
+        //     dbUserRef.update({
+        //         team : "Red",
+        //         spymaster : false
+        //     })
+        // })
+        dbUser.update({
             team : "Red",
             spymaster : false
         })
     }
 
     function handle_Blue_Spymaster_Btn(){
-        dbUser().update({
+        // listenFirebaseKey(dbUser,(dbUserRef)=>{
+        //     dbUserRef.update({
+        //         team : "Blue",
+        //         spymaster : true
+        //     })
+        // })
+        dbUser.update({
             spymaster : true,
             team : "Blue"
         })
     }
 
     function handle_Red_Spymaster_Btn(){
-        dbUser().update({
+        
+        dbUser.update({
             spymaster : true,
             team : "Red"
         })
@@ -311,9 +361,12 @@
             shuffledWordList[i]["id"] = i;
         }
     }
+    
     function handle_Start_Game_Btn(){
         if(page && page !== 'Lobby Screen') {
-            dbUser().update({
+            
+            console.log("Hey handleStartGameBtn");
+            dbUser.update({
                 team ,
                 spymaster : false
             });
@@ -321,30 +374,47 @@
         }
         setShuffledWordList();
         logsArray.push({
-            actor : user,
+            actor : currUser,
             action : "has started the game"
         });
-        dbGameSessionRound().update({
-            page : "Lobby",
-            time : Date.now() + 6000,
-            shuffledWordList,
-            turn : "Red",
-            redScore : 9,
-            blueScore : 8,
-            gameStarter : currUser.userName,
-            logsArray
+        listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+            dbGameSessionRoundRef.update({
+                page : "Lobby",
+                time : Date.now() + 6000,
+                shuffledWordList,
+                turn : "Red",
+                redScore : 9,
+                blueScore : 8,
+                gameStarter : currUser.userName,
+                logsArray
+            })
         })
+        // dbGameSessionRound().update({
+        //     page : "Lobby",
+        //     time : Date.now() + 6000,
+        //     shuffledWordList,
+        //     turn : "Red",
+        //     redScore : 9,
+        //     blueScore : 8,
+        //     gameStarter : currUser.userName,
+        //     logsArray
+        // })
     }
     function changeThemeValue(newThemeValue) {
-        dbGameSessionRound().update({
-            themeValue : newThemeValue
+        listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+            dbGameSessionRoundRef.update({
+                themeValue : newThemeValue
+            })
         })
+        // dbGameSessionRound().update({
+        //     themeValue : newThemeValue
+        // })
     }
 
     function processName(user){
         let name = user.userName;
-        let fname = name.split(" ")[0];
-        if(fname.length > 10)
+        let fname = name?.split(" ")[0];
+        if(fname?.length > 10)
         {
             fname = fname.slice(0,8) + "...";
         }

@@ -2,7 +2,7 @@
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
     import { afterUpdate, beforeUpdate} from 'svelte';
-    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound } from "./database";
+    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound,dbGameSessionRoundValue, listenFirebaseKey } from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import CorrectAnswerTick from "./CorrectAnswerTick.svelte";
     import Tick from './Tick.svelte';
@@ -66,76 +66,141 @@
     let textColorOfSpymaster,textColorOfPlayer;
 
     //To know whether this player is spymaster or not and to determine the border-color of profile picture
-    dbUser().on('value',(snap)=>{
+    
+    dbUser.on('value',(snap)=>{
         if(!snap.exists())
         return;
         user = snap.val();
     })
 
     //To fill redTeam and blueTeam
-    dbUsers().on('value',(snap)=>{
+    
+    dbUsers.on('value',(snap)=>{
         if(!snap.exists()) {
             return;
         }
         users = snap.val();
     })
 
-    
-    dbClue().on('value',(snap)=>{
-        if(!snap.exists()){
-            clue = null;
-            return;
-        }
-        clue = snap.val();
+    listenFirebaseKey(dbClue, (dbClueRef) => {
+        dbClueRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                clue = null;
+                return;
+            }
+            clue = snap.val();
+        })
     })
 
-    dbTurn().on('value',(snap)=>{
-        if(!snap.exists()){
-            turn = null;
-            return;
-        }
-        turn = snap.val();
+    // dbClue().on('value',(snap)=>{
+    //     if(!snap.exists()){
+    //         clue = null;
+    //         return;
+    //     }
+    //     clue = snap.val();
+    // })
+
+    listenFirebaseKey(dbTurn, (dbTurnRef) => {
+        dbTurnRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                turn = null;
+                return;
+            }
+            turn = snap.val();
+        })
+    })
+    // dbTurn().on('value',(snap)=>{
+    //     if(!snap.exists()){
+    //         turn = null;
+    //         return;
+    //     }
+    //     turn = snap.val();
+    // })
+
+    listenFirebaseKey(dbWordList, (dbWordListRef) => {
+        dbWordListRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return;
+            }
+            wordList = snap.val();
+        })
+        
     })
 
-    dbWordList().on('value',(snap)=>{
-        if(!snap.exists()){
-            return;
-        }
-        wordList = snap.val();
-    })
+    // dbWordList().on('value',(snap)=>{
+    //     if(!snap.exists()){
+    //         return;
+    //     }
+    //     wordList = snap.val();
+    // })
 
     //new code added
-    dbBlueScore().on('value',(snap)=>{
-        if(!snap.exists()) {
-            return; 
-        }
-        blueScore = snap.val();
+    listenFirebaseKey(dbBlueScore, (dbBlueScoreRef) => {
+        dbBlueScoreRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return;
+            }
+            blueScore = snap.val();
+        })
     })
-    dbRedScore().on('value',(snap)=>{
-        if(!snap.exists()) {
-            return;
-        }
-        redScore = snap.val();
+    // dbBlueScore().on('value',(snap)=>{
+    //     if(!snap.exists()) {
+    //         return; 
+    //     }
+    //     blueScore = snap.val();
+    // })
+    listenFirebaseKey(dbRedScore, (dbRedScoreRef) => {
+        dbRedScoreRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return;
+            }
+            redScore = snap.val();
+        })
+        
     })
+    // dbRedScore().on('value',(snap)=>{
+    //     if(!snap.exists()) {
+    //         return;
+    //     }
+    //     redScore = snap.val();
+    // })
 
-    dbLastWordSelected().on('value',(snap)=>{
-        if(!snap.exists()) {
-            lastWordSelected = null;
-            return;
-        }
-        lastWordSelected = snap.val();
-        console.log("lastWordSelected is ",lastWordSelected);
+    listenFirebaseKey(dbLastWordSelected, (dbLastWordSelectedRef) => {
+        dbLastWordSelectedRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                lastWordSelected = null;
+                return;
+            }
+            lastWordSelected = snap.val();
+        })
+        
     })
-
-    dbLogsArray().on('value',(snap)=>{
-        if(!snap.exists()) {
-            return;
-        }
-        logsArray = snap.val();
-        if(logsdiv){
-            logsdiv.scrollTo(0, logsdiv.scrollHeight);
-        }
+    // dbLastWordSelected().on('value',(snap)=>{
+    //     if(!snap.exists()) {
+    //         lastWordSelected = null;
+    //         return;
+    //     }
+    //     lastWordSelected = snap.val();
+    // })
+    
+    listenFirebaseKey(dbLogsArray, (dbLogsArrayRef) => {
+        dbLogsArrayRef.on('value',(snap)=>{
+            if(!snap.exists()) {
+                return;
+            }
+            logsArray = snap.val();
+        })
+        
     })
+    // dbLogsArray().on('value',(snap)=>{
+    //     if(!snap.exists()) {
+    //         return;
+    //     }
+    //     logsArray = snap.val();
+    //     if(logsdiv){
+    //         logsdiv.scrollTo(0, logsdiv.scrollHeight);
+    //     }
+    // })
     let autoscroll;
     beforeUpdate(()=>{
         autoscroll = logsdiv && (logsdiv.offsetHeight + logsdiv.scrollTop) > (logsdiv.scrollHeight - 20);
@@ -260,7 +325,7 @@
     } 
 
     $:{
-        isSpymaster = user.spymaster;
+        isSpymaster = user?.spymaster;
         if(isSpymaster) {
             view = "Spymaster";
         }
@@ -277,7 +342,7 @@
             leftValue = '50%';
         }
     } 
-    $: team = user.team;
+    $: team = user?.team;
     $: {
         if(team === "Blue") {
             profile_picture_border_color = "#5E96E8";
@@ -375,11 +440,16 @@
         {
             return ;
         }
-        let dbWord = dbWordList().child(word.id);
-
-        dbWord.update({
-            selectedBy : userId
+        listenFirebaseKey(dbWordList,(dbWordListRef)=>{
+            dbWordListRef.child(word.id).update({
+                selectedBy : userId
+            });
         })
+        // let dbWord = dbWordList().child(word.id);
+
+        // dbWord.update({
+        //     selectedBy : userId
+        // })
         
         word["selectorName"] = userName;
         word["selectorTeam"] = team;
@@ -395,71 +465,129 @@
         if(word.color === "Red") {
 
             if(turn !== "Red") {
-                dbGameSessionRound().update({
-                    lastWordSelected : word,
-                    redScore : redScore - 1,
-                    logsArray,
-                    clue : null,
-                    turn : 'Red'
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        lastWordSelected : word,
+                        redScore : redScore - 1,
+                        logsArray,
+                        clue : null,
+                        turn : "Red"
+                    })
                 })
+                // dbGameSessionRound().update({
+                //     lastWordSelected : word,
+                //     redScore : redScore - 1,
+                //     logsArray,
+                //     clue : null,
+                //     turn : 'Red'
+                // })
             }
             else {
-                dbGameSessionRound().update({
-                    lastWordSelected : word,
-                    redScore : redScore - 1,
-                    logsArray,
-                    clue,
-                    turn : 'Red'
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        lastWordSelected : word,
+                        redScore : redScore -1,
+                        logsArray,
+                        clue,
+                        turn : 'Red'
+                    })
                 })
+                // dbGameSessionRound().update({
+                //     lastWordSelected : word,
+                //     redScore : redScore - 1,
+                //     logsArray,
+                //     clue,
+                //     turn : 'Red'
+                // })
             }
             
         }
         else if(word.color === "Blue") {
 
             if(turn != "Blue") {
-                dbGameSessionRound().update({
-                    lastWordSelected : word,
-                    blueScore : blueScore - 1,
-                    logsArray,
-                    clue : null,
-                    turn : 'Blue'
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        lastWordSelected : word,
+                        blueScore : blueScore - 1,
+                        logsArray,
+                        clue : null,
+                        turn : 'Blue'
+                    })
                 })
+                // dbGameSessionRound().update({
+                //     lastWordSelected : word,
+                //     blueScore : blueScore - 1,
+                //     logsArray,
+                //     clue : null,
+                //     turn : 'Blue'
+                // })
             }
             else {
-                dbGameSessionRound().update({
-                    lastWordSelected : word,
-                    blueScore : blueScore - 1,
-                    logsArray,
-                    clue,
-                    turn : 'Blue'
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        lastWordSelected : word,
+                        blueScore : blueScore - 1,
+                        logsArray,
+                        clue,
+                        turn : 'Blue'
+                    })
                 })
+                // dbGameSessionRound().update({
+                //     lastWordSelected : word,
+                //     blueScore : blueScore - 1,
+                //     logsArray,
+                //     clue,
+                //     turn : 'Blue'
+                // })
             }
             
         }
         else if(word.color === "Grey") {
             if(turn === 'Red') {
-                dbGameSessionRound().update({
-                    lastWordSelected : word,
-                    logsArray,
-                    clue : null,
-                    turn : 'Blue'
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        lastWordSelected : word,
+                        logsArray,
+                        clue : null,
+                        turn : 'Blue'
+                    })
                 })
+                // dbGameSessionRound().update({
+                //     lastWordSelected : word,
+                //     logsArray,
+                //     clue : null,
+                //     turn : 'Blue'
+                // })
             }
             else if(turn === 'Blue') {
-                dbGameSessionRound().update({
-                    lastWordSelected : word,
-                    logsArray,
-                    clue : null,
-                    turn : 'Red'
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        lastWordSelected : word,
+                        logsArray,
+                        clue : null,
+                        turn : 'Blue'
+                    })
                 })
+                // dbGameSessionRound().update({
+                //     lastWordSelected : word,
+                //     logsArray,
+                //     clue : null,
+                //     turn : 'Red'
+                // })
             }
             
         }
         else if(word.color === "Black") {
-            dbGameSessionRound().update({
-                lastWordSelected : word,
-                logsArray
+            listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                dbGameSessionRoundRef.update({
+                    lastWordSelected : word,
+                    logsArray
+                })
             })
+            // dbGameSessionRound().update({
+            //     lastWordSelected : word,
+            //     logsArray
+            // })
         }
     }
     //to send clues to the other player
@@ -473,17 +601,30 @@
             actor : user,
             action : actionString
         })
-        dbGameSessionRound().update({
-            clue : {
-                clueWord,
-                clueWord_Count,
-                senderName : userName,
-                senderId : userId,
-                clueSenderTeam : turn
-            },
-            lastWordSelected : null,
-            logsArray
+        listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+            dbGameSessionRoundRef.update({
+                clue : {
+                    clueWord,
+                    clueWord_Count,
+                    senderName : userName,
+                    senderId : userId,
+                    clueSenderTeam : turn
+                },
+                lastWordSelected : null,
+                logsArray
+            })
         })
+        // dbGameSessionRound().update({
+        //     clue : {
+        //         clueWord,
+        //         clueWord_Count,
+        //         senderName : userName,
+        //         senderId : userId,
+        //         clueSenderTeam : turn
+        //     },
+        //     lastWordSelected : null,
+        //     logsArray
+        // })
     }
 
     function handleEndTurnBtn() {
@@ -500,19 +641,27 @@
         else {
             turn = 'Red';
         }
-
-        dbGameSessionRound().update({
-            logsArray,
-            turn,
-            clue : null,
-            lastWordSelected : null
-        });
+        
+        listenFirebaseKey(dbGameSessionRound, (dbGameSessionRoundRef)=>{
+            dbGameSessionRoundRef.update({
+                logsArray,
+                turn,
+                clue : null,
+                lastWordSelected : null
+            })
+        })
+        // dbGameSessionRound().update({
+        //     logsArray,
+        //     turn,
+        //     clue : null,
+        //     lastWordSelected : null
+        // });
     }
 
     function processName(user){
         let name = user.userName;
-        let fname = name.split(" ")[0];
-        if(fname.length > 10)
+        let fname = name?.split(" ")[0];
+        if(fname?.length > 10)
         {
             fname = fname.slice(0,8) + "...";
         }
@@ -532,13 +681,18 @@
             view = 'Spymaster';
         }
     }
+    let roundValue;
+    dbGameSessionRoundValue.on("value", (snap) => {
+        if(!snap.exists()) {
+            dbGameSessionRoundValue.set(1);
+            roundValue = 1;
+            return ;
+        }
+        roundValue = snap.val();
+    })
     function handleRestartBtn() {
-        dbGameSessionRound().update({
-            page : "Lobby Screen",
-            lastWordSelected : null,
-            clue : null,
-            logsArray : null,
-            themeValue : 'Default'
+        dbGameSession.update({
+            roundValue : roundValue + 1,
         })
     }
 
@@ -546,7 +700,7 @@
 
 </script>
 <main>
-    {#if !user.team}
+    {#if !user?.team}
         <Lobby_Screen/>
     {:else}
         {#if resultDeclared}
