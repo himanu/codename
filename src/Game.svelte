@@ -92,13 +92,7 @@
         })
     })
 
-    // dbClue().on('value',(snap)=>{
-    //     if(!snap.exists()){
-    //         clue = null;
-    //         return;
-    //     }
-    //     clue = snap.val();
-    // })
+    
 
     listenFirebaseKey(dbTurn, (dbTurnRef) => {
         dbTurnRef.on('value',(snap)=>{
@@ -109,13 +103,7 @@
             turn = snap.val();
         })
     })
-    // dbTurn().on('value',(snap)=>{
-    //     if(!snap.exists()){
-    //         turn = null;
-    //         return;
-    //     }
-    //     turn = snap.val();
-    // })
+    
 
     listenFirebaseKey(dbWordList, (dbWordListRef) => {
         dbWordListRef.on('value',(snap)=>{
@@ -127,12 +115,6 @@
         
     })
 
-    // dbWordList().on('value',(snap)=>{
-    //     if(!snap.exists()){
-    //         return;
-    //     }
-    //     wordList = snap.val();
-    // })
 
     //new code added
     listenFirebaseKey(dbBlueScore, (dbBlueScoreRef) => {
@@ -143,12 +125,7 @@
             blueScore = snap.val();
         })
     })
-    // dbBlueScore().on('value',(snap)=>{
-    //     if(!snap.exists()) {
-    //         return; 
-    //     }
-    //     blueScore = snap.val();
-    // })
+    
     listenFirebaseKey(dbRedScore, (dbRedScoreRef) => {
         dbRedScoreRef.on('value',(snap)=>{
             if(!snap.exists()) {
@@ -158,12 +135,7 @@
         })
         
     })
-    // dbRedScore().on('value',(snap)=>{
-    //     if(!snap.exists()) {
-    //         return;
-    //     }
-    //     redScore = snap.val();
-    // })
+    
 
     listenFirebaseKey(dbLastWordSelected, (dbLastWordSelectedRef) => {
         dbLastWordSelectedRef.on('value',(snap)=>{
@@ -175,13 +147,7 @@
         })
         
     })
-    // dbLastWordSelected().on('value',(snap)=>{
-    //     if(!snap.exists()) {
-    //         lastWordSelected = null;
-    //         return;
-    //     }
-    //     lastWordSelected = snap.val();
-    // })
+    
     
     listenFirebaseKey(dbLogsArray, (dbLogsArrayRef) => {
         dbLogsArrayRef.on('value',(snap)=>{
@@ -189,18 +155,11 @@
                 return;
             }
             logsArray = snap.val();
+            logsdiv.scrollTo(0,logsdiv.scrollHeight);
         })
         
     })
-    // dbLogsArray().on('value',(snap)=>{
-    //     if(!snap.exists()) {
-    //         return;
-    //     }
-    //     logsArray = snap.val();
-    //     if(logsdiv){
-    //         logsdiv.scrollTo(0, logsdiv.scrollHeight);
-    //     }
-    // })
+    
     let autoscroll;
     beforeUpdate(()=>{
         autoscroll = logsdiv && (logsdiv.offsetHeight + logsdiv.scrollTop) > (logsdiv.scrollHeight - 20);
@@ -384,9 +343,23 @@
                 let currUser = users[id];
                 if(currUser.team === "Red") {
                     redTeam.push(currUser);
-                    if(currUser.spymaster) {
-                        if( allUsersOnlineStatus[currUser.id] ) {
-                            redTeam_has_Spymaster  = true;
+                    if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
+                        // if( allUsersOnlineStatus[currUser.id] ) {
+                        //     redTeam_has_Spymaster  = true;
+                        // }
+                        if(redTeam_has_Spymaster) {
+                            currUser.spymaster = false;
+
+                            if(currUser.id === userId) {
+                                isSpymaster = false;
+                            }
+
+                            dbUsers.child(currUser.id).update({
+                                spymaster : false
+                            })
+                        }
+                        else {
+                            redTeam_has_Spymaster = true;
                         }
                     }
                     else {
@@ -397,8 +370,17 @@
                 }
                 else if(currUser.team === "Blue"){
                     blueTeam.push(currUser);
-                    if(currUser.spymaster) {
-                        if(allUsersOnlineStatus[currUser.id]) {
+                    if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
+                        if(blueTeam_has_Spymaster) {
+                            currUser.spymaster = false;
+                            if(currUser.id === userId) {
+                                isSpymaster = false;
+                            }
+                            dbUsers.child(currUser.id).update({
+                                spymaster : false
+                            })
+                        }
+                        else {
                             blueTeam_has_Spymaster = true;
                         }
                     }
@@ -1524,13 +1506,13 @@
         position : absolute;
         bottom : 3%;
         right : 2%;
-        width : 11%;
+        width : 12%;
     }
     .blueTeam_List{
         position : absolute;
         bottom : 3%;
         left : 2%;
-        width : 11%;
+        width : 12%;
     }
     .blue_heading{
         font-family: 'Manrope', sans-serif;

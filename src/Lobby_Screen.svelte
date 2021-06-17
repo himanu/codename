@@ -182,11 +182,6 @@
                         if(user.id === userId) {
                             isSpymaster = false;
                         }
-                        // listenFirebaseKey(dbUsers,(dbUsersRef)=>{
-                        //     dbUsersRef.child(user.id).update({
-                        //         spymaster : false
-                        //     })
-                        // })
                         dbUsers.child(user.id).update({
                             spymaster : false
                         })
@@ -212,11 +207,7 @@
                             isSpymaster = false;
                         }
                         // make update to the database and make him normal player
-                        // listenFirebaseKey(dbUsers,(dbUsersRef)=>{
-                        //     dbUsersRef.child(user.id).update({
-                        //         spymaster : false
-                        //     })
-                        // })
+                        
                         dbUsers.child(user.id).update({
                             spymaster : false
                         })
@@ -333,12 +324,7 @@
     }
 
     function handle_Blue_Spymaster_Btn(){
-        // listenFirebaseKey(dbUser,(dbUserRef)=>{
-        //     dbUserRef.update({
-        //         team : "Blue",
-        //         spymaster : true
-        //     })
-        // })
+        
         dbUser.update({
             spymaster : true,
             team : "Blue"
@@ -361,17 +347,48 @@
             shuffledWordList[i]["id"] = i;
         }
     }
-    
+    function makeSureEachTeamHaveOneSpymaster() {
+        let redHasSpymaster = false;
+        let blueHasSpymaster = false;
+        for(const id in usersList) {
+            let thisUser = usersList[id];
+            if(thisUser.team === 'Blue') {
+                if(thisUser.spymaster) {
+                    if(blueHasSpymaster) {
+                        thisUser.spymaster = false;
+                        dbUsers.child(thisUser.id).update({
+                            spymaster : false
+                        })
+                    }
+                    else {
+                        blueHasSpymaster = true;
+                    }
+                }
+            }
+            else if(thisUser.team === 'Red') {
+                if(thisUser.spymaster) {
+                    if(redHasSpymaster) {
+                        thisUser.spymaster = false;
+                        dbUsers.child(thisUser.id).update({
+                            spymaster : false
+                        })
+                    }
+                    else {
+                        redHasSpymaster = true;
+                    }
+                }
+            } 
+        }
+    }
     function handle_Start_Game_Btn(){
         if(page && page !== 'Lobby Screen') {
-            
-            console.log("Hey handleStartGameBtn");
             dbUser.update({
                 team ,
                 spymaster : false
             });
             return ;
         }
+        makeSureEachTeamHaveOneSpymaster();
         setShuffledWordList();
         logsArray.push({
             actor : currUser,

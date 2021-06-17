@@ -44,41 +44,10 @@
     })
     
     
-    
-    // listenFirebaseKey(dbPage,(dbPageRef)=>{
-    //     dbPageRef.on('value',(snap)=>{
-    //         console.log("page value is changed in app.svelte")
-    //         if(!snap.exists()) {
-    //             return;
-    //         }
-    //         if(snap.val().page === undefined) {
-    //             page = 'Lobby Screen';
-    //         }
-    //         else {
-    //             clicked = true;
-    //             page = snap.val();
-    //         }
-    //     })
-    // })
-    // dbGameSessionRound().on('value',(snap)=>{
-    //     if(!snap.exists()){
-    //         return;
-    //     }
-        
-    //     if(snap.val().page === undefined)
-    //         page = "Lobby Screen";
-    //     else
-    //     {
-    //         clicked = true;
-    //         page = snap.val().page;
-    //     }
-    // })
-    
-    let connectedRef;
-    
     $ : {
         if(roundValue) {
             page = 'Lobby Screen';
+            clicked = true;
         }
     }
 </script>
