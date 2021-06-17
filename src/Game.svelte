@@ -565,7 +565,7 @@
                         lastWordSelected : word,
                         logsArray,
                         clue : null,
-                        turn : 'Blue'
+                        turn : 'Red'
                     })
                 })
                 // dbGameSessionRound().update({
