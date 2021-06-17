@@ -2,7 +2,7 @@
     import CodeName from "./CodeName.svelte";
     import Tick from './Tick.svelte';
     import { dbGameSession,dbUser,dbUsers ,dbTime,dbGameSessionRound,listenFirebaseKey} from "./database";
-    let leftTime = 5;
+    var leftTime = 5;
     let time;
     let user;
     let redTeam = [];
@@ -26,12 +26,7 @@
             time = snap.val();
         })
     })
-    // dbTime().on('value',(snap)=>{
-    //     if(!snap.exists){
-    //         return ;
-    //     }
-    //     time = snap.val();
-    // })
+    
     
     dbUsers.on('value',(snap)=>{
         if(!snap.exists){
@@ -60,18 +55,17 @@
 
     var interval = setInterval(updateTime,1000);
 	function updateTime() {
-        leftTime = time - Date.now();
-        leftTime = Math.floor( leftTime/1000 );
-        if(leftTime <= 0) {
-            clearInterval(interval);
-            listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
-                dbGameSessionRoundRef.update({
-                    page : "Game Screen"
+        if(time) {
+            leftTime = time - Date.now();
+            leftTime = Math.floor( leftTime/1000 );
+            if(leftTime <= 0) {
+                clearInterval(interval);
+                listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+                    dbGameSessionRoundRef.update({
+                        page : "Game Screen"
+                    })
                 })
-            })
-            // dbGameSessionRound().update({
-            //     page : "Game Screen"
-            // })
+            }
         }	
 	}
     function processName(user) {

@@ -44,12 +44,6 @@
             page = snap.val();
         })
     })
-    // dbPage().on('value',(snap)=>{
-    //     if(!snap.exists()) {
-    //         return;
-    //     }
-    //     page = snap.val();
-    // })
     listenFirebaseKey(dbThemeValue, (dbThemeValueRef) => {
         dbThemeValueRef.on('value',(snap)=>{
             if(!snap.exists()) {
@@ -324,7 +318,6 @@
     }
 
     function handle_Blue_Spymaster_Btn(){
-        
         dbUser.update({
             spymaster : true,
             team : "Blue"
@@ -406,16 +399,7 @@
                 logsArray
             })
         })
-        // dbGameSessionRound().update({
-        //     page : "Lobby",
-        //     time : Date.now() + 6000,
-        //     shuffledWordList,
-        //     turn : "Red",
-        //     redScore : 9,
-        //     blueScore : 8,
-        //     gameStarter : currUser.userName,
-        //     logsArray
-        // })
+        
     }
     function changeThemeValue(newThemeValue) {
         listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
@@ -423,9 +407,7 @@
                 themeValue : newThemeValue
             })
         })
-        // dbGameSessionRound().update({
-        //     themeValue : newThemeValue
-        // })
+        
     }
 
     function processName(user){
@@ -486,7 +468,9 @@
 
                 <div class = "btn">
                     <button class = "player" class:disabledBluePlayerBtn = {team === "Blue" && !isSpymaster} on:click = {handle_Blue_Player_Btn}> {bluePlayerButtonText} </button>
-                    <button class = "spymaster" class:disabledBlueSpymasterBtn = {disableBlueSpymasterBtn} id = "blueSpymasterBtn" on:click = {handle_Blue_Spymaster_Btn}>{blueSpymasterButtonText}</button>
+                    {#if !page || page === 'Lobby Screen'}
+                        <button class = "spymaster" class:disabledBlueSpymasterBtn = {disableBlueSpymasterBtn} id = "blueSpymasterBtn" on:click = {handle_Blue_Spymaster_Btn}>{blueSpymasterButtonText}</button>
+                    {/if}
                 </div>
             </div>
 
@@ -525,7 +509,9 @@
                 </div>
                 <div class = "btn">
                     <button class = "player" class:disabledRedPlayerBtn = {team === "Red" && !isSpymaster} on:click = {handle_Red_Player_Btn}> {redPlayerButtonText} </button>
-                    <button class = "spymaster" class:disabledRedSpymasterBtn = {disableRedSpymasterBtn} on:click = {handle_Red_Spymaster_Btn}> {redSpymasterButtonText} </button>
+                    {#if !page || page === 'Lobby Screen'}
+                        <button class = "spymaster" class:disabledRedSpymasterBtn = {disableRedSpymasterBtn} on:click = {handle_Red_Spymaster_Btn}> {redSpymasterButtonText} </button>
+                    {/if}
                 </div>
             </div>
         </div>

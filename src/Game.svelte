@@ -373,6 +373,7 @@
                     if(currUser.spymaster && allUsersOnlineStatus[currUser.id]) {
                         if(blueTeam_has_Spymaster) {
                             currUser.spymaster = false;
+                            
                             if(currUser.id === userId) {
                                 isSpymaster = false;
                             }
