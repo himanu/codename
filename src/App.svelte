@@ -4,10 +4,7 @@
     let roundValue;
     var dbGameSessionRound;
     import Loading from './Loading.svelte';
-    import firebase from "firebase/app";
-    import "firebase/database";
-    import {dbGameSession, dbUser,listenFirebaseKey, dbGameSessionRoundValue,dbGameSessionRounds, dbPage} from './database.js';
-    import {getParams} from './utils';
+    import { dbGameSessionRoundValue,dbGameSessionRounds} from './database.js';
     import LobbyScreen from './Lobby_Screen.svelte';
     import Game from './Game.svelte';
     import CustomButton from './CustomButton.svelte';

@@ -1,11 +1,11 @@
 <script>
-    import { dbUser, dbUsers, dbGameSession ,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound,listenFirebaseKey} from "./database";
+    import { dbUser, dbUsers,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound,listenFirebaseKey} from "./database";
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
     import DownSvg from './DownSvg.svelte';
     import DisconnectedSvg from './DisconnectedSvg.svelte';
-    import { getParams, shuffleArray, create_NewArray_Of_List } from "./utils";
+    import { shuffleArray, create_NewArray_Of_List } from "./utils";
 
     let redTeam = [];
     let blueTeam = [];
@@ -52,12 +52,6 @@
             themeValue = snap.val();
         })
     })
-    // dbThemeValue().on('value',(snap)=>{
-    //     if(!snap.exists()) {
-    //         return ;
-    //     }
-    //     themeValue = snap.val();
-    // })
     
     dbDeepUndercover.on('value',(snap)=>{
         if(!snap.exists()) {
@@ -88,15 +82,6 @@
         usersList = snap.val();
     })
 
-    // listenFirebaseKey(dbUser, (dbUser) => {
-    //     dbUser.on('value',(snap)=>{
-    //         if(!snap.exists()) {
-    //             return;
-    //         }
-    //         currUser = snap.val();
-    //         isSpymaster = currUser.spymaster;
-    //     })
-    // })
     dbUser.on('value',(snap)=>{
         if(!snap.exists()) {
             return ;
@@ -531,7 +516,7 @@
                             Default
                         </div>
                         <div class="theme" on:click = {()=> changeThemeValue("Deep Undercover")}>
-                            Deep Undercover
+                            Deep Undercover(NSFW)
                         </div>
                         <div class="theme" on:click = {()=> changeThemeValue("Duet")}>
                             Duet

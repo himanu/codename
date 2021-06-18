@@ -1,7 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
-    import { afterUpdate, beforeUpdate} from 'svelte';
+    import { afterUpdate, beforeUpdate,onMount} from 'svelte';
     import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound,dbGameSessionRoundValue, listenFirebaseKey } from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import CorrectAnswerTick from "./CorrectAnswerTick.svelte";
@@ -155,9 +155,16 @@
                 return;
             }
             logsArray = snap.val();
-            logsdiv.scrollTo(0,logsdiv.scrollHeight);
+            if(logsdiv)
+                logsdiv.scrollTo(0,logsdiv.scrollHeight);
         })
         
+    })
+
+    onMount(()=>{
+        if(logsdiv) {
+            logsdiv.scrollTo(0,logsdiv.scrollHeight);
+        }
     })
     
     let autoscroll;
@@ -758,7 +765,7 @@
             <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
                 {#if !clue || (clue.clueSenderTeam !== turn)}
                     {#if team !== turn}
-                        {turn} Team Spymaster Turn.
+                        {turn} Team's Spymaster Turn.
                     {:else}
                         {#if isSpymaster}
                             Your turn, send clue.
@@ -768,7 +775,7 @@
                     {/if}
                 {:else}
                     {#if team !== turn}
-                        {turn} Team Players turn.
+                        {turn} Team's turn.
                     {:else}
                         {#if isSpymaster}
                             Your Team turn.
@@ -922,11 +929,11 @@
                         <div class = "clueWaiting"> Waiting for clue ...</div>
                         {#if team === "Red" && !redTeam_has_Spymaster}
                             <div class="redSpymasterDisappear">
-                                Your Spymaster is offline. To continue the game ask him to join.
+                                Your Spymaster is offline. To continue the game ask them to join.
                             </div>
                         {:else if team === "Blue" && !blueTeam_has_Spymaster}
                             <div class="blueSpymasterDisappear">
-                                Your Spymaster is offline. To continue the game ask him to join.
+                                Your Spymaster is offline. To continue the game ask them to join.
                             </div>
                         {/if}
                     {:else if team !== turn}
