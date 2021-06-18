@@ -355,7 +355,8 @@
         setShuffledWordList();
         logsArray.push({
             actor : currUser,
-            action : "has started the game"
+            action : "has started the game",
+            isWordSelected : false
         });
         listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
             dbGameSessionRoundRef.update({

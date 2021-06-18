@@ -10,6 +10,8 @@
     import DownSvg from "./DownSvg.svelte";
     import Lobby_Screen from './Lobby_Screen.svelte' 
     import DisconnectedSvg from "./DisconnectedSvg.svelte";
+import App from "./App.svelte";
+import CustomButton from "./CustomButton.svelte";
 
     let wordList = [];
     let team;
@@ -203,11 +205,11 @@
             }
             else if(lastWordSelected.color === "Grey" && team !== turn){
                 selectedInfoType = 3;
-                postWordClickMsg = "Grey word selected by mistake and your team chance is passed";
+                postWordClickMsg = "Grey word is selected and your team chance is passed";
             }
             else if(lastWordSelected.color === "Grey" && team === turn){
                 selectedInfoType = 4;
-                postWordClickMsg = "Your opponent team choose grey word by mistake and now it's your team turn";
+                postWordClickMsg = "Opponent selected grey word and now it's your team turn";
             }
             else if(lastWordSelected.color === "Black" && team === turn){
                 selectedInfoType = 7;
@@ -221,11 +223,11 @@
             }
             else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team !== turn){
                 selectedInfoType = 5;
-                postWordClickMsg = "Uff! Opponent's word is selected by mistake, they get a free word and your team chance is passed.";
+                postWordClickMsg = "Uff! Opponent's word selected, they get free word and turn.";
             }
             else if(lastWordSelected.color !== lastWordSelected.selectorTeam && team === turn){
                 selectedInfoType = 6;
-                postWordClickMsg = "Hurrah! Your opponent choose your's team word by mistake, your team get a free word and now it's your team turn."
+                postWordClickMsg = "Hurrah! Opponent selected your's team word, your team gets free word and turn."
             }
         }
         else if(clue) {
@@ -441,7 +443,9 @@
         }
         logsArray.push({
             actor : user,
-            action : " selects " + word.name
+            action : " selects " + word.name,
+            isWordSelected : true,
+            word
         })
 
         if(word.color === "Red") {
@@ -537,7 +541,8 @@
         let actionString = " sends clue " + "(" +  clueWord + " x " + clueWord_Count + ")";
         logsArray.push({
             actor : user,
-            action : actionString
+            action : actionString,
+            isWordSelected : false
         })
         listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
             dbGameSessionRoundRef.update({
@@ -560,7 +565,8 @@
         }
         logsArray.push({
             actor : user,
-            action : ` clicked End Turn button`
+            action : ` clicked End Turn button`,
+            isWordSelected : false
         })
         if(turn === 'Red') {
             turn = 'Blue';
@@ -631,9 +637,13 @@
                     <CorrectAnswerTick/>
                     <div class = "winning-btn">
                         {#if lastWordSelected?.color === team}
-                            Correct Answer
+                            {#if lastWordSelected?.selectorTeam === team}
+                                Correct Answer.
+                            {:else}
+                                Opponent selected your word.
+                            {/if}
                         {:else}
-                            Opponent selects black word
+                            Opponent selected black word.
                         {/if}
                         <svg class = "tick-cross" width="20" height="15" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
@@ -647,7 +657,11 @@
                         {#if lastWordSelected?.color === 'Black'}
                             Black word selected
                         {:else}
-                            Opponent has found all their team words
+                            {#if lastWordSelected?.selectorTeam === team} 
+                                Opponent word selected.
+                            {:else}
+                                Opponent has found all their team words
+                            {/if}
                         {/if}
                         <svg class = "tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M8.56539 9.88682L9.96921 8.48294L6.46021 4.97406L9.87206 1.56233L8.46824 0.158459L5.05634 3.57024L1.48597 0L0.0821475 1.40387L3.65247 4.97406L0.0302734 8.59613L1.4341 10L5.05634 6.37789L8.56539 9.88682Z" fill="#FFEBEE"/>
@@ -897,7 +911,18 @@
                                 {processName(log.actor)}
                             </div>
                             <div class="logsAction">
-                                {log.action}
+                                {#if log.isWordSelected === true}
+                                    selects
+                                    {#if log.word.color === 'Red'}
+                                        <span style = 'color : #E44C4F'>  {log.word.name} </span>
+                                    {:else if log.word.color === 'Blue'}
+                                        <span style = 'color : #5E96E8'>  {log.word.name}</span>
+                                    {:else}
+                                        <span>  {log.word.name} </span>
+                                    {/if}
+                                {:else}
+                                    {log.action}
+                                {/if}
                             </div>
                         </div>
                     {/each}
@@ -1410,7 +1435,7 @@
         position : absolute;
         left : 2%;
         bottom : 45%;
-        width : 11%;
+        width : 12%;
         max-height : 150px;
         text-align : center;
     }
