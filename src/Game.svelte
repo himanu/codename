@@ -1080,18 +1080,7 @@ import CustomButton from "./CustomButton.svelte";
     .playerDetails {
         flex : 1;
     }
-    @media screen and (max-width : 1100px)  {
-        .playerDetails {
-            flex : 2;
-        }
-        .scorecard {
-            flex : 1;
-            font-size : 12px;
-        }
-        .spymasterBox,.teamIndicator ,.player,.turnIndicator{
-            font-size : 12px;
-        }
-    }
+    
 
     .spymasterBox {
         background-color : #fff;
@@ -1181,6 +1170,7 @@ import CustomButton from "./CustomButton.svelte";
         line-height: 20px;
         font-size: 14px;
     }
+
     .blueScore {
         color : #5E96E8;
     }
@@ -1543,6 +1533,32 @@ import CustomButton from "./CustomButton.svelte";
         font-weight: 700;
         color : #fff;
         border-radius : 10px;
+    }
+    @media screen and (max-width : 1200px) {
+        .playerDetails {
+            flex : 1.25;
+        }
+        .scorecard {
+            flex : 0.75;
+        }
+    }
+    @media screen and (max-width : 1100px)  {
+        .playerDetails {
+            flex : 2;
+        }
+        .scorecard {
+            font-size : 12px;
+            flex : 1;
+        }
+        .spymasterBox,.teamIndicator ,.player,.turnIndicator{
+            font-size : 12px;
+        }
+        .table {
+            width : 60%;
+        }
+        .logsBox,.redTeam_List,.blueTeam_List {
+            width : 16%;
+        }
     }
     @media screen and (max-width : 1400px) {
         .word-matrix {
