@@ -35,7 +35,6 @@
     let logsArray = [];
     let page;
     let alertDivText;
-    
     listenFirebaseKey(dbPage, dbPageRef => {
         dbPageRef.on('value',(snap)=>{
             if(!snap.exists()) {
@@ -148,9 +147,9 @@
             }
             else if(user.team === "Blue")
             {
-                redTeam = redTeam.filter((player)=>{
-                    return player.id != user.id;
-                })
+                // redTeam = redTeam.filter((player)=>{
+                //     return player.id != user.id;
+                // })
                 
                 //make sure that blue team has one spymaster only
                 if(user.spymaster && allUserOnlineStatus[user.id]) {
@@ -290,12 +289,6 @@
             team = "Red";
             return ;
         }
-        // listenFirebaseKey(dbUser,(dbUserRef)=>{
-        //     dbUserRef.update({
-        //         team : "Red",
-        //         spymaster : false
-        //     })
-        // })
         dbUser.update({
             team : "Red",
             spymaster : false

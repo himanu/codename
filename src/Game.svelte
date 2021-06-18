@@ -193,7 +193,6 @@
     }
     $: {
         if(lastWordSelected) {
-            console.log("Hey some word get selected");
             if(lastWordSelected.color === lastWordSelected.selectorTeam && team === lastWordSelected.color){
                 selectedInfoType = 1;
                 postWordClickMsg = "";
@@ -230,7 +229,6 @@
             }
         }
         else if(clue) {
-            console.log("Hey clue message should appear");
             postWordClickMsg = '';
             if(turn === "Blue") {
                 selectedInfoType = 9;
@@ -240,7 +238,6 @@
             }
         }
         else if(turn) {
-            console.log("Hey turn message should appear");
             if( turn === "Blue") {
                 selectedInfoType = 9;
             }

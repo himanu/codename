@@ -14,13 +14,11 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-let roundValue = 2;
+let roundValue = 1;
 
 function getRoundValue() {
-    console.log(roundValue);
     return roundValue;
 }
-console.log("Hey I should run again");
 export const dbRoot = firebase.database().ref('codename');
 export const dbCodenameWords = firebase.database().ref('codenameWords');
 export const dbDeepUndercover = dbCodenameWords.child('deepUndercover');
