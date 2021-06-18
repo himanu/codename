@@ -432,11 +432,6 @@
                 selectedBy : userId
             });
         })
-        // let dbWord = dbWordList().child(word.id);
-
-        // dbWord.update({
-        //     selectedBy : userId
-        // })
         
         word["selectorName"] = userName;
         word["selectorTeam"] = team;
@@ -461,13 +456,6 @@
                         turn : "Red"
                     })
                 })
-                // dbGameSessionRound().update({
-                //     lastWordSelected : word,
-                //     redScore : redScore - 1,
-                //     logsArray,
-                //     clue : null,
-                //     turn : 'Red'
-                // })
             }
             else {
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
@@ -479,13 +467,6 @@
                         turn : 'Red'
                     })
                 })
-                // dbGameSessionRound().update({
-                //     lastWordSelected : word,
-                //     redScore : redScore - 1,
-                //     logsArray,
-                //     clue,
-                //     turn : 'Red'
-                // })
             }
             
         }
@@ -501,13 +482,6 @@
                         turn : 'Blue'
                     })
                 })
-                // dbGameSessionRound().update({
-                //     lastWordSelected : word,
-                //     blueScore : blueScore - 1,
-                //     logsArray,
-                //     clue : null,
-                //     turn : 'Blue'
-                // })
             }
             else {
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
@@ -519,13 +493,6 @@
                         turn : 'Blue'
                     })
                 })
-                // dbGameSessionRound().update({
-                //     lastWordSelected : word,
-                //     blueScore : blueScore - 1,
-                //     logsArray,
-                //     clue,
-                //     turn : 'Blue'
-                // })
             }
             
         }
@@ -539,12 +506,6 @@
                         turn : 'Blue'
                     })
                 })
-                // dbGameSessionRound().update({
-                //     lastWordSelected : word,
-                //     logsArray,
-                //     clue : null,
-                //     turn : 'Blue'
-                // })
             }
             else if(turn === 'Blue') {
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
@@ -555,12 +516,6 @@
                         turn : 'Red'
                     })
                 })
-                // dbGameSessionRound().update({
-                //     lastWordSelected : word,
-                //     logsArray,
-                //     clue : null,
-                //     turn : 'Red'
-                // })
             }
             
         }
@@ -571,10 +526,6 @@
                     logsArray
                 })
             })
-            // dbGameSessionRound().update({
-            //     lastWordSelected : word,
-            //     logsArray
-            // })
         }
     }
     //to send clues to the other player
@@ -601,17 +552,6 @@
                 logsArray
             })
         })
-        // dbGameSessionRound().update({
-        //     clue : {
-        //         clueWord,
-        //         clueWord_Count,
-        //         senderName : userName,
-        //         senderId : userId,
-        //         clueSenderTeam : turn
-        //     },
-        //     lastWordSelected : null,
-        //     logsArray
-        // })
     }
 
     function handleEndTurnBtn() {
@@ -637,12 +577,6 @@
                 lastWordSelected : null
             })
         })
-        // dbGameSessionRound().update({
-        //     logsArray,
-        //     turn,
-        //     clue : null,
-        //     lastWordSelected : null
-        // });
     }
 
     function processName(user){

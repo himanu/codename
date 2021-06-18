@@ -1,7 +1,7 @@
 <script>
     import CodeName from "./CodeName.svelte";
     import Tick from './Tick.svelte';
-    import { dbGameSession,dbUser,dbUsers ,dbTime,dbGameSessionRound,listenFirebaseKey} from "./database";
+    import { dbUser,dbUsers ,dbTime,dbGameSessionRound,listenFirebaseKey} from "./database";
     var leftTime = 5;
     let time;
     let user;

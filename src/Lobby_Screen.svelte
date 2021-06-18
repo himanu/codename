@@ -147,11 +147,7 @@
             }
             else if(user.team === "Blue")
             {
-                // redTeam = redTeam.filter((player)=>{
-                //     return player.id != user.id;
-                // })
-                
-                //make sure that blue team has one spymaster only
+                //make sure that blue team has one online spymaster only
                 if(user.spymaster && allUserOnlineStatus[user.id]) {
                     if(blueTeam_has_Spymaster) {
                         user.spymaster = false;
@@ -173,10 +169,6 @@
             }
             else if(user.team === "Red")
             {
-                blueTeam = blueTeam.filter((player)=>{
-                    return player.id != user.id;
-                })
-
                 if(user.spymaster === true && allUserOnlineStatus[user.id]) {
                     if(redTeam_has_Spymaster) {
                         user.spymaster = false;
