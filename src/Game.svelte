@@ -1585,7 +1585,7 @@ import CustomButton from "./CustomButton.svelte";
             font-size : 14px;
         }
         .redTeam_List,.blueTeam_List {
-            width : 14%;
+            width : 16%;
         }
         .userContainer {
             padding : 5px;
