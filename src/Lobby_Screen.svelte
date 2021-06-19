@@ -664,6 +664,7 @@
         padding : 5px 10px;
         cursor : pointer;
     }
+     
     .disabledRedPlayerBtn,.disabledBluePlayerBtn {
         cursor : text;
     }
@@ -803,22 +804,23 @@
     }
     
     @media screen and (max-width : 1150px),screen and (max-height : 700px) {
-        .blueH,.redH {
-            font-size : 0.9em;
+        .blueH,.redH,.heading {
+            font-size : 16px;
         }
         .player,.spymaster {
-            font-size : 0.7em;
+            font-size : 10px;
         }
+        .name {
+            font-size: 10px;
+        }
+
         .vs {
             width : 60px;
             height : 60px;
             font-size : 0.9em;
         }
-        .heading {
-            font-size : 0.8em;
-        }
         .emptyTeamMsg{
-            font-size : 14px;
+            font-size : 10px;
         }
         .btnText {
             font-size : 16px;
