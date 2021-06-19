@@ -1571,6 +1571,11 @@ import CustomButton from "./CustomButton.svelte";
             padding : 10px
         }
     }
+    @media screen and (max-width : 900px) {
+        .blueTeam_List,.redTeam_List {
+            width : 17%;
+        }
+    }
     @media screen and (max-width : 1150px), screen and (max-height : 720px){
         .word-matrix{
             padding: 8px;
