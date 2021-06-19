@@ -197,7 +197,7 @@
         align-items: center;
         padding : 15px;
         width : 50%;
-        height : auto;
+        max-height : 300px;
         background: #ffffff;
         border-radius : 15px;
         margin : 0px;

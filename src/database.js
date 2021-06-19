@@ -21,7 +21,6 @@ function getRoundValue() {
 }
 export const dbRoot = firebase.database().ref('codename');
 export const dbCodenameWords = firebase.database().ref('codenameWords');
-export const dbDeepUndercover = dbCodenameWords.child('deepUndercover');
 export const dbDefault = dbCodenameWords.child('default');
 export const dbDuet = dbCodenameWords.child('duet');
 export const dbGameSession = dbRoot.child(getGameSessionId());

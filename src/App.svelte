@@ -44,7 +44,9 @@
     $ : {
         if(roundValue) {
             page = 'Lobby Screen';
-            clicked = true;
+            if(roundValue != 1) {
+                clicked = true;
+            }
         }
     }
 </script>

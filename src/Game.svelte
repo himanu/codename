@@ -1550,7 +1550,7 @@ import CustomButton from "./CustomButton.svelte";
             font-size : 12px;
             flex : 1;
         }
-        .spymasterBox,.teamIndicator ,.player,.turnIndicator{
+        .spymasterBox,.teamIndicator ,.player,.turnIndicator,.noOnlinePlayer,.redSpymasterDisappear,.blueSpymasterDisappear,.postWordClickMsgBox,.sendClueMsg,.clueMsgBox,.clueMsg,.clueMsgTeamIdentifier,.clueWaiting,.sendClueMsg,.give-clue-btn{
             font-size : 12px;
         }
         .table {

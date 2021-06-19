@@ -1,5 +1,5 @@
 <script>
-    import { dbUser, dbUsers,dbDeepUndercover,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound,listenFirebaseKey} from "./database";
+    import { dbUser, dbUsers,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound,listenFirebaseKey} from "./database";
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import CodeName from "./CodeName.svelte";
@@ -26,7 +26,6 @@
     let currUser;
     let themeValue = 'Default';
     let wordList;
-    let deepUndercoverTheme;
     let defaultTheme;
     let duetTheme;
     let onlineBlueTeam = [];
@@ -50,13 +49,6 @@
             }
             themeValue = snap.val();
         })
-    })
-    
-    dbDeepUndercover.on('value',(snap)=>{
-        if(!snap.exists()) {
-            return;
-        }
-        deepUndercoverTheme = snap.val();
     })
 
     dbDefault.on('value',(snap)=>{
@@ -239,9 +231,6 @@
         }
         if(themeValue === "Default") {
             wordList = defaultTheme;
-        }
-        else if(themeValue === "Deep Undercover") {
-            wordList = deepUndercoverTheme;
         }
         else if(themeValue === "Duet") {
             wordList = duetTheme;
@@ -501,9 +490,6 @@
                         <div class="theme" on:click = {()=> changeThemeValue("Default")}>
                             Default
                         </div>
-                        <div class="theme" on:click = {()=> changeThemeValue("Deep Undercover")}>
-                            Deep Undercover(NSFW)
-                        </div>
                         <div class="theme" on:click = {()=> changeThemeValue("Duet")}>
                             Duet
                         </div>
@@ -537,7 +523,7 @@
     }
 
     *::-webkit-scrollbar-thumb {        
-        box-shadow: inset 0 0 0 10px;
+        box-shadow: inset 0 0 0 5px;
     }
 
     main{
@@ -572,7 +558,7 @@
         display : flex;
         justify-content: center;
         width : 100%;
-        height : auto;
+        max-height : 300px;
     }
     .red,.blue{
         position: relative;
@@ -619,6 +605,7 @@
         background-color: #fff;
         border-radius: 15px;
         padding : 10px 5px 10px 10px;
+        overflow : auto;
     }
     .blue > .user-list{
         border: 1px solid #5E96E8;
@@ -629,7 +616,6 @@
     .users{
         width : 100%;
         height : 100%;
-        overflow-y: scroll;
     }
     .emptyTeamMsg{
         font-size : 16px;
