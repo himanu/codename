@@ -948,7 +948,11 @@ import CustomButton from "./CustomButton.svelte";
                     {#each blueTeam as user}
                         <div class="user">
                             <div class="userDetails">
-                                <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                                {#if user.profilePicture}
+                                    <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                                {:else}
+                                    <div class = "fakeUserProfilePicture"> {user.userName[0]} </div>
+                                {/if}
                                 <div class="userName"> { processName(user) }</div>
                             </div>
                             <div class="onlineStatus">
@@ -975,7 +979,11 @@ import CustomButton from "./CustomButton.svelte";
                 {#each redTeam as user}
                     <div class="user">
                         <div class="userDetails">
-                            <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                            {#if user.profilePicture}
+                                    <img class = "userProfilePicture" src = {user.profilePicture} alt = "profilePicture">
+                            {:else}
+                                <div class = "fakeUserProfilePicture"> {user.userName[0]} </div>
+                            {/if}
                             <div class="userName"> { processName(user) }</div>
                         </div>
                         <div class="onlineStatus">
@@ -1189,6 +1197,7 @@ import CustomButton from "./CustomButton.svelte";
         margin : 5px auto;
         border-radius : 15px;
         padding : 5px;
+        cursor : pointer;
 
     }
     .blueScore {
@@ -1544,6 +1553,19 @@ import CustomButton from "./CustomButton.svelte";
         width : 20px;
         height : 20px;
         border-radius : 50%;
+    }
+    .fakeUserProfilePicture {
+        width : 30px;
+        height : 30px;
+        font-size : 0.75em;
+        color : white;
+        font-weight : 700;
+        display : flex;
+        font-family : 'Manrope',sans-serif;
+        justify-content: center;
+        align-items : center;
+        border-radius : 50%;
+        background-color : #343E98;
     }
     .userName{
         padding-left : 10px;
