@@ -15,8 +15,8 @@
 	}
 	@media screen and (max-width : 1000px), screen and (max-height : 670px) {
 		.loadingSvg {
-			width : 33px;
-			height : 33px;
+			width : 30px;
+			height : 30px;
 		}
 	}
 </style>

@@ -538,6 +538,7 @@ import CustomButton from "./CustomButton.svelte";
         if(!logsArray) {
             logsArray = [];
         }
+        
         let actionString = " sends clue " + "(" +  clueWord + " x " + clueWord_Count + ")";
         logsArray.push({
             actor : user,
@@ -556,7 +557,9 @@ import CustomButton from "./CustomButton.svelte";
                 lastWordSelected : null,
                 logsArray
             })
+            clueWord = '';
         })
+        
     }
 
     function handleEndTurnBtn() {
@@ -700,55 +703,50 @@ import CustomButton from "./CustomButton.svelte";
             <div class = "codename">
                 <CodeName/> 
             </div>
-            <div class="scorecard">
-                <div class="blueScore">Blue Score - {blueScore}</div>
-                <div class="redScore">Red Score - {redScore}</div>
+            <div class="scorecardAndLogs">
+                <div class = 'scorecard'>
+                    <div class="blueScore">Remaining Code for Blue - {blueScore}</div>
+                    <div class="redScore">Remaining Code for Red - {redScore}</div>
+                </div>
+                <div class = "logsBtn">
+                    Logs
+                </div>
+                
             </div>
         </div>
-
-        <div class="turnIndicatorBox">
-            <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
-                {#if !clue || (clue.clueSenderTeam !== turn)}
-                    {#if team !== turn}
-                        {turn} Team's Spymaster Turn.
-                    {:else}
-                        {#if isSpymaster}
-                            Your turn, send clue.
+        <div class = "container">
+            <div class="turnIndicatorBox">
+                <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
+                    {#if !clue || (clue.clueSenderTeam !== turn)}
+                        {#if team !== turn}
+                            {turn} Team's Spymaster Turn.
                         {:else}
-                            Your Spymaster turn, wait for clue.
+                            {#if isSpymaster}
+                                Your turn, send clue.
+                            {:else}
+                                Your Spymaster turn, wait for clue.
+                            {/if}
+                        {/if}
+                    {:else}
+                        {#if team !== turn}
+                            {turn} Team's turn.
+                        {:else}
+                            {#if isSpymaster}
+                                Your Team turn.
+                            {:else}
+                                Your turn, guess your words.
+                            {/if}
                         {/if}
                     {/if}
-                {:else}
-                    {#if team !== turn}
-                        {turn} Team's turn.
-                    {:else}
-                        {#if isSpymaster}
-                            Your Team turn.
-                        {:else}
-                            Your turn, guess your words.
-                        {/if}
-                    {/if}
-                {/if}
+                </div>
             </div>
-        </div>
-            
-        <div class = "table">
-            <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
-                {#each wordList as word}
-                    {#if (isSpymaster && view === 'Spymaster') || word.selectedBy}
-                        {#if word.color === "Grey"}
-                        <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
-                        {:else if word.color === "Red"}
-                            <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
-                        {:else if word.color === "Blue"}
-                            <div class = "word blueTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
-                        {:else if word.color === "Black"}
-                            <div class = "word blackTeamWord"> {word.name}</div>
-                        {/if}
-                    {:else if (isSpymaster && view === 'Player')}
-                        {#if word.selectedBy}
+                
+            <div class = "table">
+                <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
+                    {#each wordList as word}
+                        {#if (isSpymaster && view === 'Spymaster') || word.selectedBy}
                             {#if word.color === "Grey"}
-                                <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                            <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
                             {:else if word.color === "Red"}
                                 <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
                             {:else if word.color === "Blue"}
@@ -756,150 +754,162 @@ import CustomButton from "./CustomButton.svelte";
                             {:else if word.color === "Black"}
                                 <div class = "word blackTeamWord"> {word.name}</div>
                             {/if}
-                        {:else}
-                            <div class = "word simpleWord"> {word.name} </div>
+                        {:else if (isSpymaster && view === 'Player')}
+                            {#if word.selectedBy}
+                                {#if word.color === "Grey"}
+                                    <div class = "word greyTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                                {:else if word.color === "Red"}
+                                    <div class = "word redTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                                {:else if word.color === "Blue"}
+                                    <div class = "word blueTeamWord" class:selected = {word.selectedBy}> {word.name}</div>
+                                {:else if word.color === "Black"}
+                                    <div class = "word blackTeamWord"> {word.name}</div>
+                                {/if}
+                            {:else}
+                                <div class = "word simpleWord"> {word.name} </div>
+                            {/if}
+                        {:else }
+                            <div class = "word simpleWord" class:cursorPointer = {is_This_User_Turn} on:click = {checkWord(word)}> {word.name} </div>
                         {/if}
-                    {:else }
-                        <div class = "word simpleWord" class:cursorPointer = {is_This_User_Turn} on:click = {checkWord(word)}> {word.name} </div>
+                    {/each}
+                    {#if showSelectedInfo}
+                        <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
+                        <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
+
+                        <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
+                        <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
+
+                        <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
+                        <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
+
+                        <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
+                        <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
+
+                        <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+                            {#if clue}
+                                {#if team === turn}
+                                    {#if isSpymaster}
+                                        You have sent clue
+                                    {:else}
+                                        Your spymaster have sent clue
+                                    {/if}
+                                {:else if turn === "Red"}
+                                    Red Spymaster have sent clue
+                                {:else if turn === "Blue"}
+                                    Blue Spymaster have sent clue
+                                {/if}
+                            {:else}
+                                {#if team === turn}
+                                    Your Team turn
+                                {:else}
+                                    Blue Team turn
+                                {/if}
+                            {/if}
+                        </span>
+                        <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
+                            {#if clue}
+                                {#if team === turn}
+                                    {#if isSpymaster}
+                                        You have sent clue
+                                    {:else}
+                                        Your spymaster have sent clue
+                                    {/if}
+                                {:else}
+                                    Red Spymaster have sent clue
+                                {/if}
+                            {:else}
+                                {#if team === turn}
+                                    Your Team turn
+                                {:else}
+                                    Red Team turn
+                                {/if}
+                            {/if}
+                        </span>
+
                     {/if}
-                {/each}
-                {#if showSelectedInfo}
-                    <span class="{ selectedInfoType === 1 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Correct word Selected</span>
-                    <span class="{ selectedInfoType === 2 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#128532 Opponent selects correct word</span>
-
-                    <span class="{ selectedInfoType === 3 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Grey word Selected</span>
-                    <span class="{ selectedInfoType === 4 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects grey word </span>
-
-                    <span class="{ selectedInfoType === 5 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Opponent word Selected</span>
-                    <span class="{ selectedInfoType === 6 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects your word </span>
-
-                    <span class="{ selectedInfoType === 7 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};"> &#128532 Black word Selected</span>
-                    <span class="{ selectedInfoType === 8 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">&#x1F60D Opponent selects black word</span>
-
-                    <span class="{ selectedInfoType === 9 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-                        {#if clue}
-                            {#if team === turn}
-                                {#if isSpymaster}
-                                    You have sent clue
-                                {:else}
-                                    Your spymaster have sent clue
-                                {/if}
-                            {:else if turn === "Red"}
-                                Red Spymaster have sent clue
-                            {:else if turn === "Blue"}
-                                Blue Spymaster have sent clue
-                            {/if}
-                        {:else}
-                            {#if team === turn}
-                                Your Team turn
-                            {:else}
-                                Blue Team turn
-                            {/if}
-                        {/if}
-                    </span>
-                    <span class="{ selectedInfoType === 10 ?"Word-show" : "Word-hide"}" style = "background-color : {tableBorderMap[selectedInfoType]};">
-                        {#if clue}
-                            {#if team === turn}
-                                {#if isSpymaster}
-                                    You have sent clue
-                                {:else}
-                                    Your spymaster have sent clue
-                                {/if}
-                            {:else}
-                                Red Spymaster have sent clue
-                            {/if}
-                        {:else}
-                            {#if team === turn}
-                                Your Team turn
-                            {:else}
-                                Red Team turn
-                            {/if}
-                        {/if}
-                    </span>
-
-                {/if}
-            </div>
-            {#if isSpymaster && team === turn }
-                {#if (!clue || clue.clueSenderTeam !== turn)}
-                    <form class = "form-container" on:submit = {giveClue}>
-                        <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "clueInputBox" required>
-                        <div class = "clueCountWordBox">
-                            <div class = "defaultClueCount">
-                                x {clueWord_Count}
-                                <DownSvg/>
+                </div>
+                {#if isSpymaster && team === turn }
+                    {#if (!clue || clue.clueSenderTeam !== turn)}
+                        <form class = "form-container" on:submit = {giveClue}>
+                            <input type = "text" placeholder = "Clue ..." bind:value = {clueWord} class = "clueInputBox" required>
+                            <div class = "clueCountWordBox">
+                                <div class = "defaultClueCount">
+                                    x {clueWord_Count}
+                                    <DownSvg/>
+                                </div>
+                                <div class="clueCountList">
+                                    {#each clueCount as count}
+                                        <div class="clueCount" on:click= {()=> clueWord_Count = count}> x {count} </div>
+                                    {/each}
+                                </div>
                             </div>
-                            <div class="clueCountList">
-                                {#each clueCount as count}
-                                    <div class="clueCount" on:click= {()=> clueWord_Count = count}> x {count} </div>
-                                {/each}
-                            </div>
+                            <button class = "give-clue-btn" type = "submit">
+                                Give Clue
+                            </button>
+                        </form>
+                        <div class = "sendClueMsg">
+                            Send clue to your team
                         </div>
-                        <button class = "give-clue-btn" type = "submit">
-                            Give Clue
-                        </button>
-                    </form>
-                    <div class = "sendClueMsg">
-                        Send clue to your team
-                    </div>
 
-                {/if}
-                {#if clue && clue.clueSenderTeam === turn && team === turn}
-                    <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
-                {/if}
+                    {/if}
+                    {#if clue && clue.clueSenderTeam === turn && team === turn}
+                        <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
+                    {/if}
 
-                {#if (team === "Red" && !redTeamPlayersCount) || (team === "Blue" && !blueTeamPlayersCount)}
-                    <div class = "noOnlinePlayer">
-                        No online player in your team. To continue the game ask someone to join .
-                    </div>
-                {/if}
+                    {#if (team === "Red" && !redTeamPlayersCount) || (team === "Blue" && !blueTeamPlayersCount)}
+                        <div class = "noOnlinePlayer">
+                            No online player in your team. To continue the game ask someone to join .
+                        </div>
+                    {/if}
 
-                {#if showSelectedInfo}
-                    <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
-                {/if}
-            {:else}
-                {#if clue && clue.clueSenderTeam === turn}
-                    <div class = "clueMsgBox">
-                        <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
-                        <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
-                    </div>
-                    {#if turn !== team}
-                        {#if ((turn === "Red" && !redTeamPlayersCount) || (turn === "Blue" && !blueTeamPlayersCount))}
-                            <div class="noOnlinePlayer">
-                                No online player in {turn} team. To continue the game ask someone to join.
-                            </div>
-                        {/if}
+                    {#if showSelectedInfo}
+                        <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
                     {/if}
                 {:else}
-                    {#if !isSpymaster && team === turn}
-                        <div class = "clueWaiting"> Waiting for clue ...</div>
-                        {#if team === "Red" && !redTeam_has_Spymaster}
-                            <div class="redSpymasterDisappear">
-                                Your Spymaster is offline. To continue the game ask them to join.
-                            </div>
-                        {:else if team === "Blue" && !blueTeam_has_Spymaster}
-                            <div class="blueSpymasterDisappear">
-                                Your Spymaster is offline. To continue the game ask them to join.
-                            </div>
+                    {#if clue && clue.clueSenderTeam === turn}
+                        <div class = "clueMsgBox">
+                            <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
+                            <div class = "clueMsg"> {clue.clueWord} (x {clue.clueWord_Count} )</div>
+                        </div>
+                        {#if turn !== team}
+                            {#if ((turn === "Red" && !redTeamPlayersCount) || (turn === "Blue" && !blueTeamPlayersCount))}
+                                <div class="noOnlinePlayer">
+                                    No online player in {turn} team. To continue the game ask someone to join.
+                                </div>
+                            {/if}
                         {/if}
-                    {:else if team !== turn}
-                        {#if turn === "Red" && !redTeam_has_Spymaster}
-                            <div class="redSpymasterDisappear">
-                                Red Spymaster is offline. To continue the game ask him to join.
-                            </div>
-                        {:else if turn === "Blue" && !blueTeam_has_Spymaster}
-                            <div class="blueSpymasterDisappear">
-                                Blue Spymaster is offline. To continue the game ask him to join.
-                            </div>
+                    {:else}
+                        {#if !isSpymaster && team === turn}
+                            <div class = "clueWaiting"> Waiting for clue ...</div>
+                            {#if team === "Red" && !redTeam_has_Spymaster}
+                                <div class="redSpymasterDisappear">
+                                    Your Spymaster is offline. To continue the game ask them to join.
+                                </div>
+                            {:else if team === "Blue" && !blueTeam_has_Spymaster}
+                                <div class="blueSpymasterDisappear">
+                                    Your Spymaster is offline. To continue the game ask them to join.
+                                </div>
+                            {/if}
+                        {:else if team !== turn}
+                            {#if turn === "Red" && !redTeam_has_Spymaster}
+                                <div class="redSpymasterDisappear">
+                                    Red Spymaster is offline. To continue the game ask him to join.
+                                </div>
+                            {:else if turn === "Blue" && !blueTeam_has_Spymaster}
+                                <div class="blueSpymasterDisappear">
+                                    Blue Spymaster is offline. To continue the game ask him to join.
+                                </div>
+                            {/if}
                         {/if}
                     {/if}
+                    {#if showSelectedInfo}
+                        <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
+                    {/if}
+                    {#if is_This_User_Turn}
+                        <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
+                    {/if}
                 {/if}
-                {#if showSelectedInfo}
-                    <div class="postWordClickMsgBox"> {postWordClickMsg} </div>
-                {/if}
-                {#if is_This_User_Turn}
-                    <button class="endTurnBtn" on:click = {handleEndTurnBtn}>End Turn</button>
-                {/if}
-            {/if}
+            </div>
         </div>
         <div class="logsBox">
             <div class = "logHeading">Logs</div>
@@ -1001,6 +1011,10 @@ import CustomButton from "./CustomButton.svelte";
     *:focus {
         outline: none;
     }
+    *{
+        padding : 0px;
+        margin : 0px;
+    }
     main{
         background-image : url(/images/background.svg);
         border-radius: 20px;
@@ -1071,17 +1085,15 @@ import CustomButton from "./CustomButton.svelte";
     }
     .gameHeading{
         position : relative;
-        display : flex;
-        justify-content: space-between;
         width : 97%;
         margin : auto;
         top : 1.5%;
     }
     .playerDetails {
-        flex : 1;
+        position : absolute;
+        left : 0px;
+        top : 0px;
     }
-    
-
     .spymasterBox {
         background-color : #fff;
         display : flex;
@@ -1096,18 +1108,19 @@ import CustomButton from "./CustomButton.svelte";
         height : 50%;
     }
     .spymaster {
-        width : 50%;
         text-align : center;
         transition : 0.25s;
         padding : 10px;
         z-index : 1;
     }
     .player {
-        width : 50%;
         text-align : center;
         transition : .25s;
-        padding : 10px;
+        padding : 10px 22.5px;
         z-index : 1;
+        font-size : 14px;
+        font-family: 'Manrope', sans-serif;
+        font-weight : 700;
     }
     .slider {
         position : absolute;
@@ -1142,21 +1155,19 @@ import CustomButton from "./CustomButton.svelte";
         height : 40px;
         border-radius: 50%;
     }
-    .player{
-        font-size : 14px;
-        font-family: 'Manrope', sans-serif;
-        font-weight : 700;
-        line-height: 17px;
-        padding : 10px;
-        text-align : center;
-    }
+    
     .codename {
-        height : 64px;
-        flex : 4;
+        position : absolute;
+        left : 50%;
+        transform : translateX(-50%);
         text-align : center;
     }
-    .scorecard{
-        flex : 0.5;
+    .scorecardAndLogs{
+        position : absolute;
+        right : 0%;
+        
+    }
+    .scorecard {
         background-color: #F5C13B;
         display : flex;
         flex-direction:  column;
@@ -1170,14 +1181,27 @@ import CustomButton from "./CustomButton.svelte";
         line-height: 20px;
         font-size: 14px;
     }
+    .logsBtn {
+        background-color : white;
+        color : #343E98;
+        text-align : center;
+        width : 50%;
+        margin : 5px auto;
+        border-radius : 15px;
+        padding : 5px;
 
+    }
     .blueScore {
         color : #5E96E8;
+        white-space : nowrap;
     }
     .redScore {
         color : #E44C4F;
+        white-space : nowrap;
     }
     .turnIndicatorBox {
+        position : relative;
+        top : 10%;
         text-align: center;
         margin : 15px 5px;
     }
@@ -1191,9 +1215,15 @@ import CustomButton from "./CustomButton.svelte";
         line-height: 20px;
         font-size: 14px;
     }
-
+    .container {
+        position : relative;
+        top : 50%;
+        transform : translateY(-50%);
+        width : 60%;
+        margin : auto;
+        right : 1.30%;
+    }
     .table{
-        width : 65%;
         margin : 5px auto 0px;
         position: relative;
     }
@@ -1206,6 +1236,7 @@ import CustomButton from "./CustomButton.svelte";
         padding: 10px;
         grid-gap : 10px;
         border-radius: 17.7699px;
+        width : 100%;
     }
     .word {
         box-shadow: 2.87862px 4.31793px 4.31793px #1D0D36, inset 0px 1.00428px 0.719655px #BBBBBB;
@@ -1223,6 +1254,7 @@ import CustomButton from "./CustomButton.svelte";
         overflow : hidden;
         word-break: break-all;
         min-width : 0;
+        white-space : nowrap;
     }
     .cursorPointer{
         cursor : pointer;
@@ -1423,6 +1455,7 @@ import CustomButton from "./CustomButton.svelte";
     }
     .logsBox {
         position : absolute;
+        display : none;
         left : 2%;
         bottom : 45%;
         width : 12%;
@@ -1458,13 +1491,15 @@ import CustomButton from "./CustomButton.svelte";
     }
     .redTeam_List{
         position : absolute;
-        bottom : 3%;
+        top : 50%;
+        transform : translateY(-50%);
         right : 2%;
         width : 12%;
     }
     .blueTeam_List{
         position : absolute;
-        bottom : 3%;
+        top : 50%;
+        transform : translateY(-50%);
         left : 2%;
         width : 12%;
     }
@@ -1515,7 +1550,7 @@ import CustomButton from "./CustomButton.svelte";
         font-family : 'Manrope', sans-serif;
         font-size : 12px;
         font-weight : 700;
-        line-height : 19px;
+        line-height : 14px;
     }
     .Word-hide{
         display: none;
@@ -1523,7 +1558,7 @@ import CustomButton from "./CustomButton.svelte";
     .Word-show{
         display : inline;
         position: absolute;
-        top : -5%;
+        top : -6%;
         left : 50%;
         transform : translateX(-50%);
         padding : 5px;
@@ -1550,14 +1585,19 @@ import CustomButton from "./CustomButton.svelte";
             font-size : 12px;
             flex : 1;
         }
-        .spymasterBox,.teamIndicator ,.player,.turnIndicator,.noOnlinePlayer,.redSpymasterDisappear,.blueSpymasterDisappear,.postWordClickMsgBox,.sendClueMsg,.clueMsgBox,.clueMsg,.clueMsgTeamIdentifier,.clueWaiting,.sendClueMsg,.give-clue-btn{
+        .spymasterBox,.teamIndicator ,.player,.turnIndicator,.noOnlinePlayer,.redSpymasterDisappear,.blueSpymasterDisappear,.postWordClickMsgBox,.sendClueMsg,.clueMsgBox,.clueMsg,.clueMsgTeamIdentifier,.clueWaiting,.sendClueMsg,.give-clue-btn,.Word-show{
             font-size : 12px;
         }
-        .table {
-            width : 60%;
+        .Word-show{
+            padding : 4px;
         }
         .logsBox,.redTeam_List,.blueTeam_List {
-            width : 16%;
+            width : 14.5%;
+        }
+    }
+    @media screen and (max-width : 1000px) {
+        .blue_heading,.red_heading {
+            font-size: 14px;
         }
     }
     @media screen and (max-width : 1400px) {
@@ -1573,7 +1613,7 @@ import CustomButton from "./CustomButton.svelte";
     }
     @media screen and (max-width : 900px) {
         .blueTeam_List,.redTeam_List {
-            width : 17%;
+            width : 15%;
         }
     }
     @media screen and (max-width : 1150px), screen and (max-height : 720px){
@@ -1590,7 +1630,7 @@ import CustomButton from "./CustomButton.svelte";
             font-size : 14px;
         }
         .redTeam_List,.blueTeam_List {
-            width : 16%;
+            width : 15%;
         }
         .userContainer {
             padding : 5px;

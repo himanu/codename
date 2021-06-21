@@ -13,6 +13,7 @@
 		.disconnectedSvg {
 			width : 15px;
 			height : 15px;
+			margin-right : 0px;
 		}
 	}
 </style>
