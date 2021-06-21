@@ -244,7 +244,7 @@
     function updateUsersOnlineStatus() {
         for(const id in usersList) {
             user = usersList[id];
-            if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
+            if( (user.online === true) || (Date.now() - user.online <= 5000000) ) {
                 allUserOnlineStatus[user.id] = true;
             }
             else {
