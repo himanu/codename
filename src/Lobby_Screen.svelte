@@ -802,7 +802,16 @@
     .disabledStartBtn:hover + .alertDiv{
         visibility : visible;
     }
-    
+    @media screen and (max-width : 1100px) {
+        .teams {
+            max-height : 250px;
+        }
+    }
+    @media screen and (max-height : 650px) {
+        .teams {
+            max-height : 230px;
+        }
+    }
     @media screen and (max-width : 1150px),screen and (max-height : 700px) {
         .blueH,.redH,.heading {
             font-size : 16px;
@@ -844,7 +853,7 @@
             font-size : 12px;
         }
         .btnText {
-            font-size : 15px;
+            font-size : 0.75rem;
         }
     }
 </style>
