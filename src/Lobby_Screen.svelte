@@ -558,7 +558,7 @@
         display : flex;
         justify-content: center;
         width : 100%;
-        max-height : 300px;
+        max-height : 275px;
     }
     .red,.blue{
         position: relative;
