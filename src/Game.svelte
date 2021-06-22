@@ -651,18 +651,18 @@
                     <div class = "winning-btn">
                         {#if lastWordSelected?.color === team}
                             {#if lastWordSelected?.selectorTeam === team}
-                                Correct Answer.
+                                Correct Answer
                             {:else}
-                                Opponent selected your word.
+                                Opponent selected your word
                             {/if}
                         {:else}
-                            Opponent selected black word.
+                            Opponent selected black word
                         {/if}
                         <svg class = "tick-cross" width="20" height="15" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
                         </svg>
                     </div>
-                    <div class = "result-text"> <strong> Congaratulations </strong> {team} team has won the game.</div>
+                    <div class = "result-text"> Hurrah!! {team} team has won the game.</div>
                     <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
                 {:else}
                     <Cross/>
@@ -671,9 +671,9 @@
                             Black word selected
                         {:else}
                             {#if lastWordSelected?.selectorTeam === team} 
-                                Opponent's word selected.
+                                Opponent's word selected
                             {:else}
-                                Opponent has found all their team words.
+                                Opponent has found all their words
                             {/if}
                         {/if}
                         <svg class = "tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -903,16 +903,16 @@
                         {/if}
                     {:else}
                         {#if !isSpymaster && team === turn}
-                            <div class = "clueWaiting"> Waiting for clue ...</div>
                             {#if team === "Red" && !redTeam_has_Spymaster}
                                 <div class="redSpymasterDisappear">
-                                    Your Spymaster is offline. To continue the game ask them to join.
+                                    Your Spymaster is offline. To continue the game ask him to join.
                                 </div>
                             {:else if team === "Blue" && !blueTeam_has_Spymaster}
                                 <div class="blueSpymasterDisappear">
-                                    Your Spymaster is offline. To continue the game ask them to join.
+                                    Your Spymaster is offline. To continue the game ask him to join.
                                 </div>
                             {/if}
+                            <div class = "clueWaiting"> Waiting for clue ...</div>
                         {:else if team !== turn}
                             {#if turn === "Red" && !redTeam_has_Spymaster}
                                 <div class="redSpymasterDisappear">
@@ -1055,14 +1055,25 @@
         justify-content: center;
         align-items : center;
         z-index : 200;
+        font-family: 'Manrope', sans-serif;
+        font-size : 20px;
+        letter-spacing : 0.25px;
+    }
+    @media screen and (max-width : 1150px) {
+        .result {
+            font-size : 18px;
+        }
+    }
+    @media screen and (max-width : 1000px) {
+        .result {
+            font-size : 16px;
+        }
     }
     .winning-btn,.loosing-btn{
         border-radius: 45px;
         padding : 8px 16px;
         margin : 20px 0px;
         color : #fff;
-        font-family: 'Manrope', sans-serif;
-        font-size : 16px;
         font-weight: 700;
     }
     .winning-btn{
@@ -1077,17 +1088,12 @@
         margin-left : 8px;
     }
     .result-text{
-        font-family: 'Manrope',sans-serif;
-        font-style: normal;
         font-weight: 800;
-        font-size : 16px;
         text-align: center;
         color: #FFFFFF;
     }
     .restart-game{
         background: #6C44A8;
-        font-family: 'Manrope', sans-serif;
-        font-style: normal;
         font-weight: 700;
         padding : 10px 20px;
         box-shadow: 0px 3px 10px rgba(108, 68, 168, 0.5);
@@ -1095,7 +1101,6 @@
         margin : 20px 0px;
         color : #fff;
         cursor : pointer;
-        font-size : 16px;
     }
     .gameHeading{
         position : relative;
