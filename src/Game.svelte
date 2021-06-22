@@ -715,6 +715,31 @@
             </div>
             <div class = "codename">
                 <img src = '/images/codenames-logo.png' class = "codenamePng" style = "height : 60px" alt = "codenames"> 
+                <div class="turnIndicatorBox">
+                    <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
+                        {#if !clue || (clue.clueSenderTeam !== turn)}
+                            {#if team !== turn}
+                                {turn} Team's Spymaster Turn.
+                            {:else}
+                                {#if isSpymaster}
+                                    Your turn, send clue.
+                                {:else}
+                                    Your Spymaster turn, wait for clue.
+                                {/if}
+                            {/if}
+                        {:else}
+                            {#if team !== turn}
+                                {turn} Team's turn.
+                            {:else}
+                                {#if isSpymaster}
+                                    Your Team turn.
+                                {:else}
+                                    Your turn, guess your words.
+                                {/if}
+                            {/if}
+                        {/if}
+                    </div>
+                </div>
             </div>
             <div class="scorecardAndLogs">
                 <div class = 'scorecard'>
@@ -729,32 +754,6 @@
         </div>
         
         <div class = "container">
-            <div class="turnIndicatorBox">
-                <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
-                    {#if !clue || (clue.clueSenderTeam !== turn)}
-                        {#if team !== turn}
-                            {turn} Team's Spymaster Turn.
-                        {:else}
-                            {#if isSpymaster}
-                                Your turn, send clue.
-                            {:else}
-                                Your Spymaster turn, wait for clue.
-                            {/if}
-                        {/if}
-                    {:else}
-                        {#if team !== turn}
-                            {turn} Team's turn.
-                        {:else}
-                            {#if isSpymaster}
-                                Your Team turn.
-                            {:else}
-                                Your turn, guess your words.
-                            {/if}
-                        {/if}
-                    {/if}
-                </div>
-            </div>   
-        
             <div class="word-matrix" style = "border : 6px solid {tableBorderColor};">
                 {#each wordList as word}
                     {#if (isSpymaster && view === 'Spymaster') || word.selectedBy}
@@ -1192,9 +1191,13 @@
         left : 50%;
         transform : translateX(-50%);
         text-align : center;
+        display : flex;
+        flex-direction : column;
+        justify-content : center;
     }
     .codenamePng {
         height : 60px;
+        align-self : center;
     }
     .scorecardAndLogs{
         position : absolute;
@@ -1244,12 +1247,7 @@
         white-space : nowrap;
     }
     .turnIndicatorBox {
-        position : absolute;
-        top : -20%;
-        left : 0;
-        right : 0;
-        text-align: center;
-        margin : 15px 5px;
+        margin : 12px 0px 0px 0px;
     }
     .turnIndicator {
         display: inline;
