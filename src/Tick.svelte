@@ -7,13 +7,11 @@
     .tick {
         width : 20px;
         height: 20px;
-        margin-right : 5px;
     }
     @media screen and (max-width : 1000px), screen and (max-height : 670px) {
 		.tick {
 			width : 15px;
 			height : 15px;
-            margin-right : 0px;
 		}
 	}
 </style>

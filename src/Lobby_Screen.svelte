@@ -244,7 +244,7 @@
     function updateUsersOnlineStatus() {
         for(const id in usersList) {
             user = usersList[id];
-            if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
+            if( (user.online === true) || (Date.now() - user.online <= 50000000) ) {
                 allUserOnlineStatus[user.id] = true;
             }
             else {
@@ -350,7 +350,7 @@
         listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
             dbGameSessionRoundRef.update({
                 page : "Lobby",
-                time : Date.now() + 6000,
+                time : Date.now() + 600000,
                 shuffledWordList,
                 turn : "Red",
                 redScore : 9,
@@ -391,7 +391,7 @@
 </script>
 <main>
     <div class = "gameHeading">
-        <CodeName/> 
+        <img class = "codenamePng" src = '/images/codenames-logo.png' alt = "codenamesPng">
     </div>
     <div class = "container">
         <div class = "heading">
@@ -399,7 +399,7 @@
         </div>
         <div class = "teams">
             <div class = "blue">
-                <div class = "blueH">Blue Team({blueTeam.length})</div>
+                <div class = "blueH">Blue Team ({blueTeam.length})</div>
                 
                 <div class = "user-list">
                     <div class = "users">
@@ -409,7 +409,11 @@
                         {#each blueTeam as user}
                             <div class="user">
                                 <div class = "userDetails">
-                                    <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
+                                    {#if user.profilePicture}
+                                        <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
+                                    {:else}
+                                        <div class="fakeProfilePicture"> {user.userName[0].toUpperCase()} </div>
+                                    {/if}
                                     <div class="name"> {processName(user)} </div>
                                 </div>
                                 {#if allUserOnlineStatus[user.id] }
@@ -439,7 +443,7 @@
             </div>
 
             <div class = "red">
-                <div class = "redH">Red Team({redTeam.length})</div>
+                <div class = "redH">Red Team ({redTeam.length})</div>
 
                 <div class = "user-list">
                     <div class = "users">
@@ -449,7 +453,11 @@
                         {#each redTeam as user}
                             <div class="user">
                                 <div class="userDetails"> 
-                                    <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
+                                    {#if user.profilePicture}
+                                        <img class = "profilePicture" src = {user.profilePicture} alt = "UserProfilePicture">
+                                    {:else}
+                                        <div class="fakeProfilePicture"> {user.userName[0].toUpperCase()} </div>
+                                    {/if}
                                     <div class = "name">
                                         {processName(user)} 
                                     </div>
@@ -514,18 +522,23 @@
 <style>
    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap');
 
-   *::-webkit-scrollbar,
-    *::-webkit-scrollbar-thumb {
-        width: 26px;
-        border-radius: 13px;
-        border: 10px solid transparent;
-        color : #2A337E;
+    
+   ::-webkit-scrollbar {
+        width: 10px;
     }
 
-    *::-webkit-scrollbar-thumb {        
-        box-shadow: inset 0 0 0 5px;
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #fff;
+        border-radius : 5px;
     }
 
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;;
+        border-radius : 5px;
+    }
+    
     main{
         background-image : url(/images/background.svg);
         border-radius: 20px;
@@ -537,6 +550,10 @@
     .gameHeading{
         padding : 3%;
     }
+    .codenamePng {
+        height : 60px;
+    }
+    
     .container{
         display: flex;
         flex-direction : column;
@@ -604,8 +621,7 @@
         margin : 5% 5%;
         background-color: #fff;
         border-radius: 15px;
-        padding : 10px 5px 10px 10px;
-        overflow : auto;
+        padding : 5px;
     }
     .blue > .user-list{
         border: 1px solid #5E96E8;
@@ -614,8 +630,8 @@
         border: 1px solid #E96143;
     }
     .users{
-        width : 100%;
-        height : 100%;
+        overflow : auto;
+        max-height : 100%;
     }
     .emptyTeamMsg{
         font-size : 16px;
@@ -626,8 +642,7 @@
         display : flex;
         justify-content: space-between;
         align-items: center;
-        padding : 5px 10px 5px 5px;
-        width : 100%;
+        padding : 5px;
     }
     .userDetails {
         display : flex;
@@ -640,6 +655,22 @@
         border-radius : 50%;
         margin-right : 5px;
     }
+    .fakeProfilePicture{
+        min-width : 20px;
+        min-height : 20px;
+        max-width : 20px;
+        max-height : 20px;
+        font-size : 14px;
+        color : white;
+        font-weight : 700;
+        display : flex;
+        font-family : 'Manrope',sans-serif;
+        justify-content: center;
+        align-items : center;
+        border-radius : 50%;
+        background-color : #343E98;
+        margin-right: 5px;
+    }
     .name{
         font-family: 'Manrope',sans-serif;
         font-weight : 700;
@@ -651,6 +682,7 @@
         width : 100%;
         display : flex;
         justify-content: space-evenly;
+        white-space : nowrap;
     }
     .player,.spymaster{
         border-radius: 41px;
@@ -751,6 +783,7 @@
         box-sizing: border-box;
         background-color: #3F1575;
         visibility: hidden;
+        overflow : hidden;
     }
     .themes {
         display : flex;
@@ -762,8 +795,7 @@
         visibility : visible;
     }
     .theme {
-        margin : 10px 0px;
-        padding-left : 10px;
+        padding : 10px;
     }
     .theme:hover{
         background-color: #fff;
@@ -779,6 +811,10 @@
         padding : 10px 20px;
         margin-top : 20px;
 	}
+    .startBtn:hover {
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px -6px 0px #98C8E2;
+        transform : scale3d(1,1,1.75);
+    }
 	.startBtn:focus{
 		box-shadow: 0px 0px 0px;
 	}
@@ -802,17 +838,7 @@
     .disabledStartBtn:hover + .alertDiv{
         visibility : visible;
     }
-    @media screen and (max-width : 1100px) {
-        .teams {
-            max-height : 250px;
-        }
-    }
-    @media screen and (max-height : 650px) {
-        .teams {
-            max-height : 230px;
-        }
-    }
-    @media screen and (max-width : 1150px),screen and (max-height : 700px) {
+    @media screen and (max-width : 1150px) {
         .blueH,.redH,.heading {
             font-size : 16px;
         }
@@ -835,7 +861,30 @@
             font-size : 16px;
         }
     }
-    @media screen and (max-width : 1000px), screen and (max-height : 650px) {
+    @media screen and (max-width : 1100px) {
+        .teams {
+            max-height : 250px;
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #fff;
+            border-radius : 2.5px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;;
+            border-radius : 2.5px;
+        }
+    }
+    @media screen and (max-width : 1000px) {
+        .startBtn {
+            padding : 5px 10px;
+        }
         .player,.spymaster {
             font-size : 0.6em;
         }
@@ -856,4 +905,15 @@
             font-size : 0.75rem;
         }
     }
+    @media screen and (max-width : 900px){
+        .red,.blue {
+            width : 33%;
+        }
+    }
+    @media screen and (max-height : 650px) {
+        .teams {
+            max-height : 230px;
+        }
+    }
+    
 </style>
