@@ -865,20 +865,30 @@
                         </div>
     
                     {/if}
+                    {#if allUsersOnlineStatus[user.id] === false}
+                        <div class = "noOnlinePlayer">
+                            You are offline, please check your connection and refresh the page.
+                        </div>
+                    {/if}
                     {#if clue && clue.clueSenderTeam === turn && team === turn}
                         <div class="clueMsgBox">You have send clue {clue.clueWord} (x {clue.clueWord_Count} )</div>
                     {/if}
-    
+                    
                     {#if (team === "Red" && !redTeamPlayersCount) || (team === "Blue" && !blueTeamPlayersCount)}
                         <div class = "noOnlinePlayer">
-                            No online player in your team. To continue the game ask someone to join .
+                            No online player in your team. To continue the game ask someone to join.
                         </div>
                     {/if}
-    
+                    
                     {#if showSelectedInfo}
                         <div class = "postWordClickMsgBox"> {postWordClickMsg} </div>
                     {/if}
                 {:else}
+                    {#if allUsersOnlineStatus[user.id] === false}
+                        <div class = "noOnlinePlayer">
+                            You are offline, please check your connection and refresh the page.
+                        </div>
+                    {/if}
                     {#if clue && clue.clueSenderTeam === turn}
                         <div class = "clueMsgBox">
                             <div class = "clueMsgTeamIdentifier" style = "background-color : {clueMsgTeamIdentifierColor}"> {turn.toUpperCase()}</div>
@@ -924,35 +934,7 @@
                 {/if}
             </div>
         </div>
-        
-        <div class="logsBox">
-            <div class = "logHeading">Logs</div>
-            <div class = "logsContainer" bind:this = {logsdiv}>
-                {#if logsArray && logsArray.length !== 0}
-                    {#each logsArray as log}
-                        <div class="log">
-                            <div class="logsActor" style = "color : {log.actor.team === "Red" ?"#E44C4F" : "#5E96E8"}">
-                                {processName(log.actor)}
-                            </div>
-                            <div class="logsAction">
-                                {#if log.isWordSelected === true}
-                                    selects
-                                    {#if log.word.color === 'Red'}
-                                        <span style = 'color : #E44C4F'>  {log.word.name} </span>
-                                    {:else if log.word.color === 'Blue'}
-                                        <span style = 'color : #5E96E8'>  {log.word.name}</span>
-                                    {:else}
-                                        <span>  {log.word.name} </span>
-                                    {/if}
-                                {:else}
-                                    {log.action}
-                                {/if}
-                            </div>
-                        </div>
-                    {/each}
-                {/if}
-            </div>
-        </div>
+    
         <div class="blueTeam_List">
             <div class = "blue_heading">
                 Blue Team
@@ -1233,11 +1215,6 @@
         font-weight : 700;
         font-size: 14px;
     }
-    .logBoxShow{
-        transform : translateY(100%);
-        transition : transform 1s ease;
-
-    }
     .blueScore {
         color : #5E96E8;
         white-space : nowrap;
@@ -1327,7 +1304,7 @@
         grid-template-columns: 3fr 1fr 1fr;
         grid-gap : 10px;
         width : 100%;
-        margin-bottom : 5px;
+        margin-bottom : 10px;
     }
     .clueInputBox{
         border : 0px;
@@ -1439,7 +1416,7 @@
         font-size : 14px;
         line-height : 19px;
         text-align : center;
-        margin : 0px auto 15px;
+        margin : 0px auto 10px;
         width : 60%;
     }
     .redSpymasterDisappear,.blueSpymasterDisappear {
@@ -1486,42 +1463,7 @@
         line-height: 20px;
         font-size: 14px;
     }
-    .logsBox {
-        position : absolute;
-        display : none;
-        left : 2%;
-        bottom : 45%;
-        width : 12%;
-        max-height : 150px;
-        text-align : center;
-    }
-    .logHeading {
-        color :#fff;
-        font-family:  'Manrope',sans-serif;
-        font-size : 14px;
-        line-height : 19px;
-        font-weight : 800;
-        padding : 5px;
-    }
-    .logsContainer {
-        font-family:  'Manrope',sans-serif;
-        font-size : 10px;
-        line-height : 19px;
-        border : 2px solid #4C1A96;
-        border-radius : 8px;
-        padding : 5px;
-        overflow : auto;
-        max-height : 200px;
-    }
-    .log{
-        padding : 5px 0;
-        color : #fff;
-    }
-    .logsActor {
-        margin-top : 5px;
-        font-weight : bold;
-        font-size : 11.5px;
-    }
+    
     .redTeam_List{
         position : absolute;
         top : 50%;
@@ -1640,7 +1582,7 @@
         .Word-show{
             padding : 4px;
         }
-        .logsBox,.redTeam_List,.blueTeam_List {
+        .redTeam_List,.blueTeam_List {
             width : 14.5%;
         }
         .player-box {

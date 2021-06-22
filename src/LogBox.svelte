@@ -77,7 +77,7 @@
                         {:else if log.word.color === 'Blue'}
                             <span style = 'color : #5E96E8' class = "wordName">  {log.word.name}</span>
                         {:else}
-                            <span>  {log.word.name} </span>
+                            <span style = 'margin-left : 5px;'>  {log.word.name} </span>
                         {/if}
                     {:else}
                         {log.action}
