@@ -662,7 +662,7 @@
                             <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
                         </svg>
                     </div>
-                    <div class = "result-text"> <strong> Congaratulations </strong> {team} team has won the game</div>
+                    <div class = "result-text"> <strong> Congaratulations </strong> {team} team has won the game.</div>
                     <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
                 {:else}
                     <Cross/>
@@ -671,9 +671,9 @@
                             Black word selected
                         {:else}
                             {#if lastWordSelected?.selectorTeam === team} 
-                                Opponent word selected.
+                                Opponent's word selected.
                             {:else}
-                                Opponent has found all their team words
+                                Opponent has found all their team words.
                             {/if}
                         {/if}
                         <svg class = "tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -681,7 +681,7 @@
                         </svg>
                             
                     </div>
-                    <div class="result-text">Your team has lost the Game</div>
+                    <div class="result-text">Your team has lost the Game.</div>
                     <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
                 {/if}
 
@@ -1062,8 +1062,8 @@
         margin : 20px 0px;
         color : #fff;
         font-family: 'Manrope', sans-serif;
-        font-style: normal;
-        font-weight: bold;
+        font-size : 16px;
+        font-weight: 700;
     }
     .winning-btn{
         background: #3FAB8B;
@@ -1077,23 +1077,25 @@
         margin-left : 8px;
     }
     .result-text{
-        font-family: Manrope;
+        font-family: 'Manrope',sans-serif;
         font-style: normal;
         font-weight: 800;
+        font-size : 16px;
         text-align: center;
         color: #FFFFFF;
     }
     .restart-game{
         background: #6C44A8;
-        font-family: Manrope;
+        font-family: 'Manrope', sans-serif;
         font-style: normal;
-        font-weight: bold;
+        font-weight: 700;
         padding : 10px 20px;
         box-shadow: 0px 3px 10px rgba(108, 68, 168, 0.5);
         border-radius: 41px;
         margin : 20px 0px;
         color : #fff;
         cursor : pointer;
+        font-size : 16px;
     }
     .gameHeading{
         position : relative;
