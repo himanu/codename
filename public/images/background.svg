@@ -1,0 +1,18 @@
+<svg width="100%" height="100%" viewBox="0 0 100% 100%" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="100%" height="100%" rx="20" fill="#3F1575"></rect>
+<rect width="100%" height="100%" rx="20" fill="#3F1575"></rect>
+<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+<rect width="100%" height="100%" rx="20" fill="#3F1575"></rect>
+</mask>
+<g mask="url(#mask0)">
+<circle opacity="0.1" cx="703" cy="158" r="37" fill="#6F45AE"></circle>
+<circle cx="-20.5" cy="551.5" r="22" stroke="#2D1255" stroke-width="5"></circle>
+<circle cx="583.5" cy="482.5" r="22" stroke="#441A7B" stroke-width="5"></circle>
+<circle cx="891" cy="108" r="13.5" stroke="#441A7B" stroke-width="3"></circle>
+<circle opacity="0.1" cx="287" cy="345" r="37" fill="#6F45AE"></circle>
+<circle opacity="0.1" cx="858" cy="463" r="82" fill="#6F45AE"></circle>
+<circle cx="23.5" cy="115.5" r="60" stroke="#441A7B" stroke-width="5"></circle>
+<circle opacity="0.1" cx="80" cy="426" r="31" fill="#6F45AE"></circle>
+<circle opacity="0.1" cx="512" cy="49" r="21" fill="#6F45AE"></circle>
+</g>
+</svg>

@@ -1,30 +1,69 @@
 <script>
-	export let name;
+    let page = "Loading";
+    let clicked = false;
+    let roundValue;
+    var dbGameSessionRound;
+    import Loading from './Loading.svelte';
+    import { dbGameSessionRoundValue,dbGameSessionRounds} from './database.js';
+    import LobbyScreen from './Lobby_Screen.svelte';
+    import Game from './Game.svelte';
+    import CustomButton from './CustomButton.svelte';
+    import Loby from './loby.svelte';
+    function updateClick() {
+        if(clicked === false)
+        {
+            clicked = true;
+        }
+    }
+    const snapFun = function(snap){
+        if(!snap.exists()) {
+            return;
+        }
+        if(snap.val().page === undefined) {
+            page = "Lobby Screen";
+        }
+        else {
+            clicked = true;
+            page = snap.val().page;
+        }
+    }
+    dbGameSessionRoundValue.on('value',(snap)=>{
+        if(!snap.exists()) {
+            return;
+        }
+        roundValue = snap.val();
+        if(dbGameSessionRound){
+            dbGameSessionRound.off('value',snapFun);
+        }
+        
+        dbGameSessionRound = dbGameSessionRounds.child(roundValue);
+        dbGameSessionRound.on('value',snapFun);
+    })
+    
+    
+    $ : {
+        if(roundValue) {
+            page = 'Lobby Screen';
+            if(roundValue != 1) {
+                clicked = true;
+            }
+        }
+    }
 </script>
-
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
+{#if clicked === false}
+    <Loading/>
+    <CustomButton on:click = {updateClick}/>
+{:else if page === "Lobby Screen"}
+    <LobbyScreen/>
+{:else if page === "Lobby"}
+    <Loby/>
+{:else if page === 'Game Screen'}
+    <Game/>
+{/if}
+    
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+    :global(*){
+        box-sizing: border-box;
+        outline : 0;
+    }
 </style>
