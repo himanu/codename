@@ -1592,6 +1592,12 @@
         color : #fff;
         border-radius : 10px;
     }
+    @media screen and (max-height : 670px) {
+        .word {
+            padding : 10px;
+        }
+    }
+
     @media screen and (max-width : 1200px) {
         .playerDetails {
             flex : 1.25;
