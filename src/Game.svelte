@@ -1015,7 +1015,10 @@
         background: #888;
         border-radius : 5px;
     }
-
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgb(70, 69, 69);
+        cursor : pointer;
+    }
     
     *:focus {
         outline: none;
@@ -1288,7 +1291,7 @@
         cursor : pointer;
     }
     .greyTeamWord{
-        background-color : #9c9c9c;
+        background-color : #C1BFBF;
         color : black;
     }
     .redTeamWord{
@@ -1442,8 +1445,7 @@
         text-align : center;
         margin : 0px auto 10px;
         width : 60%;
-        color: #f1f156;
-        font-style: oblique;
+        color: #c9c920;
     }
     .noOnlinePlayer {
         color: rgba(255, 255, 255,1);
@@ -1454,11 +1456,10 @@
         text-align : center;
         margin : 0px auto  10px auto;
         width : 60%;
-        color: #f1f156;
-        font-style: oblique;
+        color: #c9c920;
     }
     .postWordClickMsgBox {
-        color: rgba(255, 255, 255,0.5);
+        color: #c9c920;
         font-family : 'Manrope',sans-serif;
         font-weight : 700;
         font-size : 14px;

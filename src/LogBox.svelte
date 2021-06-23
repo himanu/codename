@@ -105,6 +105,10 @@
         background: #888;
         border-radius : 5px;
     }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgb(70, 69, 69);
+        cursor : pointer;
+    }
 
     .container {
         width : 50%;
@@ -116,6 +120,7 @@
         transition : transform 0.15s ease;
         z-index : 100;
         border-radius : 10px;
+        border : 2px solid #C1BFBF;
     }
     .showContainer {
         transform: translateY(20%);

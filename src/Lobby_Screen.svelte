@@ -537,7 +537,10 @@
         background: #888;;
         border-radius : 5px;
     }
-    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgb(70, 69, 69);
+        cursor : pointer;
+    }
     main{
         background-image : url(/images/background.svg);
         border-radius: 20px;
@@ -642,6 +645,7 @@
         justify-content: space-between;
         align-items: center;
         padding : 5px;
+        overflow-x : hidden;
     }
     .userDetails {
         display : flex;
@@ -675,6 +679,7 @@
         font-weight : 700;
         font-size : 14px;
         color: #0C0030;
+        white-space : nowrap;
     }
     
     .btn{
@@ -718,6 +723,7 @@
     .spymaster{
         background-color: #ffffff;
         border-color : black;
+        color : #333333f2;
     }
     .vsBox {
         display : flex;
@@ -743,7 +749,6 @@
         z-index : 10;
     }
     .themeSelectorBox {
-        width : 300px;
         color : #fff;
         display : flex;
         justify-content: space-between;
@@ -755,6 +760,7 @@
         font-weight : 700;
         font-size : 14px;
         line-height : 19px;
+        margin-right : 10px;
     }
     .themesBox {
         border : 1px solid #fff;
@@ -907,12 +913,12 @@
             font-size : 12px;
         }
         .btnText {
-            font-size : 0.75rem;
+            font-size : 0.70rem;
         }
     }
     @media screen and (max-width : 900px){
         .red,.blue {
-            width : 33%;
+            width : 35%;
         }
     }
     @media screen and (max-height : 650px) {

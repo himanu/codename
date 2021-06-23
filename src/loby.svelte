@@ -115,7 +115,7 @@
         <div class="container">
             <div class = "teams">
                 <div class = "blue">
-                    <div class = "blueH">Blue Team({blueTeam.length})</div>
+                    <div class = "blueH">Blue Team ({blueTeam.length})</div>
                     
                     <div class = "user-list">
                         <div class = "users">
@@ -152,7 +152,7 @@
                 </div>
         
                 <div class = "red">
-                    <div class = "redH">Red Team({redTeam.length})</div>
+                    <div class = "redH">Red Team ({redTeam.length})</div>
         
                     <div class = "user-list">
                         <div class = "users">
@@ -209,6 +209,10 @@
         background: #888;;
         border-radius : 5px;
     }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgb(70, 69, 69);
+        cursor : pointer;
+    }
     @media screen and (max-width : 1100px) {
         ::-webkit-scrollbar {
             width: 5px;
@@ -247,6 +251,26 @@
         left : 50%;
         transform: translate(-50%,-50%);
         width : 60%;
+    }
+    @media screen and (max-width : 1100px) {
+        .container {
+            width : 62.5%;
+        }
+    }
+    @media screen and (max-width : 1000px) {
+        .container {
+            width : 65%;
+        }
+    }
+    @media screen and (max-width : 950px) {
+        .container {
+            width : 70%;
+        }
+    }
+    @media screen and (max-width : 900px) {
+        .container {
+            width : 75%;
+        }
     }
     .teams{
         display : flex;
@@ -309,7 +333,7 @@
         max-height: 50%;
         background-color: #fff;
         border-radius: 15px;
-        padding : 10px 5px 10px 10px;
+        padding : 5px;
     }
     .blue > .user-list{
         border: 1px solid #5E96E8;
@@ -331,7 +355,7 @@
         display : flex;
         justify-content: space-between;
         align-items: center;
-        padding : 5px 10px 5px 5px;
+        padding : 5px;
         width : 100%;
     }
     .userDetails {
@@ -372,6 +396,7 @@
         font-weight : 700;
         font-size : 14px;
         color: #0C0030;
+        white-space : nowrap;
     }
     .vsBox {
         display : flex;
