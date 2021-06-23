@@ -1052,7 +1052,7 @@
         justify-content: center;
         align-items : center;
         z-index : 200;
-        font-family: 'Manrope', sans-serif;
+        font-family : monospace;
         font-size : 20px;
         letter-spacing : 0.25px;
     }
@@ -1098,6 +1098,10 @@
         margin : 20px 0px;
         color : #fff;
         cursor : pointer;
+        letter-spacing : 0.25px;
+    }
+    .restart-game:hover {
+        transform : scale3d(1.05,1.05,1.25)
     }
     .gameHeading{
         position : relative;
@@ -1218,6 +1222,9 @@
         font-family : 'Manrope', sans-serif;
         font-weight : 700;
         font-size: 14px;
+    }
+    .logsBtn:hover {
+        transform : scale3d(1.05,1.05,1.25);
     }
     .blueScore {
         color : #5E96E8;
@@ -1372,9 +1379,12 @@
         color : #ffffff;
         border-radius : 10px;
         cursor : pointer;
-        font-family : 'Manrope';
+        font-family : 'Manrope',sans-serif;
         font-weight : 700;
         font-size : 14px;
+    }
+    .give-clue-btn:hover {
+        transform : scale3d(1.05,1.05,1.25);
     }
     .sendClueMsg {
         color : #fff;
@@ -1432,6 +1442,8 @@
         text-align : center;
         margin : 0px auto 10px;
         width : 60%;
+        color: #f1f156;
+        font-style: oblique;
     }
     .noOnlinePlayer {
         color: rgba(255, 255, 255,1);
@@ -1442,6 +1454,8 @@
         text-align : center;
         margin : 0px auto  10px auto;
         width : 60%;
+        color: #f1f156;
+        font-style: oblique;
     }
     .postWordClickMsgBox {
         color: rgba(255, 255, 255,0.5);
@@ -1467,7 +1481,9 @@
         line-height: 20px;
         font-size: 14px;
     }
-    
+    .endTurnBtn:hover {
+        transform : scale3d(1.05,1.05,1.25);
+    }
     .redTeam_List{
         position : absolute;
         top : 50%;

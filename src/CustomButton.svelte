@@ -23,6 +23,9 @@
 		align-items: center;
 		cursor : pointer;
 	}
+	.startBtn:hover {
+		transform: scale3d(1.05,1.05,1.25);
+	}
 	.startBtn:focus{
 		box-shadow: 0px 0px 0px;
 	}

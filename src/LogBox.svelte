@@ -154,7 +154,7 @@
 		height : 3px;
 		background : grey;
 	}
-
+    
 	.line1{
 		transform : rotate(45deg);
 	}
