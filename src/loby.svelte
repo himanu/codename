@@ -2,6 +2,8 @@
     import Tick from './Tick.svelte';
     import { dbUser,dbUsers ,dbTime,dbGameSessionRound,listenFirebaseKey} from "./database";
     import LobbyScreen from "./Lobby_Screen.svelte";
+    import LoadingSvg from './LoadingSvg.svelte';
+    import DisconnectedSvg from './DisconnectedSvg.svelte';
     var leftTime = 5;
     let time;
     let user;
@@ -9,6 +11,7 @@
     let blueTeam = [];
     let users;
     let userId;
+    let currUser;
     
     dbUser.on('value',(snap)=>{
         if(!snap.exists)
@@ -68,6 +71,23 @@
             }
         }	
 	}
+    function keepUpdatingUsersOnlineStatus() {
+        setInterval(updateUsersOnlineStatus, 1000);
+    }
+    let allUserOnlineStatus = {};
+    function updateUsersOnlineStatus() {
+        for(const id in usersList) {
+            currUser = usersList[id];
+            if( (currUser.online === true) || (Date.now() - currUser.online <= 5000) ) {
+                allUserOnlineStatus[currUser.id] = true;
+            }
+            else {
+                allUserOnlineStatus[currUser.id] = false;
+            }
+        }
+    }
+    updateUsersOnlineStatus();
+    keepUpdatingUsersOnlineStatus();
     function processName(user) {
         let name = user.userName;
         let fname = name.split(" ")[0];
@@ -112,7 +132,15 @@
                                         {/if}   
                                         <div class="name"> {processName(user)} </div>
                                     </div>
-                                    <Tick/>
+                                    {#if allUserOnlineStatus[user.id] }
+                                    {#if user.online === true}
+                                        <Tick/>
+                                    {:else}
+                                        <LoadingSvg/>
+                                    {/if}
+                                    {:else}
+                                        <DisconnectedSvg />
+                                    {/if}
                                 </div>
                             {/each}
                         </div>
@@ -143,7 +171,15 @@
                                             {processName(user)} 
                                         </div>
                                     </div>
-                                    <Tick/>
+                                    {#if allUserOnlineStatus[user.id] }
+                                    {#if user.online === true}
+                                        <Tick/>
+                                    {:else}
+                                        <LoadingSvg/>
+                                    {/if}
+                                    {:else}
+                                        <DisconnectedSvg />
+                                    {/if}
                                 </div>
                             {/each}
                         </div>

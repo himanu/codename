@@ -244,7 +244,7 @@
     function updateUsersOnlineStatus() {
         for(const id in usersList) {
             user = usersList[id];
-            if( (user.online === true) || (Date.now() - user.online <= 50000000) ) {
+            if( (user.online === true) || (Date.now() - user.online <= 5000) ) {
                 allUserOnlineStatus[user.id] = true;
             }
             else {
@@ -350,7 +350,7 @@
         listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
             dbGameSessionRoundRef.update({
                 page : "Lobby",
-                time : Date.now() + 600000,
+                time : Date.now() + 6000,
                 shuffledWordList,
                 turn : "Red",
                 redScore : 9,
