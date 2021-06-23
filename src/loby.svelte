@@ -103,6 +103,15 @@
         }
         return fname;
     }
+    function validUserProfilePicture(str) {
+        try {
+            new URL(str);
+            return true;
+        }
+        catch(err){
+            return false;
+        }
+    }
     updateTime();
 </script>
 <main>
@@ -125,7 +134,7 @@
                             {#each blueTeam as user}
                                 <div class="user">
                                     <div class = "userDetails">
-                                        {#if user.profilePicture}
+                                        {#if validUserProfilePicture(user.profilePicture)}
                                         <img class = "profilePicture" src = {user.profilePicture} alt = "profilePicture">
                                         {:else}
                                             <div class = "fakeProfilePicture"> {user.userName[0].toUpperCase()} </div>
@@ -162,7 +171,7 @@
                             {#each redTeam as user}
                                 <div class="user">
                                     <div class="userDetails"> 
-                                        {#if user.profilePicture}
+                                        {#if validUserProfilePicture(user.profilePicture)}
                                         <img class = "profilePicture" src = {user.profilePicture} alt = "profilePicture">
                                         {:else}
                                             <div class = "fakeProfilePicture"> {user.userName[0].toUpperCase()} </div>
