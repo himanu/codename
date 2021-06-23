@@ -891,7 +891,7 @@
             padding : 5px 10px;
         }
         .player,.spymaster {
-            font-size : 0.6em;
+            font-size : 11px;
         }
         .red,.blue {
             width : 30%;

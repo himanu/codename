@@ -716,7 +716,7 @@
                     <div class = "turnIndicator" style = "background-color : {turnIndicatorBackgroundColor}">
                         {#if !clue || (clue.clueSenderTeam !== turn)}
                             {#if team !== turn}
-                                {turn} Team's Spymaster Turn.
+                                {turn} Team Spymaster Turn.
                             {:else}
                                 {#if isSpymaster}
                                     Your turn, send clue.
@@ -726,7 +726,7 @@
                             {/if}
                         {:else}
                             {#if team !== turn}
-                                {turn} Team's turn.
+                                {turn} Team turn.
                             {:else}
                                 {#if isSpymaster}
                                     Your Team turn.
@@ -1037,7 +1037,7 @@
         position : absolute;
         top : 0;
         left : 0;
-        background-color: #3F1575;
+        background-color: #2a0f4d;
         opacity : 0.5;
         z-index : 100;
     }
@@ -1053,17 +1053,17 @@
         align-items : center;
         z-index : 200;
         font-family : monospace;
-        font-size : 20px;
+        font-size : 22px;
         letter-spacing : 0.25px;
     }
     @media screen and (max-width : 1150px) {
         .result {
-            font-size : 18px;
+            font-size : 20px;
         }
     }
     @media screen and (max-width : 1000px) {
         .result {
-            font-size : 16px;
+            font-size : 18px;
         }
     }
     .winning-btn,.loosing-btn{

@@ -76,8 +76,8 @@
     }
     let allUserOnlineStatus = {};
     function updateUsersOnlineStatus() {
-        for(const id in usersList) {
-            currUser = usersList[id];
+        for(const id in users) {
+            currUser = users[id];
             if( (currUser.online === true) || (Date.now() - currUser.online <= 5000) ) {
                 allUserOnlineStatus[currUser.id] = true;
             }
