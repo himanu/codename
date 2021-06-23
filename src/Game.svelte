@@ -1,5 +1,4 @@
 <script>
-    import CodeName from "./CodeName.svelte";
     import Cross from "./Cross.svelte";
     import { afterUpdate, beforeUpdate,onMount} from 'svelte';
     import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound,dbGameSessionRoundValue, listenFirebaseKey } from "./database";
@@ -11,8 +10,6 @@
     import Lobby_Screen from './Lobby_Screen.svelte' 
     import DisconnectedSvg from "./DisconnectedSvg.svelte";
     import LogBox from './LogBox.svelte';
-    import App from "./App.svelte";
-    import CustomButton from "./CustomButton.svelte";
 
     let wordList = [];
     let team;

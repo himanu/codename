@@ -2,7 +2,6 @@
     import { dbUser, dbUsers,dbDefault,dbDuet, dbThemeValue,dbPage, dbGameSessionRound,listenFirebaseKey} from "./database";
     import Tick from "./Tick.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
-    import CodeName from "./CodeName.svelte";
     import DownSvg from './DownSvg.svelte';
     import DisconnectedSvg from './DisconnectedSvg.svelte';
     import { shuffleArray, create_NewArray_Of_List } from "./utils";
