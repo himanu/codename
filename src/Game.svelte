@@ -659,7 +659,7 @@
                             <path d="M11.9811 0L4.92831 7.0606L2.01749 4.15653L0.548828 5.62831L4.93091 10L13.4519 1.4697L11.9811 0Z" fill="white"/>
                         </svg>
                     </div>
-                    <div class = "result-text"> Hurrah!! {team} team has won the game.</div>
+                    <div class = "result-text"> Hurrah!! Your team has won the game.</div>
                     <button class = "restart-game" on:click = {handleRestartBtn}>Restart Game</button>
                 {:else}
                     <Cross/>
