@@ -770,7 +770,7 @@
     }
     .themeContainer {
         position : absolute;
-		top : 100%;
+		top : calc(100% + 1px);
         left : 0%;
 		opacity : 0;
         width : 100%;
@@ -812,8 +812,14 @@
 	}
     .startBtn:hover {
         box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px -6px 0px #98C8E2;
-        transform : scale3d(1.05,1.05,1.25);
     }
+    
+	.startBtn:hover .btnText{
+		transform: scale3d(1.05,1.05,1.25);
+	}
+	.startBtn:hover .btnArrow{
+		transform: scale3d(1.05,1.05,1.25);
+	}
 	.startBtn:focus{
 		box-shadow: 0px 0px 0px;
 	}
