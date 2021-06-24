@@ -410,9 +410,6 @@
                 
                 <div class = "user-list">
                     <div class = "users">
-                        {#if blueTeam.length === 0}
-                            <div class = "emptyTeamMsg">Empty team ...</div>
-                        {/if}
                         {#each blueTeam as user}
                             <div class="user">
                                 <div class = "userDetails">
@@ -433,6 +430,8 @@
                                     <DisconnectedSvg/>
                                 {/if}
                             </div>
+                            {:else}
+                                <div class="emptyTeamMsg">Empty team ...</div>
                         {/each}
                     </div>
                 </div>
@@ -454,9 +453,7 @@
 
                 <div class = "user-list">
                     <div class = "users">
-                        {#if redTeam.length === 0}
-                            <div class="emptyTeamMsg">Empty team ...</div>
-                        {/if}
+                        
                         {#each redTeam as user}
                             <div class="user">
                                 <div class="userDetails"> 
@@ -480,6 +477,8 @@
                                     <DisconnectedSvg />
                                 {/if}
                             </div>
+                            {:else}
+                                <div class="emptyTeamMsg">Empty team ...</div>
                         {/each}
                     </div>
                 </div>
