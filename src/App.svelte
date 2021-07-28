@@ -1,6 +1,5 @@
 <script>
-    let page = "Loading";
-    let clicked = false;
+    let page = "Welcome";
     let roundValue;
     var dbGameSessionRound;
     import Loading from './Loading.svelte';
@@ -10,22 +9,17 @@
     import CustomButton from './CustomButton.svelte';
     import Loby from './loby.svelte';
     function updateClick() {
-        if(clicked === false)
-        {
-            clicked = true;
-        }
+        dbGameSessionRound.update({
+            page : 'Lobby Screen'
+        })
     }
     const snapFun = function(snap){
         if(!snap.exists()) {
+            if(roundValue === 1)
+                page = 'Welcome';
             return;
         }
-        if(snap.val().page === undefined) {
-            page = "Lobby Screen";
-        }
-        else {
-            clicked = true;
-            page = snap.val().page;
-        }
+        page = snap.val().page;
     }
     dbGameSessionRoundValue.on('value',(snap)=>{
         if(!snap.exists()) {
@@ -43,14 +37,18 @@
     
     $ : {
         if(roundValue) {
-            page = 'Lobby Screen';
             if(roundValue != 1) {
-                clicked = true;
+                dbGameSessionRound.update({
+                    page  : 'Lobby Screen'
+                })
             }
         }
     }
+    $: {
+        console.log('page ',page);
+    }
 </script>
-{#if clicked === false}
+{#if page === 'Welcome' }
     <Loading/>
     <CustomButton on:click = {updateClick}/>
 {:else if page === "Lobby Screen"}

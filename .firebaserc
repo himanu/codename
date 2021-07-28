@@ -1,7 +1,7 @@
 {
-    "projects": {
-        "default": "da-cn-dev",
-        "dev": "da-cn-dev",
-        "prod": "da-cn-prod"
+  "projects": {
+    "default": "da-cn-dev",
+    "dev": "da-cn-dev",
+    "prod": "da-cn-prod"
   }
 }
