@@ -5,20 +5,19 @@ exports.updateLeaderBoard = functions.https.onCall((data, context)=>{
   const roomIdSessionId = data.gameSessionId;
   const sessionId = roomIdSessionId.split("+")[1];
   const winningTeamOnlinePlayersId = data.winningTeamOnlinePlayersId;
-  
-  let scoresArray = [];
-  winningTeamOnlinePlayersId.forEach(userId => {
+  const scoresArray = [];
+  winningTeamOnlinePlayersId.forEach((userId) => {
     scoresArray.push({
-        userid : userId,
-        score : 10
-    })
+      userid: userId,
+      score: 10,
+    });
   });
-  console.log('secret ',functions.config().app.secret);
+  console.log("secret ", functions.config().app.secret);
   return axios({
     method: "post",
     headers: {
-      Host: functions.config().app.url,
-      "X-APP-ACCESS-SECRET": `Token ${functions.config().app.secret}`
+      "Host": functions.config().app.url,
+      "X-APP-ACCESS-SECRET": `Token ${functions.config().app.secret}`,
     },
     url: `${functions.config().app.url}/v1/api/dapp/extension/${
       functions.config().app.id
@@ -28,10 +27,10 @@ exports.updateLeaderBoard = functions.https.onCall((data, context)=>{
       scores: scoresArray,
     },
   })
-  .then(function (response) {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response);
-  });
+      .then(function(response) {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
 });
