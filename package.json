@@ -5,6 +5,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "dev:emulate": "firebase emulators:start",
     "start": "sirv public --no-clear"
   },
   "devDependencies": {

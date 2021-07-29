@@ -1,11 +1,11 @@
 <script>
     import Cross from "./Cross.svelte";
     import { afterUpdate, beforeUpdate,onMount} from 'svelte';
-    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound,dbGameSessionRoundValue, listenFirebaseKey } from "./database";
+    import { dbGameSession, dbUser, dbUsers, dbWordList, dbTurn, dbClue, dbLogsArray,dbLastWordSelected,dbBlueScore,dbRedScore,dbGameSessionRound,dbGameSessionRoundValue, listenFirebaseKey, updateLeaderBoard } from "./database";
     import LoadingSvg from "./LoadingSvg.svelte";
     import CorrectAnswerTick from "./CorrectAnswerTick.svelte";
     import Tick from './Tick.svelte';
-    import { getParams } from './utils';
+    import { getGameSessionId, getParams } from './utils';
     import DownSvg from "./DownSvg.svelte";
     import Lobby_Screen from './Lobby_Screen.svelte' 
     import DisconnectedSvg from "./DisconnectedSvg.svelte";
@@ -422,7 +422,38 @@
         }
     }
     updateUsersOnlineStatus()
-
+    async function postData(url = '', data = {}) {
+    // Default options are marked with *
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return response.json(); // parses JSON response into native JavaScript objects
+    }
+    let redTeamOnlinePlayersId = [];
+    let blueTeamOnlinePlayersId = [];
+    function getBothTeamOnlinePlayersId() {
+        redTeamOnlinePlayersId = [];
+        blueTeamOnlinePlayersId = [];
+        for(const id in users) {
+            if(users[id].team === 'Red' && allUsersOnlineStatus[id]) {
+                redTeamOnlinePlayersId.push(id);
+            }
+            else if(users[id].team === 'Blue' && allUsersOnlineStatus[id]) {
+                blueTeamOnlinePlayersId.push(id);
+            }
+        }
+    }
+    let gameSessionId = getGameSessionId();
     function checkWord(word) {
         if(!is_This_User_Turn)
         {
@@ -433,7 +464,10 @@
                 selectedBy : userId
             });
         })
-        
+
+        let winningTeamOnlinePlayersId;
+        getBothTeamOnlinePlayersId();
+
         word["selectorName"] = userName;
         word["selectorTeam"] = team;
         
@@ -450,6 +484,7 @@
         if(word.color === "Red") {
 
             if(turn !== "Red") {
+                winningTeamOnlinePlayersId = redTeamOnlinePlayersId;
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                     dbGameSessionRoundRef.update({
                         lastWordSelected : word,
@@ -461,6 +496,7 @@
                 })
             }
             else {
+                winningTeamOnlinePlayersId = redTeamOnlinePlayersId;
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                     dbGameSessionRoundRef.update({
                         lastWordSelected : word,
@@ -476,6 +512,7 @@
         else if(word.color === "Blue") {
 
             if(turn != "Blue") {
+                winningTeamOnlinePlayersId = blueTeamOnlinePlayersId;
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                     dbGameSessionRoundRef.update({
                         lastWordSelected : word,
@@ -487,6 +524,7 @@
                 })
             }
             else {
+                winningTeamOnlinePlayersId = blueTeamOnlinePlayersId;
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                     dbGameSessionRoundRef.update({
                         lastWordSelected : word,
@@ -501,6 +539,7 @@
         }
         else if(word.color === "Grey") {
             if(turn === 'Red') {
+                winningTeamOnlinePlayersId = blueTeamOnlinePlayersId;
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                     dbGameSessionRoundRef.update({
                         lastWordSelected : word,
@@ -511,6 +550,7 @@
                 })
             }
             else if(turn === 'Blue') {
+                winningTeamOnlinePlayersId = redTeamOnlinePlayersId;
                 listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                     dbGameSessionRoundRef.update({
                         lastWordSelected : word,
@@ -523,6 +563,13 @@
             
         }
         else if(word.color === "Black") {
+            if(turn === 'Red') {
+                winningTeamOnlinePlayersId = blueTeamOnlinePlayersId;
+            }
+            else {
+                winningTeamOnlinePlayersId = redTeamOnlinePlayersId;
+            }
+
             listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
                 dbGameSessionRoundRef.update({
                     lastWordSelected : word,
@@ -530,6 +577,13 @@
                 })
             })
         }
+        console.log('winningTeam' ,winningTeamOnlinePlayersId);
+        updateLeaderBoard({gameSessionId,winningTeamOnlinePlayersId}).then(()=>{
+            console.log('Scores are updated');
+        })
+        .catch((err)=>{
+            console.log('Some error occured ',err);
+        })
     }
     //to send clues to the other player
     function giveClue(event){
