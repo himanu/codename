@@ -1,5 +1,5 @@
 <script>
-    let page = "Welcome";
+    let page;
     let roundValue;
     var dbGameSessionRound;
     import Loading from './Loading.svelte';
