@@ -3,7 +3,7 @@ export  const getParams =  function (name) {
     return '' + params.get(name);
 };
 export const getGameSessionId = function () {
-    return getParams('roomId') + getParams('sessionId');
+    return getParams('roomId') + '+' + getParams('sessionId');
 };
 
 export const shuffleArray = function(arr) {
