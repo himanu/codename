@@ -57,6 +57,8 @@
     <Loby/>
 {:else if page === 'Game Screen'}
     <Game/>
+{:else}
+    <Loading/>
 {/if}
     
 <style>
