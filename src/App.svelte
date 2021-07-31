@@ -8,11 +8,8 @@
     import Game from './Game.svelte';
     import CustomButton from './CustomButton.svelte';
     import Loby from './loby.svelte';
-    function updateClick() {
-        dbGameSessionRound.update({
-            page : 'Lobby Screen'
-        })
-    }
+    import {fly} from 'svelte/transition';
+    
     const snapFun = function(snap){
         if(!snap.exists()) {
             if(roundValue === 1)
@@ -37,6 +34,7 @@
     
     $ : {
         if(roundValue) {
+            console.log('roundValue ',roundValue);
             if(roundValue != 1) {
                 dbGameSessionRound.update({
                     page  : 'Lobby Screen'
@@ -50,7 +48,6 @@
 </script>
 {#if page === 'Welcome' }
     <Loading/>
-    <CustomButton on:click = {updateClick}/>
 {:else if page === "Lobby Screen"}
     <LobbyScreen/>
 {:else if page === "Lobby"}
@@ -58,7 +55,11 @@
 {:else if page === 'Game Screen'}
     <Game/>
 {:else}
-    <Loading/>
+    <main in:fly ="{{ y: -20, duration: 1000 }}">
+        <div class = "container">
+            <img class = 'codenamePng' alt = 'codenamePng' src = '/images/codenames-logo.png' >
+        </div>
+    </main>
 {/if}
     
 <style>
@@ -66,4 +67,34 @@
         box-sizing: border-box;
         outline : 0;
     }
+    :global(html) {
+        font-size : 20px;
+    }
+    @media screen and (max-width : 1000px) {
+        :global(html) {
+            font-size : 18px;
+        }
+    }
+    @media screen and (max-width : 900px) {
+        :global(html) {
+            font-size : 16px;
+        }
+    }
+    main{
+		background-image: url(/images/background.svg);
+		width : 100%;
+		height : 100%;
+		background-size: 100% 100%;
+		padding : 2rem;
+		display : flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+	.codenamePng {
+		width : 20rem;
+	}
+	.container{
+		margin : auto;
+	}
 </style>

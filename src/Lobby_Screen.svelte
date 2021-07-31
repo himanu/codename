@@ -5,6 +5,8 @@
     import DownSvg from './DownSvg.svelte';
     import DisconnectedSvg from './DisconnectedSvg.svelte';
     import { shuffleArray, create_NewArray_Of_List } from "./utils";
+    import {fly} from 'svelte/transition';
+import CustomButton from "./CustomButton.svelte";
 
     let redTeam = [];
     let blueTeam = [];
@@ -223,6 +225,9 @@
                 alertDivText = "Need atleast 2 online Player and 1 online Spymaster in each team !!!"
             }
         }
+        else {
+            alertDivText = '';
+        }
     }
     $: {
         if(!themeValue) {
@@ -397,10 +402,10 @@
     keepUpdatingUsersOnlineStatus();
 </script>
 <main>
-    <div class = "gameHeading">
+    <div class = "gameHeading" in:fly ="{{ y: -20, duration: 1000 }}">
         <img class = "codenamePng" src = '/images/codenames-logo.png' alt = "codenamesPng">
     </div>
-    <div class = "container">
+    <div class = "container" in:fly ="{{ y: -20, duration: 1000 }}">
         <div class = "heading">
             Choose a team you want to join
         </div>
@@ -512,18 +517,9 @@
                 </div>
             </div>
         {/if}
-        <button class = "startBtn" class:disabledStartBtn = {disableStartGameBtn === true} on:click = {handle_Start_Game_Btn} disabled = {disableStartGameBtn} style = "cursor : {disableStartGameBtn ? "not-allowed" : "pointer"}">
-            <div class = "btnText">Start Game</div>
-            <div class = "btnArrow">
-                <svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1.25391 5.94377L14.5352 4.94377V1.79534C14.5352 1.46721 14.6953 1.22112 15.0156 0.975025C15.3359 0.892994 15.6563 0.892993 15.8945 1.05706C19.1758 3.35393 22.2969 7.20159 22.375 7.36565C22.4531 7.5219 22.5273 7.75627 22.5313 7.92034C22.5313 7.92424 22.5352 7.93206 22.5352 7.93596C22.5352 8.10002 22.457 8.34612 22.375 8.42815C22.2969 8.59221 19.2539 12.4516 15.8945 14.7485C15.5742 14.9125 15.2539 14.9946 15.0156 14.8305C14.6953 14.6664 14.5352 14.4203 14.5352 14.0922V10.9438L1.25391 9.94377C0.855469 9.62346 0.535156 8.81877 0.535156 7.93596C0.535156 7.13909 0.773438 6.26409 1.25391 5.94377Z" fill="#343E98"/>
-                </svg>	
-            </div>
-        </button>
-        <div class = "alertDiv">
-            {alertDivText}
-        </div>
+        
     </div>
+    <CustomButton btnText = {"Start Game"} disableBtn = {disableStartGameBtn} on:click = {handle_Start_Game_Btn} tooltipMsg = {alertDivText}/>
 </main>
 
 <style>
@@ -555,13 +551,13 @@
         background-size: 100% 100%;
         width : 100%;
         height : 100%;
-        text-align : center;
-    }
-    .gameHeading{
-        padding : 3%;
+        display : flex;
+        flex-direction: column;
+        align-items : center;
+        padding : 2rem;
     }
     .codenamePng {
-        height : 60px;
+        height : 3rem;
     }
     
     .container{
@@ -570,13 +566,14 @@
         align-items : center;
         justify-content: center;
         width : 100%;
+        margin : auto;
     }
     .heading{
         color : #fff;
         font-family: 'Manrope', sans-serif;
-        font-size : 18px;
+        font-size : 0.85rem;
         line-height: 24px;
-        margin-bottom : 1.5%;
+        margin-bottom : 1rem;
         font-weight : 700;
     }
 
@@ -610,7 +607,7 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 20px;
+        font-size: 1rem;
         line-height: 28px;
         text-align: center;
         color: #5E96E8;
@@ -619,7 +616,7 @@
         font-family: 'Manrope', sans-serif;
         font-style: normal;
         font-weight: 800;
-        font-size: 20px;
+        font-size: 1rem;
         line-height: 28px;
         text-align: center;
         color: #E96143;
@@ -644,7 +641,7 @@
         max-height : 100%;
     }
     .emptyTeamMsg{
-        font-size : 16px;
+        font-size : 0.75rem;
         color : grey;
         font-style: oblique;
     }
@@ -761,7 +758,7 @@
         display : flex;
         justify-content: space-between;
         align-items: center;
-        margin-top : 20px;
+        margin-top : 1rem;
     }
     .selectATheme {
         font-family : 'Manrope' , sans-serif;
@@ -815,48 +812,7 @@
         color : #3F1575;
     }
     
-    .startBtn{
-		display : flex;
-        background : #ffffff;
-        align-items : center;
-		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px -8px 0px #98C8E2;
-		border-radius: 30px;
-        padding : 10px 20px;
-        margin-top : 20px;
-	}
-    .startBtn:hover {
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px -6px 0px #98C8E2;
-    }
-    
-	.startBtn:hover .btnText{
-		transform: scale3d(1.05,1.05,1.25);
-	}
-	.startBtn:hover .btnArrow{
-		transform: scale3d(1.05,1.05,1.25);
-	}
-	.startBtn:focus{
-		box-shadow: 0px 0px 0px;
-	}
-	.btnText{
-		color: #343E98;
-        font-family: 'Manrope', sans-serif;
-        font-weight : 900;
-        font-size : 18px;
-	}
-	.btnArrow{
-		margin : 8px;
-	}
-    .alertDiv{
-        color : white; 
-        padding : 8px;
-        font-family: 'Manrope', sans-serif;
-        font-weight : 700;
-        font-size : 14px;
-        visibility : hidden;
-    }
-    .disabledStartBtn:hover + .alertDiv{
-        visibility : visible;
-    }
+
     @media screen and (max-width : 1150px) {
         .blueH,.redH,.heading {
             font-size : 16px;
@@ -875,9 +831,6 @@
         }
         .emptyTeamMsg{
             font-size : 10px;
-        }
-        .btnText {
-            font-size : 16px;
         }
     }
     @media screen and (max-width : 1100px) {
@@ -901,9 +854,7 @@
         }
     }
     @media screen and (max-width : 1000px) {
-        .startBtn {
-            padding : 5px 10px;
-        }
+        
         .player,.spymaster {
             font-size : 11px;
         }
@@ -919,9 +870,6 @@
         }
         .emptyTeamMsg {
             font-size : 12px;
-        }
-        .btnText {
-            font-size : 0.70rem;
         }
     }
     @media screen and (max-width : 900px){

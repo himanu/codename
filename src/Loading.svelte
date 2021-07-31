@@ -1,7 +1,21 @@
+<script>
+	import {fly} from 'svelte/transition';
+	import {listenFirebaseKey,dbGameSessionRound} from './database';
+	import CustomButton from './CustomButton.svelte';
+
+	function updateClick() {
+		listenFirebaseKey(dbGameSessionRound,(dbGameSessionRoundRef)=>{
+			dbGameSessionRoundRef.update({
+				page : 'Lobby Screen'
+			})
+		})
+	}
+</script>
 <main>
 	<div class = "container">
-		<img class = 'codenamePng' alt = 'codenamePng' src = '/images/codenames-logo.png'>
+		<img class = 'codenamePng' alt = 'codenamePng' src = '/images/codenames-logo.png' in:fly ="{{ y: -20, duration: 1000 }}">
 	</div>
+	<CustomButton on:click = {updateClick} btnText = {'Start Game'} disableBtn = {false}/>
 </main>
 
 <style>
@@ -10,14 +24,17 @@
 		width : 100%;
 		height : 100%;
 		background-size: 100% 100%;
-	}
-	.container{
+		padding : 2rem;
 		display : flex;
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		height : 75%;
-		width : 100%;
+	}
+	.codenamePng {
+		width : 20rem;
+	}
+	.container{
+		margin : auto;
 	}
 
 </style>

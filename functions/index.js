@@ -16,7 +16,6 @@ exports.updateLeaderBoard = functions.https.onCall((data, context)=>{
   return axios({
     method: "post",
     headers: {
-      "Host": functions.config().app.url,
       "X-APP-ACCESS-SECRET": `Token ${functions.config().app.secret}`,
     },
     url: `${functions.config().app.url}/v1/api/dapp/extension/${

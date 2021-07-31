@@ -4,6 +4,8 @@
     import LobbyScreen from "./Lobby_Screen.svelte";
     import LoadingSvg from './LoadingSvg.svelte';
     import DisconnectedSvg from './DisconnectedSvg.svelte';
+    import {fly} from 'svelte/transition';
+
     var leftTime = 5;
     let time;
     let user;
