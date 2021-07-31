@@ -31,7 +31,7 @@ function serve() {
 }
 
 export default {
-	input: "src/main.ts",
+	input: "src/main.js",
 	output: {
 		sourcemap: true,
 		format: "iife",
