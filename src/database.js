@@ -129,8 +129,8 @@ dbUser.update({
     profilePicture: getParams('userProfilePicture')
 });
 
-dbDefault.set(defaultWordsArray);
-dbDuet.set(duetWordsArray);
+// dbDefault.set(defaultWordsArray);
+// dbDuet.set(duetWordsArray);
 
 
 
