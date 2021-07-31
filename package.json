@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "dev:emulate": "firebase emulators:start",
-    "start": "sirv public --no-clear"
+    "dev": "env-cmd -f .env.development rollup -c -w",
+    "dev:emulate": "env-cmd -f .env.development.emulate rollup -c -w & npm run emulate",
+    "emulate": "firebase emulators:start --debug",
+    "start": "sirv public --no-clear",
+    "deploy:dev": "env-cmd -f .env.development npm run build && bash scripts/deploy_dev.sh",
+    "deploy:prod": "env-cmd -f .env.production npm run build && bash scripts/deploy_prod.sh"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -19,6 +22,7 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "env-cmd": "^10.1.0",
     "firebase": "^8.6.2",
     "sirv-cli": "^1.0.0"
   }
