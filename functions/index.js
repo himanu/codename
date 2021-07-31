@@ -27,9 +27,9 @@ exports.updateLeaderBoard = functions.https.onCall((data, context)=>{
     },
   })
       .then(function(response) {
-        console.log('Success response is ',response);
+        console.log("Success response is ", response);
       })
       .catch((error) => {
-        console.log('Failure is ', error);
+        console.log("Failure is ", error);
       });
 });
