@@ -12,7 +12,6 @@ exports.updateLeaderBoard = functions.https.onCall((data, context)=>{
       score: 10,
     });
   });
-  console.log("secret ", functions.config().app.secret);
   return axios({
     method: "post",
     headers: {

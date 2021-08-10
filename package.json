@@ -8,7 +8,7 @@
     "dev:emulate": "env-cmd -f .env.development.emulate rollup -c -w & npm run emulate",
     "emulate": "firebase emulators:start --debug",
     "start": "sirv public --no-clear",
-    "deploy:dev": "env-cmd -f .env.development npm run build && bash scripts/deploy_dev.sh",
+    "deploy:dev": "env-cmd -f .env.development npm run build",
     "deploy:prod": "env-cmd -f .env.production npm run build && bash scripts/deploy_prod.sh"
   },
   "devDependencies": {
