@@ -1,7 +1,7 @@
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from 'firebase/app';
+import 'firebase/database';
 import 'firebase/functions';
-import { getGameSessionId, getParams,defaultWordsArray,duetWordsArray } from "./utils";
+import { getGameSessionId, getParams } from './utils';
 
 const firebaseConfig = {
 	apiKey: process.env.API_KEY,
@@ -17,42 +17,45 @@ firebase.initializeApp(firebaseConfig);
 var functions = firebase.functions();
 export const updateLeaderBoard = functions.httpsCallable('updateLeaderBoard');
 
-// var firebaseEmulators = {
-//     "database": {
-//       "host": "localhost",
-//       "port": 9000
-//     },
-//     "functions": {
-//       "host": "localhost",
-//       "port": 5001
-//     }
-// };
-// if (firebaseEmulators) {
-//     console.log("Automatically connecting Firebase SDKs to running emulators:");
-//     Object.keys(firebaseEmulators).forEach(function(key) {
-//     console.log('\t' + key + ': http://' +  firebaseEmulators[key].host + ':' + firebaseEmulators[key].port );
-//     });
-//     if (firebaseEmulators.database && typeof firebase.database === 'function') {
-//     firebase.database().useEmulator(firebaseEmulators.database.host, firebaseEmulators.database.port);
-//     }
-//     if (firebaseEmulators.firestore && typeof firebase.firestore === 'function') {
-//     firebase.firestore().useEmulator(firebaseEmulators.firestore.host, firebaseEmulators.firestore.port);
-//     }
-//     if (firebaseEmulators.functions && typeof firebase.functions === 'function') {
-//     firebase.functions().useEmulator(firebaseEmulators.functions.host, firebaseEmulators.functions.port);
-//     }
-//     if (firebaseEmulators.auth && typeof firebase.auth === 'function') {
-//     firebase.auth().useEmulator('http://' + firebaseEmulators.auth.host + ':' + firebaseEmulators.auth.port);
-//     }
-// } 
-// else {
-//     console.log("To automatically connect the Firebase SDKs to running emulators, replace '/__/firebase/init.js' with '/__/firebase/init.js?useEmulator=true' in your index.html");
-// }
+if (process.env.EMULATE) {
+	var firebaseEmulators = {
+		database: {
+			host: 'localhost',
+			port: 9000,
+		},
+		functions: {
+			host: 'localhost',
+			port: 5001,
+		},
+	};
+	if (firebaseEmulators) {
+		console.log('Automatically connecting Firebase SDKs to running emulators:');
+		Object.keys(firebaseEmulators).forEach(function (key) {
+			console.log('\t' + key + ': http://' + firebaseEmulators[key].host + ':' + firebaseEmulators[key].port);
+		});
+		if (firebaseEmulators.database && typeof firebase.database === 'function') {
+			firebase.database().useEmulator(firebaseEmulators.database.host, firebaseEmulators.database.port);
+		}
+		if (firebaseEmulators.firestore && typeof firebase.firestore === 'function') {
+			firebase.firestore().useEmulator(firebaseEmulators.firestore.host, firebaseEmulators.firestore.port);
+		}
+		if (firebaseEmulators.functions && typeof firebase.functions === 'function') {
+			firebase.functions().useEmulator(firebaseEmulators.functions.host, firebaseEmulators.functions.port);
+		}
+		if (firebaseEmulators.auth && typeof firebase.auth === 'function') {
+			firebase.auth().useEmulator('http://' + firebaseEmulators.auth.host + ':' + firebaseEmulators.auth.port);
+		}
+	} else {
+		console.log(
+			"To automatically connect the Firebase SDKs to running emulators, replace '/__/firebase/init.js' with '/__/firebase/init.js?useEmulator=true' in your index.html",
+		);
+	}
+}
 
 let roundValue = 1;
 
 function getRoundValue() {
-    return roundValue;
+	return roundValue;
 }
 
 export const dbCodenameWords = firebase.database().ref('codenameWords');
@@ -61,8 +64,8 @@ export const dbDuet = dbCodenameWords.child('duet');
 
 export const dbRoot = firebase.database().ref('codename');
 export const dbGameSession = dbRoot.child(getGameSessionId());
-export const dbGameSessionRoundValue = dbGameSession.child("roundValue");
-export const dbGameSessionRounds = dbGameSession.child("rounds");
+export const dbGameSessionRoundValue = dbGameSession.child('roundValue');
+export const dbGameSessionRounds = dbGameSession.child('rounds');
 
 export const dbGameSessionRound = () => dbGameSessionRounds.child(getRoundValue());
 
@@ -82,55 +85,49 @@ export const dbTime = () => dbGameSessionRound().child('time');
 export const dbThemeValue = () => dbGameSessionRound().child('themeValue');
 
 export function listenFirebaseKey(key, callback) {
-    Promise.resolve(roundTimeValuePromise).then(() => {
-        callback(key());
-    });
+	Promise.resolve(roundTimeValuePromise).then(() => {
+		callback(key());
+	});
 }
 
-
 const roundTimeValuePromise = new Promise((resolve, reject) => {
-    dbGameSessionRoundValue.once("value").then((snap) => {
-        if(!snap.exists()) {
-            roundValue = 1;
-        } else {
-            roundValue = snap.val();
-        }
-        resolve();
-    })
-})
+	dbGameSessionRoundValue.once('value').then((snap) => {
+		if (!snap.exists()) {
+			roundValue = 1;
+		} else {
+			roundValue = snap.val();
+		}
+		resolve();
+	});
+});
 
-dbGameSessionRoundValue.on("value", (snap) => {
-    if(!snap.exists()) {
-        dbGameSessionRoundValue.set(1);
-        roundValue = 1;
-        return ;
-    }
-    roundValue = snap.val();
-
-})
+dbGameSessionRoundValue.on('value', (snap) => {
+	if (!snap.exists()) {
+		dbGameSessionRoundValue.set(1);
+		roundValue = 1;
+		return;
+	}
+	roundValue = snap.val();
+});
 
 var connectedRef = firebase.database().ref('.info/connected');
 connectedRef.on('value', (snap) => {
-    if (snap.val() === true) {
-
+	if (snap.val() === true) {
 		dbUser.update({
-            online : true
-        });
+			online: true,
+		});
 
-        dbUser.onDisconnect().update({
-            online : firebase.database.ServerValue.TIMESTAMP
-        });
-    }
+		dbUser.onDisconnect().update({
+			online: firebase.database.ServerValue.TIMESTAMP,
+		});
+	}
 });
 
 dbUser.update({
-    id: getParams('userId'),
-    userName: getParams('userName'),
-    profilePicture: getParams('userProfilePicture')
+	id: getParams('userId'),
+	userName: getParams('userName'),
+	profilePicture: getParams('userProfilePicture'),
 });
 
 // dbDefault.set(defaultWordsArray);
 // dbDuet.set(duetWordsArray);
-
-
-

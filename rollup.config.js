@@ -10,80 +10,85 @@ import sveltePreprocess from "svelte-preprocess";
 const production = !process.env.ROLLUP_WATCH;
 const EMULATE = !!process.env.EMULATE;
 function serve() {
-	let server;
+  let server;
 
-	function toExit() {
-		if (server) server.kill(0);
-	}
+  function toExit() {
+    if (server) server.kill(0);
+  }
 
-	return {
-		writeBundle() {
-			if (server) return;
-			server = require("child_process").spawn("npm", ["run", "start", "--", "--dev"], {
-				stdio: ["ignore", "inherit", "inherit"],
-				shell: true,
-			});
+  return {
+    writeBundle() {
+      if (server) return;
+      server = require("child_process").spawn(
+        "npm",
+        ["run", "start", "--", "--dev"],
+        {
+          stdio: ["ignore", "inherit", "inherit"],
+          shell: true,
+        }
+      );
 
-			process.on("SIGTERM", toExit);
-			process.on("exit", toExit);
-		},
-	};
+      process.on("SIGTERM", toExit);
+      process.on("exit", toExit);
+    },
+  };
 }
 
 export default {
-	input: "src/main.js",
-	output: {
-		sourcemap: true,
-		format: "iife",
-		name: "app",
-		file: "public/build/bundle.js",
-	},
-	plugins: [
-		svelte({
-			preprocess: sveltePreprocess({ sourceMap: !production }),
-			compilerOptions: {
-				// enable run-time checks when not in production
-				dev: !production,
-			},
-		}),
-		// we'll extract any component CSS out into
-		// a separate file - better for performance
-		css({ output: "bundle.css" }),
+  input: "src/main.js",
+  output: {
+    sourcemap: true,
+    format: "iife",
+    name: "app",
+    file: "public/build/bundle.js",
+  },
+  plugins: [
+    svelte({
+      preprocess: sveltePreprocess({ sourceMap: !production }),
+      compilerOptions: {
+        // enable run-time checks when not in production
+        dev: !production,
+      },
+    }),
+    // we'll extract any component CSS out into
+    // a separate file - better for performance
+    css({ output: "bundle.css" }),
 
-		// If you have external dependencies installed from
-		// npm, you'll most likely need these plugins. In
-		// some cases you'll need additional configuration -
-		// consult the documentation for details:
-		// https://github.com/rollup/plugins/tree/master/packages/commonjs
-		resolve({
-			browser: true,
-			dedupe: ["svelte"],
-		}),
-		commonjs(),
-		injectProcessEnv({
-			API_KEY: process.env.API_KEY,
-			AUTH_DOMAIN: process.env.AUTH_DOMAIN,
-			DATABASE_URL: process.env.DATABASE_URL,
-			PROJECT_ID: process.env.PROJECT_ID,
-			STORAGE_BUCKET: process.env.STORAGE_BUCKET,
-			MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
-			APP_ID: process.env.APP_ID,
-			APP_ENV: process.env.APP_ENV,
-		}),
+    // If you have external dependencies installed from
+    // npm, you'll most likely need these plugins. In
+    // some cases you'll need additional configuration -
+    // consult the documentation for details:
+    // https://github.com/rollup/plugins/tree/master/packages/commonjs
+    resolve({
+      browser: true,
+      dedupe: ["svelte"],
+    }),
+    commonjs(),
+    injectProcessEnv({
+      API_KEY: process.env.API_KEY,
+      AUTH_DOMAIN: process.env.AUTH_DOMAIN,
+      DATABASE_URL: process.env.DATABASE_URL,
+      PROJECT_ID: process.env.PROJECT_ID,
+      STORAGE_BUCKET: process.env.STORAGE_BUCKET,
+      MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
+      APP_ID: process.env.APP_ID,
+      EMULATE: process.env.EMULATE,
+      APP_ENV: process.env.APP_ENV,
+    }),
 
-		// In dev mode, call `npm run start` once
-		// the bundle has been generated
-		!production && !EMULATE && serve(),
+    // In dev mode, call `npm run start` once
+    // the bundle has been generated
+    !production && !EMULATE && serve(),
 
-		// Watch the `public` directory and refresh the
-		// browser on changes when not in production
-		!production && livereload("public"),
+    // Watch the `public` directory and refresh the
+    // browser on changes when not in production
+    !production && livereload("public"),
 
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
-		production && terser(),
-	],
-	watch: {
-		clearScreen: false,
-	},
+    // If we're building for production (npm run build
+    // instead of npm run dev), minify
+    production && terser(),
+  ],
+  watch: {
+    clearScreen: false,
+  },
 };
