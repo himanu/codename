@@ -23,6 +23,7 @@
 	import LoadingSvg from './LoadingSvg.svelte';
 	import Lobby_Screen from './Lobby_Screen.svelte';
 	import LogBox from './LogBox.svelte';
+	import MediaQuery from './MediaQuery.svelte';
 	import Tick from './Tick.svelte';
 	import { getGameSessionId, getParams } from './utils';
 
@@ -725,12 +726,16 @@
 						<div class="player" style="color : {profile_picture_border_color}">PLAYER</div>
 					</div>
 				{/if}
-				<div class="teamIndicator" style="background-color : {profile_picture_border_color}">
-					{team} Team
-				</div>
+				<MediaQuery query="(max-width: 600px)" let:matches>
+					{#if !matches}
+						<div class="teamIndicator" style="background-color : {profile_picture_border_color}">
+							{team} Team
+						</div>
+					{/if}
+				</MediaQuery>
 			</div>
 			<div class="codename">
-				<img src="/images/codenames-logo.png" class="codenamePng" style="height : 60px" alt="codenames" />
+				<img src="/images/codenames-logo.png" class="codenamePng" alt="codenames" />
 				<div class="turnIndicatorBox">
 					<div class="turnIndicator" style="background-color : {turnIndicatorBackgroundColor}">
 						{#if !clue || clue.clueSenderTeam !== turn}
@@ -751,13 +756,17 @@
 					</div>
 				</div>
 			</div>
-			<div class="scorecardAndLogs">
-				<div class="scorecard">
-					<div class="blueScore">Remaining Code for Blue - {blueScore}</div>
-					<div class="redScore">Remaining Code for Red - {redScore}</div>
-				</div>
-				<div class="logsBtn" on:click={handleShowLogsBtn}>Logs</div>
-			</div>
+			<MediaQuery query="(max-width: 600px)" let:matches>
+				{#if !matches}
+					<div class="scorecardAndLogs">
+						<div class="scorecard">
+							<div class="blueScore">Remaining Code for Blue - {blueScore}</div>
+							<div class="redScore">Remaining Code for Red - {redScore}</div>
+						</div>
+						<div class="logsBtn" on:click={handleShowLogsBtn}>Logs</div>
+					</div>
+				{/if}
+			</MediaQuery>
 		</div>
 
 		<div class="container">
@@ -1073,6 +1082,7 @@
 		margin: 20px 0px;
 		color: #fff;
 		font-weight: 700;
+		text-align: center;
 	}
 	.winning-btn {
 		background: #3fab8b;
@@ -1186,9 +1196,21 @@
 		flex-direction: column;
 		justify-content: center;
 	}
+	@media screen and (max-width: 600px) {
+		.codename {
+			right: 0;
+			left: unset;
+			transform: unset;
+		}
+	}
 	.codenamePng {
 		height: 60px;
 		align-self: center;
+	}
+	@media screen and (max-width: 600px) {
+		.codenamePng {
+			align-self: flex-end;
+		}
 	}
 	.scorecardAndLogs {
 		position: absolute;
@@ -1337,6 +1359,7 @@
 		background-color: rgba(0, 0, 0, 0.5);
 		color: #fff;
 		padding: 10px;
+		white-space: nowrap;
 	}
 	.clueCountWordBox:hover {
 		background-color: rgba(0, 0, 0, 1);
@@ -1382,6 +1405,7 @@
 		font-family: 'Manrope', sans-serif;
 		font-weight: 700;
 		font-size: 14px;
+		white-space: nowrap;
 	}
 	.give-clue-btn:hover {
 		transform: scale3d(1.05, 1.05, 1.25);
@@ -1490,12 +1514,32 @@
 		right: 22px;
 		width: 16%;
 	}
+	@media screen and (max-width: 600px) {
+		.redTeam_List {
+			top: unset;
+			bottom: 2%;
+			transform: unset;
+		}
+		.redTeam_List:hover > .userContainer {
+			visibility: visible;
+		}
+	}
 	.blueTeam_List {
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
 		left: 22px;
 		width: 16%;
+	}
+	@media screen and (max-width: 600px) {
+		.blueTeam_List {
+			top: unset;
+			bottom: 2%;
+			transform: unset;
+		}
+		.blueTeam_List:hover > .userContainer {
+			visibility: visible;
+		}
 	}
 	.blue_heading {
 		font-family: 'Manrope', sans-serif;
@@ -1519,6 +1563,14 @@
 		background-color: #fff;
 		border-radius: 10px;
 		padding: 5px;
+	}
+	@media screen and (max-width: 600px) {
+		.userContainer {
+			position: absolute;
+			bottom: 0;
+			bottom: 34px;
+			visibility: hidden;
+		}
 	}
 	.users {
 		overflow: auto;
@@ -1721,7 +1773,33 @@
 	}
 	@media screen and (max-width: 950px) {
 		.word {
+			line-height: 12px;
 			font-size: 13px;
+		}
+	}
+	@media screen and (max-width: 600px) {
+		.container {
+			max-width: 90%;
+			width: 90%;
+		}
+		.blueTeam_List,
+		.redTeam_List {
+			width: 40%;
+		}
+		.word-matrix {
+			grid-template-columns: repeat(4, 1fr);
+		}
+		.word {
+			font-size: 10px;
+		}
+		.spymaster {
+			font-size: 10px;
+		}
+		.player {
+			font-size: 10px;
+		}
+		.clueInputBox {
+			min-width: 150px;
 		}
 	}
 </style>

@@ -280,6 +280,12 @@
 		width: 100%;
 		margin: auto;
 	}
+	@media screen and (max-width: 600px) {
+		.teams {
+			flex-direction: column;
+			align-items: center;
+		}
+	}
 	.text {
 		color: #fff;
 		font-family: 'Manrope', sans-serif;
@@ -301,6 +307,13 @@
 		background: #ffffff;
 		border-radius: 15px;
 		margin: 0px;
+	}
+
+	@media screen and (max-width: 600px) {
+		.red,
+		.blue {
+			width: 90%;
+		}
 	}
 	.blue {
 		box-shadow: -5px -5px #5e96e8;

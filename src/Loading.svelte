@@ -32,9 +32,9 @@
 		flex-direction: column;
 	}
 	.codenamePng {
-		width: 20rem;
+		width: 100%;
 	}
 	.container {
-		margin: auto;
+		margin: 10vh auto;
 	}
 </style>

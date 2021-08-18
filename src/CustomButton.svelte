@@ -81,8 +81,11 @@
 		font-family: 'Manrope', sans-serif;
 		font-weight: 900;
 		font-size: 1rem;
+		margin-bottom: 5px;
+		transition: all 0.3s ease;
 	}
 	.btnArrow {
 		margin: 8px;
+		transition: all 0.3s ease;
 	}
 </style>

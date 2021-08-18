@@ -519,7 +519,7 @@
 		border-radius: 20px;
 		background-size: 100% 100%;
 		width: 100%;
-		height: 100%;
+		min-height: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -544,6 +544,7 @@
 		line-height: 24px;
 		margin-bottom: 1rem;
 		font-weight: 700;
+		text-align: center;
 	}
 
 	.teams {
@@ -600,6 +601,12 @@
 		border-radius: 15px;
 		padding: 5px;
 	}
+	@media screen and (max-width: 650px) {
+		.user-list {
+			max-height: 70px;
+			overflow: hidden;
+		}
+	}
 	.blue > .user-list {
 		border: 1px solid #5e96e8;
 	}
@@ -614,6 +621,9 @@
 		font-size: 0.75rem;
 		color: grey;
 		font-style: oblique;
+		min-height: 30px;
+		display: flex;
+		align-items: center;
 	}
 	.user {
 		display: flex;
@@ -856,6 +866,22 @@
 	@media screen and (max-height: 650px) {
 		.teams {
 			max-height: 230px;
+		}
+	}
+	@media screen and (max-width: 650px) {
+		main {
+			padding: 1rem;
+		}
+		.red,
+		.blue {
+			width: 70%;
+			min-width: 250px;
+			padding: 5px;
+		}
+		.teams {
+			flex-direction: column;
+			align-items: center;
+			max-height: 450px;
 		}
 	}
 </style>
