@@ -4,7 +4,7 @@
 	export let disableBtn;
 	export let tooltipMsg;
 </script>
-<div class = "startBtn" class:disabledBtn = {disableBtn === true} on:click in:fly ="{{ y: -20, duration: 1000 }}">
+<div class = "startBtn"disabled = {disableBtn} class:disabledBtn = {disableBtn === true} on:click in:fly ="{{ y: -20, duration: 1000 }}">
 	{#if tooltipMsg}
 		<div class="tooltip">
 			{tooltipMsg}
