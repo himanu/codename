@@ -4,11 +4,9 @@ import 'firebase/functions';
 
 import { getGameSessionId, getParams,defaultWordsArray,duetWordsArray } from "./utils";
 import * as Sentry from "@Sentry/browser";
-import { Integrations } from "@Sentry/tracing";
 
 Sentry.init({
   dsn: "https://290aaec6fb37438eaa9f8f2fa34ccd18@o422923.ingest.sentry.io/5884399",
-  integrations: [new Integrations.BrowserTracing()],
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
