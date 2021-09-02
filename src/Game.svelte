@@ -690,14 +690,6 @@
 						{:else}
 							Opponent has found all their words
 						{/if}
-						<svg class="tick-cross" width="15" height="15" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
-								d="M8.56539 9.88682L9.96921 8.48294L6.46021 4.97406L9.87206 1.56233L8.46824 0.158459L5.05634 3.57024L1.48597 0L0.0821475 1.40387L3.65247 4.97406L0.0302734 8.59613L1.4341 10L5.05634 6.37789L8.56539 9.88682Z"
-								fill="#FFEBEE"
-							/>
-						</svg>
 					</div>
 					<div class="result-text">Your team has lost the Game.</div>
 					<button class="restart-game" on:click={handleRestartBtn}>Restart Game</button>
