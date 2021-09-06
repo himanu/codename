@@ -1,4 +1,4 @@
-import Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/browser';
 import App from './App.svelte';
 
 if (process.env.APP_ENV === 'prod') {
