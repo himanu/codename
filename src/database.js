@@ -7,40 +7,72 @@ import { getGameSessionId, getParams,defaultWordsArray,duetWordsArray } from "./
 const firebaseConfig = {
 	apiKey: "AIzaSyAaWOflD1Hg4VmQJSvlqtdsiIi1HcdNbnk",
 	authDomain: "fir-384a7.firebaseapp.com",
+	databaseURL: "https://fir-384a7-default-rtdb.firebaseio.com",
 	projectId: "fir-384a7",
 	storageBucket: "fir-384a7.appspot.com",
 	messagingSenderId: "156594093226",
 	appId: "1:156594093226:web:baf0e766e480e5a0a8a4d3",
 	measurementId: "G-6J07C7WESN"
-  };
+};
 
 const app = firebase.initializeApp(firebaseConfig);
 var functions = firebase.functions();
 
 const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
-
-auth.signInWithPopup(provider).then(function(result) {
-  var user = result.user;
-  var credential = result.credential;
-  console.log('User ', user);
-}, function(error) {
-  // The provider's account email, can be used in case of
-  // auth/account-exists-with-different-credential to fetch the providers
-  // linked to the email:
-  var email = error.email;
-  // The provider's credential:
-  var credential = error.credential;
-  // In case of auth/account-exists-with-different-credential error,
-  // you can fetch the providers using this:
-  if (error.code === 'auth/account-exists-with-different-credential') {
-    auth.fetchSignInMethodsForEmail(email).then(function(providers) {
-      // The returned 'providers' is a list of the available providers
-      // linked to the email address. Please refer to the guide for a more
-      // complete explanation on how to recover from this error.
-    });
-  }
-});
+// function signUp(email, password) {
+// 	auth.createUserWithEmailAndPassword(email, password)
+// 	.then((userCredential) => {
+// 	  // Signed in 
+// 	  var user = userCredential.user;
+// 	  console.log('user ', user);
+// 	  // ...
+// 	})
+// 	.catch((error) => {
+// 	  var errorCode = error.code;
+// 	  var errorMessage = error.message;
+// 	  console.log('error ', error);
+// 	  // ..
+// 	});
+// }
+// function signIn(email, password) {
+// 	auth.signInWithEmailAndPassword(email, password)
+// 	.then((userCredential) => {
+// 		// Signed in
+// 		var user = userCredential.user;
+// 		console.log('user ', user);
+// 		// ...
+// 	})
+// 	.catch((error) => {
+// 		var errorCode = error.code;
+// 		var errorMessage = error.message;
+// 		console.log('error ', error);
+// 	});
+// }
+// signUp('hy287720@gmail.com', '123456');
+// const provider = new firebase.auth.GoogleAuthProvider();
+// provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+// auth.signInWithPopup(provider).then(function(result) {
+//   var user = result.user;
+//   var credential = result.credential;
+//   console.log('User ', user);
+// }, function(error) {
+//   // The provider's account email, can be used in case of
+//   // auth/account-exists-with-different-credential to fetch the providers
+//   // linked to the email:
+//   var email = error.email;
+//   console.log("error ", error);
+//   // The provider's credential:
+//   var credential = error.credential;
+//   // In case of auth/account-exists-with-different-credential error,
+//   // you can fetch the providers using this:
+//   if (error.code === 'auth/account-exists-with-different-credential') {
+//     auth.fetchSignInMethodsForEmail(email).then(function(providers) {
+//       // The returned 'providers' is a list of the available providers
+//       // linked to the email address. Please refer to the guide for a more
+//       // complete explanation on how to recover from this error.
+//     });
+//   }
+// });
 
 if (process.env.EMULATE) {
 	var firebaseEmulators = {

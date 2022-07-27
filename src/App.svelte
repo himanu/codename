@@ -5,6 +5,7 @@
 	import { fly } from 'svelte/transition';
 	import { dbGameSessionRounds, dbGameSessionRoundValue } from './database.js';
 	import Game from './Game.svelte';
+import GoogleSignIn from './GoogleSignIn.svelte';
 	import Loading from './Loading.svelte';
 	import LobbyScreen from './Lobby_Screen.svelte';
 	import Loby from './loby.svelte';
@@ -43,8 +44,8 @@
 		console.log('page ', page);
 	}
 </script>
-
-{#if page === 'Welcome'}
+<GoogleSignIn />
+<!-- {#if page === 'Welcome'}
 	<Loading />
 {:else if page === 'Lobby Screen'}
 	<LobbyScreen />
@@ -58,7 +59,7 @@
 			<img class="codenamePng" alt="codenamePng" src="/images/codenames-logo.png" />
 		</div>
 	</main>
-{/if}
+{/if} -->
 
 <style>
 	:global(*) {
