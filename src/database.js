@@ -1,31 +1,46 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/functions';
-
+import "firebase/auth";
 import { getGameSessionId, getParams,defaultWordsArray,duetWordsArray } from "./utils";
-import * as Sentry from "@Sentry/browser";
-
-Sentry.init({
-  dsn: "https://290aaec6fb37438eaa9f8f2fa34ccd18@o422923.ingest.sentry.io/5884399",
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-});
 
 const firebaseConfig = {
-	apiKey: process.env.API_KEY,
-	authDomain: process.env.AUTH_DOMAIN,
-	databaseURL: process.env.DATABASE_URL,
-	projectId: process.env.PROJECT_ID,
-	storageBucket: process.env.STORAGE_BUCKET,
-	messagingSenderId: process.env.MESSAGING_SENDER_ID,
-	appId: process.env.APP_ID,
-};
+	apiKey: "AIzaSyAaWOflD1Hg4VmQJSvlqtdsiIi1HcdNbnk",
+	authDomain: "fir-384a7.firebaseapp.com",
+	projectId: "fir-384a7",
+	storageBucket: "fir-384a7.appspot.com",
+	messagingSenderId: "156594093226",
+	appId: "1:156594093226:web:baf0e766e480e5a0a8a4d3",
+	measurementId: "G-6J07C7WESN"
+  };
 
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 var functions = firebase.functions();
-export const updateLeaderBoard = functions.httpsCallable('updateLeaderBoard');
+
+const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
+
+auth.signInWithPopup(provider).then(function(result) {
+  var user = result.user;
+  var credential = result.credential;
+  console.log('User ', user);
+}, function(error) {
+  // The provider's account email, can be used in case of
+  // auth/account-exists-with-different-credential to fetch the providers
+  // linked to the email:
+  var email = error.email;
+  // The provider's credential:
+  var credential = error.credential;
+  // In case of auth/account-exists-with-different-credential error,
+  // you can fetch the providers using this:
+  if (error.code === 'auth/account-exists-with-different-credential') {
+    auth.fetchSignInMethodsForEmail(email).then(function(providers) {
+      // The returned 'providers' is a list of the available providers
+      // linked to the email address. Please refer to the guide for a more
+      // complete explanation on how to recover from this error.
+    });
+  }
+});
 
 if (process.env.EMULATE) {
 	var firebaseEmulators = {
@@ -99,6 +114,8 @@ export function listenFirebaseKey(key, callback) {
 		callback(key());
 	});
 }
+
+export const updateLeaderBoard = functions.httpsCallable('updateLeaderBoard');
 
 const roundTimeValuePromise = new Promise((resolve, reject) => {
 	dbGameSessionRoundValue.once('value').then((snap) => {
